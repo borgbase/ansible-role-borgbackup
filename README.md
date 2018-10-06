@@ -31,4 +31,4 @@ MIT/BSD
 
 ## Author
 
-This role was created by Manuel Riel, founder of [BorgBase.com](https://www.borgbase.com) - Simple and Secure Hosting for your Borg Repositories.
+Created by [BorgBase.com](https://www.borgbase.com) - Simple and Secure Hosting for your Borg Repositories.
