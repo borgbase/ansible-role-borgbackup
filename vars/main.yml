@@ -1,0 +1,14 @@
+---
+borg_apt_packages:
+  - libssl-dev
+  - libacl1-dev
+  - libacl1
+  - build-essential
+  - python3-dev
+  - python3-pip
+  - python3-msgpack
+
+borg_python_packages:
+  - borgbackup
+  - borgmatic
+

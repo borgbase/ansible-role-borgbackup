@@ -1,0 +1,48 @@
+---
+- name: Regenerate apt-cache and update packages
+  apt: update_cache=yes upgrade=dist cache_valid_time=120
+
+- name: Install required System Packages
+  apt: 
+    pkg: "{{ item }}"
+    state: installed
+  with_items: "{{ borg_apt_packages }}"
+
+- name: Install required Python Packages
+  pip:
+    name: "{{ item }}"
+    executable: pip3
+  with_items: "{{ borg_python_packages }}"
+
+- name: Ensure root has SSH key.
+  user:
+    name: "root"
+    generate_ssh_key: yes
+    ssh_key_file: .ssh/id_ed25519
+    ssh_key_type: ed25519
+  register: root_user
+
+- debug:
+    var: root_user['ssh_public_key']
+
+- name: Ensures /etc/borgmatic exists
+  file:
+    path: /etc/borgmatic
+    state: directory
+    mode: 0700
+    owner: root
+
+- name: Add Borgmatic Configuration
+  template:
+    src: config.yaml.j2
+    dest: "/etc/borgmatic/config.yaml"
+    mode: 0600
+
+- name: Add cron-job for borgmatic
+  cron: 
+    name: "borgmatic"
+    hour: "{{ 4 |random }}"
+    minute: "{{ 59 |random }}"
+    user: "root"
+    cron_file: borgmatic
+    job: "/usr/local/bin/borgmatic"

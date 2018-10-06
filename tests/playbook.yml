@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  roles:
+    - role: borgbackup
+      borg_encryption_passphrase: CHANGEME
+      borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+      borg_source_directories:
+        - /srv/www
+        - /var/lib/automysqlbackup
+      borg_exclude_patterns:
+        - /srv/www/upload

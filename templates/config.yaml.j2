@@ -1,0 +1,115 @@
+location:
+    source_directories:
+{% for dir in borg_source_directories %}
+        - {{ dir }}
+{% endfor %}
+    
+    one_file_system: true
+    repositories:
+        - {{ borg_repository }}
+
+    # Any paths matching these patterns are excluded from backups. Globs and tildes
+    # are expanded. See the output of "borg help patterns" for more details.
+    exclude_patterns:
+{% for dir in borg_exclude_patterns %}
+        - {{ dir }}
+{% endfor %}
+
+    # Exclude directories that contain a CACHEDIR.TAG file. See
+    # http://www.brynosaurus.com/cachedir/spec.html for details.
+    exclude_caches: true
+
+    # Exclude directories that contain a file with the given filename.
+    exclude_if_present: .nobackup
+
+# Repository storage options. See
+# https://borgbackup.readthedocs.io/en/stable/usage.html#borg-create and
+# https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables for
+# details.
+storage:
+    encryption_passphrase: {{ borg_encryption_passphrase }}
+    # Type of compression to use when creating archives. See
+    # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-create for details.
+    # Defaults to no compression.
+    compression: auto,zstd
+
+    # Remote network upload rate limit in kiBytes/second.
+    #remote_rate_limit: 5000
+
+    # Command to use instead of just "ssh". This can be used to specify ssh options.
+    # ssh_command: ssh -i ~/.ssh/id_ed25519
+
+    # Umask to be used for borg create.
+    umask: 0077
+
+    # Maximum seconds to wait for acquiring a repository/cache lock.
+    lock_wait: 5
+
+    # Name of the archive. Borg placeholders can be used. See the output of
+    # "borg help placeholders" for details. Default is
+    # "{hostname}-{now:%Y-%m-%dT%H:%M:%S.%f}". If you specify this option, you must
+    # also specify a prefix in the retention section to avoid accidental pruning of
+    # archives with a different archive name format. And you should also specify a
+    # prefix in the consistency section as well.
+    archive_name_format: '{hostname}-{now}'
+
+# Retention policy for how many backups to keep in each category. See
+# https://borgbackup.readthedocs.org/en/stable/usage.html#borg-prune for details.
+# At least one of the "keep" options is required for pruning to work.
+retention:
+    # Number of hourly archives to keep.
+    keep_hourly: 3
+
+    # Number of daily archives to keep.
+    keep_daily: 7
+
+    # Number of weekly archives to keep.
+    keep_weekly: 4
+
+    # Number of monthly archives to keep.
+    keep_monthly: 6
+
+    # When pruning, only consider archive names starting with this prefix.
+    # Borg placeholders can be used. See the output of "borg help placeholders" for
+    # details. Default is "{hostname}-".
+    prefix: '{hostname}-'
+
+# Consistency checks to run after backups. See
+# https://borgbackup.readthedocs.org/en/stable/usage.html#borg-check and
+# https://borgbackup.readthedocs.org/en/stable/usage.html#borg-extract for details.
+consistency:
+    # List of one or more consistency checks to run: "repository", "archives", and/or
+    # "extract". Defaults to "repository" and "archives". Set to "disabled" to disable
+    # all consistency checks. "repository" checks the consistency of the repository,
+    # "archive" checks all of the archives, and "extract" does an extraction dry-run
+    # of just the most recent archive.
+    checks:
+        - disabled
+        # - repository
+        # - archives
+
+    # Restrict the number of checked archives to the last n. Applies only to the "archives" check.
+    check_last: 3
+
+    # When performing the "archives" check, only consider archive names starting with
+    # this prefix. Borg placeholders can be used. See the output of
+    # "borg help placeholders" for details. Default is "{hostname}-".
+    prefix: '{hostname}-'
+
+# Shell commands or scripts to execute before and after a backup or if an error has occurred.
+# IMPORTANT: All provided commands and scripts are executed with user permissions of borgmatic.
+# Do not forget to set secure permissions on this file as well as on any script listed (chmod 0700) to
+# prevent potential shell injection or privilege escalation.
+hooks:
+    # List of one or more shell commands or scripts to execute before creating a backup.
+    before_backup:
+        - echo "`date` - Starting backup."
+
+    # List of one or more shell commands or scripts to execute after creating a backup.
+    after_backup:
+        - echo "`date` - Finished backup."
+
+    # List of one or more shell commands or scripts to execute in case an exception has occurred.
+    on_error:
+        - echo "`date` - Error while creating a backup."
+
