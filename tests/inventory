@@ -1,2 +1,2 @@
 [gce]
-debian9 ansible_ssh_host=35.231.187.214 ansible_ssh_user=erlebnishengst_gmail_com
+debian9
