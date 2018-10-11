@@ -46,3 +46,11 @@
     user: "root"
     cron_file: borgmatic
     job: "/usr/local/bin/borgmatic"
+
+- name: Set PATH for borgmatic cron job.
+  cron:
+    user: "root"
+    cron_file: borgmatic
+    name: PATH
+    env: yes
+    value: /usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
