@@ -5,7 +5,7 @@ galaxy_info:
   author: Manuel Riel
   description: Borg Backup.
   company: "BorgBase.com"
-  license: "license (BSD, MIT)"
+  license: license (BSD, MIT)
   min_ansible_version: 2.0
   platforms:
     - name: Debian

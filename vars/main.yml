@@ -11,4 +11,3 @@ borg_apt_packages:
 borg_python_packages:
   - borgbackup
   - borgmatic
-
