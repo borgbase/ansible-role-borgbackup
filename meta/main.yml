@@ -1,0 +1,25 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: Manuel Riel
+  description: Borg Backup.
+  company: "BorgBase.com"
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.0
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - trusty
+        - xenial
+        - bionic
+  galaxy_tags:
+    - backup
+    - cloud
+    - system
+    - security
+
+allow_duplicates: true
