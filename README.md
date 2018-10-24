@@ -16,11 +16,21 @@ An Ansible Role that installs that sets up BorgBackup on Debian/Ubuntu.
 - hosts: webservers
   roles:
   - role: borgbackup
+    borgmatic_config_name: important_stuff
     borg_encryption_passphrase: CHANGEME
     borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
     borg_source_directories:
       - /srv/www
       - /var/lib/automysqlbackup
+    borg_exclude_patterns:
+      - /srv/www/upload
+
+  - role: borgbackup
+    borgmatic_config_name: full_backup
+    borg_encryption_passphrase: CHANGEME
+    borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+    borg_source_directories:
+      - /
     borg_exclude_patterns:
       - /srv/www/upload
 ```

@@ -3,7 +3,7 @@
   apt: update_cache=yes upgrade=dist cache_valid_time=120
 
 - name: Install required System Packages
-  apt: 
+  apt:
     pkg: "{{ item }}"
     state: installed
   with_items: "{{ borg_apt_packages }}"
@@ -35,11 +35,11 @@
 - name: Add Borgmatic Configuration
   template:
     src: config.yaml.j2
-    dest: "/etc/borgmatic/config.yaml"
+    dest: "/etc/borgmatic/{{ borgmatic_config_name }}.yaml"
     mode: 0600
 
 - name: Add cron-job for borgmatic
-  cron: 
+  cron:
     name: "borgmatic"
     hour: "{{ 4 |random }}"
     minute: "{{ 59 |random }}"
