@@ -35,7 +35,7 @@
 - name: Add Borgmatic Configuration
   template:
     src: config.yaml.j2
-    dest: "/etc/borgmatic/config.yaml"
+    dest: "/etc/borgmatic/{{ borgmatic_config_name }}"
     mode: 0600
 
 - name: Add cron-job for borgmatic
@@ -45,7 +45,7 @@
     minute: "{{ 59 |random }}"
     user: "root"
     cron_file: borgmatic
-    job: "/usr/local/bin/borgmatic"
+    job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
 
 - name: Set PATH for borgmatic cron job.
   cron:
@@ -54,3 +54,4 @@
     name: PATH
     env: yes
     value: /usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+4

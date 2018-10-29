@@ -5,9 +5,10 @@ An Ansible Role that installs that sets up BorgBackup on Debian/Ubuntu.
 ## Role Variables
 
 - `borg_repository` (required): Full path to repository. Your own server or [BorgBase.com](https://www.borgbase.com) repo.
-- `borg_encryption_passphrase` (optional): Password to use for repokey or keyfile. Empty if repo is unencrypted.
 - `borg_source_directories` (required): List of local folders to back up.
-- `borg_exclude_patterns` (optional): List of local folders to exclude.
+- `borg_encryption_passphrase` (optional): Password to use for repokey or keyfile. Empty if repo is unencrypted.
+- `borgmatic_config_name` (optional): Name to use for the borgmatic config file. Defaults to `config.yml`
+- `borg_exclude_patterns` (optional): Paths or patterns to exclude from backup. See [official documentation](https://borgbackup.readthedocs.io/en/stable/usage/help.html#borg-help-patterns) for more.
 
 
 ## Example Playbook
@@ -22,8 +23,13 @@ An Ansible Role that installs that sets up BorgBackup on Debian/Ubuntu.
       - /srv/www
       - /var/lib/automysqlbackup
     borg_exclude_patterns:
-      - /srv/www/upload
+      - /srv/www/old-sites
 ```
+
+## Planned features
+- [ ] Testing via vagrant
+- [ ] Multiple repos in one role-call instead of callng this role multiple times.
+
 
 ## License
 

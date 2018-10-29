@@ -1,3 +1,4 @@
 ---
 borg_encryption_passphrase: ''
 borg_exclude_patterns: []
+borgmatic_config_name: config.yaml
