@@ -4,7 +4,8 @@ location:
         - {{ dir }}
 {% endfor %}
     
-    one_file_system: true
+    # Stay in same file system (do not cross mount points).
+    one_file_system: {{ borg_one_file_system }}
     repositories:
         - {{ borg_repository }}
 
@@ -12,6 +13,13 @@ location:
     # are expanded. See the output of "borg help patterns" for more details.
     exclude_patterns:
 {% for dir in borg_exclude_patterns %}
+        - {{ dir }}
+{% endfor %}
+
+    # Read exclude patterns from one or more separate named files, one pattern per
+    # line. See the output of "borg help patterns" for more details.
+    exclude_from:
+{% for dir in borg_exclude_from %}
         - {{ dir }}
 {% endfor %}
 
@@ -28,6 +36,16 @@ location:
 # details.
 storage:
     encryption_passphrase: {{ borg_encryption_passphrase }}
+
+    # The standard output of this command is used to unlock the encryption key. Only
+    # use on repositories that were initialized with passcommand/repokey encryption.
+    # Note that if both encryption_passcommand and encryption_passphrase are set,
+    # then encryption_passphrase takes precedence.
+    # encryption_passcommand: secret-tool lookup borg-repository repo-name
+{% if borg_encryption_passcommand %}
+    encryption_passcommand: {{ borg_encryption_passcommand }}
+{% endif %}
+
     # Type of compression to use when creating archives. See
     # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-create for details.
     # Defaults to no compression.
@@ -38,6 +56,9 @@ storage:
 
     # Command to use instead of just "ssh". This can be used to specify ssh options.
     # ssh_command: ssh -i ~/.ssh/id_ed25519
+{% if borg_ssh_command %}
+    encryption_passcommand: {{ borg_ssh_command }}
+{% endif %}
 
     # Umask to be used for borg create.
     umask: 0077

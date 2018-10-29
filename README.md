@@ -9,7 +9,10 @@ An Ansible Role that installs that sets up BorgBackup on Debian/Ubuntu.
 - `borg_encryption_passphrase` (optional): Password to use for repokey or keyfile. Empty if repo is unencrypted.
 - `borgmatic_config_name` (optional): Name to use for the borgmatic config file. Defaults to `config.yml`
 - `borg_exclude_patterns` (optional): Paths or patterns to exclude from backup. See [official documentation](https://borgbackup.readthedocs.io/en/stable/usage/help.html#borg-help-patterns) for more.
-
+- `borg_one_file_system` (optional): Don't cross file-system boundaries. Defaults to `true`
+- `borg_exclude_from` (optional): Read exclude patterns from one or more separate named files, one pattern per line.
+- `borg_ssh_command` (optional): Command to use instead of just "ssh". This can be used to specify ssh options.
+- `borg_encryption_passcommand` (optional): The standard output of this command is used to unlock the encryption key.
 
 ## Example Playbook
 
