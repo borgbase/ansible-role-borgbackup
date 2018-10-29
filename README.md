@@ -1,6 +1,6 @@
 # Ansible Role: BorgBackup Client
 
-An Ansible Role that installs that sets up BorgBackup on Debian/Ubuntu.
+An Ansible Role that sets up BorgBackup on Debian/Ubuntu.
 
 ## Role Variables
 
