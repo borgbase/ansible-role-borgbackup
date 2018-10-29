@@ -32,7 +32,7 @@ An Ansible Role that installs that sets up BorgBackup on Debian/Ubuntu.
 ## Planned features
 - [ ] Testing via vagrant
 - [ ] Multiple repos in one role-call instead of callng this role multiple times.
-
+- [ ] Support more OSs, like Red Hat/Fedora/CentOS, SuSE, Gentoo, Slackware, Arch, BSD
 
 ## License
 
