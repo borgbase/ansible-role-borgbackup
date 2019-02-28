@@ -1,12 +1,20 @@
 ---
 - name: Regenerate apt-cache and update packages
-  apt: update_cache=yes upgrade=dist cache_valid_time=120
+  apt: 
+    update_cache: yes
+    cache_valid_time: 120
 
 - name: Install required System Packages
   apt: 
     pkg: "{{ item }}"
     state: installed
   with_items: "{{ borg_apt_packages }}"
+
+- name: Update setuptools if needed
+  pip: 
+    name: setuptools
+    state: latest
+    executable: pip3
 
 - name: Install required Python Packages
   pip:
