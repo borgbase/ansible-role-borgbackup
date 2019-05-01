@@ -2,6 +2,7 @@
 borg_encryption_passphrase: ''
 borg_exclude_patterns: []
 borgmatic_config_name: config.yaml
+borgmatic_large_repo: false
 borg_one_file_system: true
 borg_exclude_from: []
 borg_encryption_passcommand: false

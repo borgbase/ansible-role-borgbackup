@@ -106,9 +106,8 @@ consistency:
     # "archive" checks all of the archives, and "extract" does an extraction dry-run
     # of just the most recent archive.
     checks:
-        - disabled
-        # - repository
-        # - archives
+        - repository
+        - archives
 
     # Restrict the number of checked archives to the last n. Applies only to the "archives" check.
     check_last: 3

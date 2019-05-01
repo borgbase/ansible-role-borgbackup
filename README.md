@@ -8,6 +8,7 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 - `borg_source_directories` (required): List of local folders to back up.
 - `borg_encryption_passphrase` (optional): Password to use for repokey or keyfile. Empty if repo is unencrypted.
 - `borgmatic_config_name` (optional): Name to use for the borgmatic config file. Defaults to `config.yml`
+- `borgmatic_large_repo` (optional): Does repo-checking on a weekly basis instead of daily. Good for repos with 100GB+ size.
 - `borg_exclude_patterns` (optional): Paths or patterns to exclude from backup. See [official documentation](https://borgbackup.readthedocs.io/en/stable/usage/help.html#borg-help-patterns) for more.
 - `borg_one_file_system` (optional): Don't cross file-system boundaries. Defaults to `true`
 - `borg_exclude_from` (optional): Read exclude patterns from one or more separate named files, one pattern per line.
