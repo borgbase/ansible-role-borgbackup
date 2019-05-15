@@ -132,4 +132,4 @@ hooks:
 
     # List of one or more shell commands or scripts to execute in case an exception has occurred.
     on_error:
-        - echo "`date` - Error while creating a backup."
+        - {{ borgmatic_failure_command }}

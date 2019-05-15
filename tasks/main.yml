@@ -46,35 +46,37 @@
     dest: "/etc/borgmatic/{{ borgmatic_config_name }}"
     mode: 0600
 
-- name: Add cron-job for borgmatic (large repo, create and prune)
-  cron: 
-    name: "borgmatic-create"
-    hour: "{{ 6 |random }}"
-    minute: "{{ 59 |random }}"
-    user: "root"
-    cron_file: borgmatic
-    job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --create --prune"
-  when: borgmatic_large_repo
-
-- name: Add cron-job for borgmatic (large repo, check)
-  cron: 
-    name: "borgmatic-check"
-    weekday: 0
-    hour: "{{ range(7, 24) |random }}"
-    minute: "{{ 59 |random }}"
-    user: "root"
-    cron_file: borgmatic
-    job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --check"
+- name: Add cron-job for borgmatic (large repo, create and check separate)
+  block:
+    - cron: 
+        name: "borgmatic"
+        hour: "{{ 6 |random }}"
+        minute: "{{ 59 |random }}"
+        user: "root"
+        cron_file: borgmatic
+        job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --create --prune"
+    - cron: 
+        name: "borgmatic-check"
+        day: "{{ 28 | random }}"
+        hour: "{{ range(7, 24) | random }}"
+        minute: "{{ 59 | random }}"
+        user: "root"
+        cron_file: borgmatic
+        job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --check"
   when: borgmatic_large_repo
 
 - name: Add cron-job for borgmatic (normal-sized repo)
-  cron: 
-    name: "borgmatic-create"
-    hour: "{{ 6 |random }}"
-    minute: "{{ 59 |random }}"
-    user: "root"
-    cron_file: borgmatic
-    job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
+  block:
+    - cron: 
+        name: "borgmatic"
+        hour: "{{ 6 | random }}"
+        minute: "{{ 59 | random }}"
+        user: "root"
+        cron_file: borgmatic
+        job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
+    - cron:
+        name: "borgmatic-check"
+        state: absent
   when: not borgmatic_large_repo
 
 - name: Set PATH for borgmatic cron job.
