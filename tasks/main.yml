@@ -1,25 +1,23 @@
 ---
-- name: Regenerate apt-cache and update packages
-  apt: 
-    update_cache: yes
-    cache_valid_time: 120
+- include_vars: '{{ ansible_pkg_mgr }}.yml'
+- include: "{{ ansible_pkg_mgr }}.yml"
 
 - name: Install required System Packages
-  apt: 
+  package: 
     pkg: "{{ item }}"
     state: installed
-  with_items: "{{ borg_apt_packages }}"
+  with_items: "{{ borg_packages }}"
 
 - name: Update setuptools if needed
   pip: 
     name: setuptools
     state: latest
-    executable: pip3
+    executable: "{{ pip_bin }}"
 
 - name: Install required Python Packages
   pip:
     name: "{{ item }}"
-    executable: pip3
+    executable: "{{ pip_bin }}"
   with_items: "{{ borg_python_packages }}"
 
 - name: Ensure root has SSH key.

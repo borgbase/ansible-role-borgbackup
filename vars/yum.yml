@@ -1,0 +1,16 @@
+---
+borg_packages:
+  - libacl-devel
+  - libacl
+  - gcc
+  - gcc-c++
+  - openssl-devel
+  - python36-pip
+  - python36-devel
+
+python_bin: python3
+pip_bin: pip3
+
+borg_python_packages:
+  - borgbackup
+  - borgmatic

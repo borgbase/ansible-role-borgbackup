@@ -1,0 +1,6 @@
+---
+- name: Install EPEL repo
+  yum: 
+    pkg: epel-release
+    state: installed
+    update_cache: yes

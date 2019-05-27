@@ -1,5 +1,5 @@
 ---
-borg_apt_packages:
+borg_packages:
   - libssl-dev
   - libacl1-dev
   - libacl1
@@ -7,6 +7,9 @@ borg_apt_packages:
   - python3-dev
   - python3-pip
   - python3-msgpack
+
+python_bin: python3
+pip_bin: pip3
 
 borg_python_packages:
   - borgbackup

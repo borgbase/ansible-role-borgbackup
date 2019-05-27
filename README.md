@@ -1,6 +1,6 @@
 # Ansible Role: BorgBackup Client
 
-An Ansible Role that sets up automated remote backups on the target machine. Uses [BorgBackup](https://borgbackup.readthedocs.io/en/stable/) and [Borgmatic](https://github.com/witten/borgmatic). Currently supports Debian and Ubuntu.
+An Ansible Role that sets up automated remote backups on the target machine. Uses [BorgBackup](https://borgbackup.readthedocs.io/en/stable/) and [Borgmatic](https://github.com/witten/borgmatic). Currently supports Debian/Ubuntu and CentOS/RHEL/Fedora.
 
 ## Role Variables
 
