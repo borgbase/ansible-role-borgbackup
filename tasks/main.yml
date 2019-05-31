@@ -37,7 +37,7 @@
     email: "{{ bb_email }}"
     password: "{{ bb_password }}"
     new_ssh_key: "{{ bb_new_sshkey }}"
-    ssh_key: "{{ root_user['ssh_public_key'] }}"
+    ssh_key: "{{ bb_sshkey }}"
     append_only: "{{ bb_append }}"
     quota_enable: "{{ bb_quota }}"
     quota: "{{ bb_quota_size }}"
