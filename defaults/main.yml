@@ -15,3 +15,4 @@ bb_quota: False
 bb_quota_size: 0
 bb_alertdays: 0
 bb_repo_name: "{{ inventory_hostname }}"
+bb_sshkey: "{{ root_user['ssh_public_key'] }}"
