@@ -5,7 +5,7 @@
 - name: Install required System Packages
   package: 
     pkg: "{{ item }}"
-    state: installed
+    state: present
   with_items: "{{ borg_packages }}"
 
 - name: Update setuptools if needed
@@ -13,6 +13,33 @@
     name: setuptools
     state: latest
     executable: "{{ pip_bin }}"
+
+- name: Create new repository for server
+  borgbase:
+    repository_name: "{{ bb_repo_name }}"
+    email: "{{ bb_email }}"
+    password: "{{ bb_password }}"
+    new_ssh_key: "{{ bb_new_sshkey }}"
+    ssh_key: "{{ root_user['ssh_public_key'] }}"
+    append_only: "{{ bb_append }}"
+    quota_enable: "{{ bb_quota }}"
+    quota: "{{ bb_quota_size }}"
+    region: "{{ bb_region }}"
+    alertdays: "{{ bb_alertdays }}"
+  delegate_to: localhost
+  become: no
+  register: repo_creation
+  when: create_repo
+ 
+- name: Debug Repo Creation
+  debug:
+    msg: "{{ repo_creation }}"
+  when: create_repo
+ 
+- name: Set Repository Fact
+  set_fact:
+    borg_repository: "{{ repo_creation['data']['repoPath'] }}"
+  when: create_repo
 
 - name: Install required Python Packages
   pip:
