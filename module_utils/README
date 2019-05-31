@@ -2,5 +2,5 @@ The "borgbase_api_client" folder of the API client repository will need to be pu
 
 Folder structure:
 ansible-role-borgbackup/
-|---------------------+ library/
+|---------------------+ module_utils/
                       |-------- borgbase_api_client/
