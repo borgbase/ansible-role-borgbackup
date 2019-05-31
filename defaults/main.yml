@@ -8,3 +8,10 @@ borg_one_file_system: true
 borg_exclude_from: []
 borg_encryption_passcommand: false
 borg_ssh_command: false
+create_repo: False
+bb_new_sshkey: True
+bb_append: True
+bb_quota: False
+bb_quota_size: 0
+bb_alertdays: 0
+bb_repo_name: "{{ inventory_hostname }}"
