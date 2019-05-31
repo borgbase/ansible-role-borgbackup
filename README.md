@@ -5,7 +5,7 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 ## Role Variables
 
 ### Required Arguments
-- `borg_repository`: Full path to repository. Your own server or [BorgBase.com](https://www.borgbase.com) repo.
+- `borg_repository`: Full path to repository. Your own server or [BorgBase.com](https://www.borgbase.com) repo. Only required if not using the [BorgBase.com](https://www.borgbase.com) auto creation of repositories.
 - `borg_source_directories`: List of local folders to back up.
 
 ### Optional Arguments
@@ -18,6 +18,19 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 - `borg_exclude_from`: Read exclude patterns from one or more separate named files, one pattern per line.
 - `borg_ssh_command`: Command to use instead of just "ssh". This can be used to specify ssh options.
 - `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
+
+### Optional Arguments for [BorgBase.com](https://www.borgbase.com) repository auto creation
+- `create_repo`: Whether to let the role create the repository for the server. Default: False
+- `bb_email`: Your [BorgBase.com](https://www.borgbase.com) login email.
+- `bb_password`: Your [BorgBase.com](https://www.borgbase.com) login password. Should probably be prompted for at start of playbook.
+- `bb_region`: Which region the backups should be saved in. Choice: "eu" or "us".
+- `bb_new_sshkey`: Whether to use the automatically created SSH_key. Default: True
+- `bb_sshkey`: If there is a key already available on [BorgBase.com](https://www.borgbase.com) that should be used, it can be set with this variable. The key needs to be exactly the same, including key-comment.
+- `bb_append`: Should the permission of the newly created repository be append only? Default: True
+- `bb_quota`: To use a quota for the Server. Default: False
+- `bb_quota_size`: Will need to be set if `bb_quota` is set to True. In Gigabyte.
+- `bb_alertdays`: After how many days of no backup activity should alerts be sent out? Defaults to off. 
+- `bb_repo_name`: What name the created repository should have. Defaults to the inventory_hostname.
 
 ## Example Playbook
 
