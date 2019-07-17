@@ -3,13 +3,13 @@
 - include: "{{ ansible_pkg_mgr }}.yml"
 
 - name: Install required System Packages
-  package: 
+  package:
     pkg: "{{ item }}"
     state: installed
   with_items: "{{ borg_packages }}"
 
 - name: Update setuptools if needed
-  pip: 
+  pip:
     name: setuptools
     state: latest
     executable: "{{ pip_bin }}"
@@ -31,9 +31,9 @@
 - debug:
     var: root_user['ssh_public_key']
 
-- name: Ensures /etc/borgmatic exists
+- name: Ensures /etc/borgmatic.d exists
   file:
-    path: /etc/borgmatic
+    path: /etc/borgmatic.d
     state: directory
     mode: 0700
     owner: root
@@ -41,37 +41,41 @@
 - name: Add Borgmatic Configuration
   template:
     src: config.yaml.j2
-    dest: "/etc/borgmatic/{{ borgmatic_config_name }}"
+    dest: "/etc/borgmatic.d/{{ item | regex_replace('\\/$', '') | basename }}.yaml"
     mode: 0600
+  with_items: "{{ borg_source_directories }}"
+
+- debug: msg="/etc/borgmatic.d/{{ item | regex_replace('\\/$', '') | basename }}.yaml"
+  with_items: "{{ borg_source_directories }}"
 
 - name: Add cron-job for borgmatic (large repo, create and check separate)
   block:
-    - cron: 
+    - cron:
         name: "borgmatic"
         hour: "{{ 6 |random }}"
         minute: "{{ 59 |random }}"
         user: "root"
         cron_file: borgmatic
-        job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --create --prune"
-    - cron: 
+        job: "/usr/local/bin/borgmatic --create --prune"
+    - cron:
         name: "borgmatic-check"
         day: "{{ 28 | random }}"
         hour: "{{ range(7, 24) | random }}"
         minute: "{{ 59 | random }}"
         user: "root"
         cron_file: borgmatic
-        job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --check"
+        job: "/usr/local/bin/borgmatic --check"
   when: borgmatic_large_repo
 
 - name: Add cron-job for borgmatic (normal-sized repo)
   block:
-    - cron: 
+    - cron:
         name: "borgmatic"
         hour: "{{ 6 | random }}"
         minute: "{{ 59 | random }}"
         user: "root"
         cron_file: borgmatic
-        job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
+        job: "/usr/local/bin/borgmatic"
     - cron:
         name: "borgmatic-check"
         state: absent
