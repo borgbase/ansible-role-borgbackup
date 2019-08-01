@@ -78,17 +78,40 @@ storage:
 # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-prune for details.
 # At least one of the "keep" options is required for pruning to work.
 retention:
+{% if borg_retention_policy.keep_secondly is defined %}
+    # Number of secondly archives to keep.
+    keep_secondly: {{ borg_retention_policy.keep_secondly }}
+{% endif %}
+
+{% if borg_retention_policy.keep_minutely is defined %}
+    # Number of minutely archives to keep.
+    keep_minutely: {{ borg_retention_policy.keep_minutely }}
+{% endif %}
+
+{% if borg_retention_policy.keep_hourly is defined %}
     # Number of hourly archives to keep.
-    keep_hourly: 3
+    keep_hourly: {{ borg_retention_policy.keep_hourly }}
+{% endif %}
 
+{% if borg_retention_policy.keep_daily is defined %}
     # Number of daily archives to keep.
-    keep_daily: 7
+    keep_daily: {{ borg_retention_policy.keep_daily }}
+{% endif %}
 
+{% if borg_retention_policy.keep_weekly is defined %}
     # Number of weekly archives to keep.
-    keep_weekly: 4
+    keep_weekly: {{ borg_retention_policy.keep_weekly }}
+{% endif %}
 
+{% if borg_retention_policy.keep_monthly is defined %}
     # Number of monthly archives to keep.
-    keep_monthly: 6
+    keep_monthly: {{ borg_retention_policy.keep_monthly }}
+{% endif %}
+
+{% if borg_retention_policy.keep_yearly is defined %}
+    # Number of yearly archives to keep.
+    keep_yearly: {{ borg_retention_policy.keep_yearly }}
+{% endif %}
 
     # When pruning, only consider archive names starting with this prefix.
     # Borg placeholders can be used. See the output of "borg help placeholders" for

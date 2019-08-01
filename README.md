@@ -17,6 +17,7 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 - `borg_exclude_from`: Read exclude patterns from one or more separate named files, one pattern per line.
 - `borg_ssh_command`: Command to use instead of just "ssh". This can be used to specify ssh options.
 - `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
+- `borg_retention_policy`: Retention policy for how many backups to keep in each category (daily, weekly, monthly, etc).
 
 ## Example Playbook
 
@@ -31,6 +32,11 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
       - /var/lib/automysqlbackup
     borg_exclude_patterns:
       - /srv/www/old-sites
+    borg_retention_policy:
+      keep_hourly: 3
+      keep_daily: 7
+      keep_weekly: 4
+      keep_monthly: 6
 ```
 
 ## Planned features
