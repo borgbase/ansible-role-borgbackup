@@ -13,3 +13,6 @@ borg_retention_policy:
   keep_daily: 7
   keep_weekly: 4
   keep_monthly: 6
+
+borgmatic_cron_hour: "{{ 6 | random }}"
+borgmatic_cron_minute: "{{ 59 | random }}"

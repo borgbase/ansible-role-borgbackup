@@ -37,8 +37,8 @@
   block:
     - cron: 
         name: "borgmatic"
-        hour: "{{ 6 |random }}"
-        minute: "{{ 59 |random }}"
+        hour: "{{ borgmatic_cron_hour }}"
+        minute: "{{ borgmatic_cron_minute }}"
         user: "root"
         cron_file: borgmatic
         job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --create --prune"
@@ -56,8 +56,8 @@
   block:
     - cron: 
         name: "borgmatic"
-        hour: "{{ 6 | random }}"
-        minute: "{{ 59 | random }}"
+        hour: "{{ borgmatic_cron_hour }}"
+        minute: "{{ borgmatic_cron_minute }}"
         user: "root"
         cron_file: borgmatic
         job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
