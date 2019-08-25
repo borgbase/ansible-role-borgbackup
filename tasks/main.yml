@@ -5,7 +5,7 @@
 - name: Install required System Packages
   package: 
     pkg: "{{ item }}"
-    state: installed
+    state: present
   with_items: "{{ borg_packages }}"
 
 - name: Update setuptools if needed
