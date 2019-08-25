@@ -19,6 +19,8 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 - `borg_ssh_command`: Command to use instead of just "ssh". This can be used to specify ssh options.
 - `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
 - `borg_retention_policy`: Retention policy for how many backups to keep in each category (daily, weekly, monthly, etc).
+- `borgmatic_cron_hour`: Configure the hour when the backup shall run. Default is randomized between 0-6 local time.
+- `borgmatic_cron_minute`: Configure the minute when the backup shall run. Default is randomized between 0-59 local time.
 
 ## Example Playbook
 
