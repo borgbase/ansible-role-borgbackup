@@ -20,9 +20,6 @@
     state: latest
     executable: "{{ pip_bin }}"
 
-- debug:
-    var: root_user['ssh_public_key']
-
 - name: Ensures /etc/borgmatic exists
   file:
     path: /etc/borgmatic
