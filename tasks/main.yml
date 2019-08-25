@@ -1,6 +1,6 @@
 ---
-- include_vars: '{{ ansible_pkg_mgr }}.yml'
-- include: "{{ ansible_pkg_mgr }}.yml"
+- include_vars: "{{ ansible_pkg_mgr }}.yml"
+- include_tasks: "{{ ansible_pkg_mgr }}.yml"
 
 - name: Install required System Packages
   package: 
