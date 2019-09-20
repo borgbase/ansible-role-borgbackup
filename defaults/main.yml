@@ -9,6 +9,11 @@ borg_exclude_from: []
 borg_encryption_passcommand: false
 borg_ssh_command: false
 create_repo: False
+borg_retention_policy:
+  keep_hourly: 3
+  keep_daily: 7
+  keep_weekly: 4
+  keep_monthly: 6
 bb_new_sshkey: True
 bb_append: True
 bb_quota: False
