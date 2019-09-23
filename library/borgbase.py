@@ -14,8 +14,7 @@ EXAMPLES = '''
 - name: Create new repository for server in EU with new SSH_key and quota
   borgbase:
     repository_name: "{{ inventory_hostname }}"
-    email: "example@example.com"
-    password: "you-might-want-to-prompt-this"
+    token: "Your Borgbase API Token"
     new_ssh_key: True
     ssh_key: "{{ some_variable }}"
     append_only: True
@@ -27,8 +26,7 @@ EXAMPLES = '''
 - name: Create new repository without new key and no quota/alerting in US region
   borgbase:
     repository_name: "{{ inventory_hostname }}"
-    email: "example@example.com"
-    password: "you-might-want-to-prompt-this"
+    token: "Your Borgbase API Token"
     new_ssh_key: False
     ssh_key: "ssh-ed25519 AAAAC3Nz......aLqRJw+dl/E+2BJ xxx@yyy"
     region: us
@@ -92,11 +90,7 @@ def main():
                         type='str',
                         required=True,
                     ),
-                    email = dict(
-                        required=True,
-                        type='str'
-                    ),
-                    password = dict(
+                    token = dict(
                         required=True,
                         type='str',
                         no_log=True
@@ -138,8 +132,7 @@ def main():
     )
 
     global client
-    client = GraphQLClient()
-    client.login(email=module.params['email'], password=module.params['password'])
+    client = GraphQLClient(module.params['token'])
 
     # Add new SSH key or get ID of old key
     if module.params['new_ssh_key']:

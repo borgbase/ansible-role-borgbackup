@@ -22,8 +22,7 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 
 ### Optional Arguments for [BorgBase.com](https://www.borgbase.com) repository auto creation
 - `create_repo`: Whether to let the role create the repository for the server. Default: False
-- `bb_email`: Your [BorgBase.com](https://www.borgbase.com) login email.
-- `bb_password`: Your [BorgBase.com](https://www.borgbase.com) login password. Should probably be prompted for at start of playbook.
+- `bb_token`: Your [BorgBase.com](https://www.borgbase.com) API-Token. Should be Create Only for security reasons.
 - `bb_region`: Which region the backups should be saved in. Choice: "eu" or "us".
 - `bb_new_sshkey`: Whether to use the automatically created SSH_key. Default: True
 - `bb_sshkey`: If there is a key already available on [BorgBase.com](https://www.borgbase.com) that should be used, it can be set with this variable. The key needs to be exactly the same, including key-comment.
