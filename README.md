@@ -22,7 +22,7 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 
 ### Optional Arguments for [BorgBase.com](https://www.borgbase.com) repository auto creation
 - `create_repo`: Whether to let the role create the repository for the server. Default: False
-- `bb_token`: Your [BorgBase.com](https://www.borgbase.com) API-Token. Should be Create Only for security reasons.
+- `token`: Your [BorgBase.com](https://www.borgbase.com) API-Token. Should be Create Only for security reasons.
 - `bb_region`: Which region the backups should be saved in. Choice: "eu" or "us".
 - `bb_new_sshkey`: Whether to use the automatically created SSH_key. Default: True
 - `bb_sshkey`: If there is a key already available on [BorgBase.com](https://www.borgbase.com) that should be used, it can be set with this variable. The key needs to be exactly the same, including key-comment.
@@ -50,6 +50,23 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
       keep_daily: 7
       keep_weekly: 4
       keep_monthly: 6
+```
+## Example Playbook for [BorgBase.com](https://www.borgbase.com) repository auto creation
+```
+- hosts: webservers
+  roles:
+  - role: borgbackup
+    create_repo: True
+    token: "Your_Borgbase_API-TOKEN"
+    bb_region: eu
+    bb_alertdays: 2
+    borg_encryption_passphrase: CHANGEME
+    borgmatic_large_repo: false
+    borg_source_directories:
+      - /srv/www
+      - /var/lib/automysqlbackup
+    borg_exclude_patterns:
+      - /srv/www/old-sites
 ```
 
 ## Planned features
