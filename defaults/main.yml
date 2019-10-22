@@ -12,3 +12,11 @@ borg_retention_policy:
   keep_daily: 7
   keep_weekly: 4
   keep_monthly: 6
+create_repo: False
+bb_new_sshkey: True
+bb_append: True
+bb_quota: False
+bb_quota_size: 0
+bb_alertdays: 0
+bb_repo_name: "{{ inventory_hostname }}"
+bb_sshkey: "{{ root_user['ssh_public_key'] }}"
