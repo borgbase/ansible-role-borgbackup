@@ -1,10 +1,9 @@
 # Full config: https://gist.github.com/coaxial/46e36d89d7b81887f7275d587fe04c44
+{% set archive_prefix = item | regex_replace("\\/$", "") | basename %}
 location:
     source_directories:
-{% for dir in borg_source_directories %}
-        - {{ dir }}
-{% endfor %}
-    
+        - {{ item }}
+
     # Stay in same file system (do not cross mount points).
     one_file_system: {{ borg_one_file_system }}
     repositories:
@@ -73,7 +72,7 @@ storage:
     # also specify a prefix in the retention section to avoid accidental pruning of
     # archives with a different archive name format. And you should also specify a
     # prefix in the consistency section as well.
-    archive_name_format: '{hostname}-{now}'
+    archive_name_format: '{{ archive_prefix }}-{now}'
 
 # Retention policy for how many backups to keep in each category. See
 # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-prune for details.
@@ -117,7 +116,7 @@ retention:
     # When pruning, only consider archive names starting with this prefix.
     # Borg placeholders can be used. See the output of "borg help placeholders" for
     # details. Default is "{hostname}-".
-    prefix: '{hostname}-'
+    prefix: '{{ archive_prefix }}-'
 
 # Consistency checks to run after backups. See
 # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-check and
@@ -138,7 +137,7 @@ consistency:
     # When performing the "archives" check, only consider archive names starting with
     # this prefix. Borg placeholders can be used. See the output of
     # "borg help placeholders" for details. Default is "{hostname}-".
-    prefix: '{hostname}-'
+    prefix: '{{ archive_prefix }}-'
 
 # Shell commands or scripts to execute before and after a backup or if an error has occurred.
 # IMPORTANT: All provided commands and scripts are executed with user permissions of borgmatic.
