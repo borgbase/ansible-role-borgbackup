@@ -19,6 +19,7 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 - `borg_one_file_system`: Don't cross file-system boundaries. Defaults to `true`
 - `borg_exclude_from`: Read exclude patterns from one or more separate named files, one pattern per line.
 - `borg_ssh_command`: Command to use instead of just "ssh". This can be used to specify ssh options.
+- `borg_remote_path`: Path to the borg executable on the remote. It will default to `borg`.
 - `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
 - `borg_retention_policy`: Retention policy for how many backups to keep in each category (daily, weekly, monthly, etc).
 

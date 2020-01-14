@@ -30,6 +30,12 @@ location:
     # Exclude directories that contain a file with the given filename.
     exclude_if_present: .nobackup
 
+    # Alternate Borg remote executable. Defaults to "borg".
+    # remote_path: borg1
+{% if borg_remote_path %}
+    remote_path: {{ borg_remote_path }}
+{% endif %}
+
 # Repository storage options. See
 # https://borgbackup.readthedocs.io/en/stable/usage.html#borg-create and
 # https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables for
