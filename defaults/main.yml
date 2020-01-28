@@ -17,6 +17,7 @@ borg_retention_policy:
   keep_weekly: 4
   keep_monthly: 6
 create_repo: False
+ssh_key_file: .ssh/id_ed25519
 bb_new_sshkey: True
 bb_append: True
 bb_quota: False
