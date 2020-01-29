@@ -22,6 +22,7 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 - `borg_remote_path`: Path to the borg executable on the remote. It will default to `borg`.
 - `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
 - `borg_retention_policy`: Retention policy for how many backups to keep in each category (daily, weekly, monthly, etc).
+- `ssh_key_file`: Path to a private ssh key file (default is `.ssh/id_ed25519`). It generates a ed25519 key if the file doesn't exist yet.
 
 ### Optional Arguments for [BorgBase.com](https://www.borgbase.com) repository auto creation
 - `create_repo`: Whether to let the role create the repository for the server. Default: False
