@@ -18,6 +18,7 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 - `borg_exclude_patterns`: Paths or patterns to exclude from backup. See [official documentation](https://borgbackup.readthedocs.io/en/stable/usage/help.html#borg-help-patterns) for more.
 - `borg_one_file_system`: Don't cross file-system boundaries. Defaults to `true`
 - `borg_exclude_from`: Read exclude patterns from one or more separate named files, one pattern per line.
+- `borg_lock_wait_time`: Config maximum seconds to wait for acquiring a repository/cache lock. Defaults to 5 seconds.
 - `borg_ssh_command`: Command to use instead of just "ssh". This can be used to specify ssh options.
 - `borg_remote_path`: Path to the borg executable on the remote. It will default to `borg`.
 - `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
