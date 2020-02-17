@@ -58,9 +58,20 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 ```
 
 ## Planned features
-- [ ] Testing via vagrant
+
+- [x] Testing
 - [ ] Multiple repos in one role-call instead of callng this role multiple times.
 - [ ] Support more OSs, like Red Hat/Fedora/CentOS, SuSE, Gentoo, Slackware, Arch, BSD
+
+
+## Contributing
+
+Pull requests (PR) are welcome, as long as they add features that are relevant for a meaningful number of users. All PRs are tested for style and functionality. To run tests locally (needs Docker):
+
+```
+$ pip install -r requirements-dev.txt
+$ molecule test
+```
 
 ## License
 
