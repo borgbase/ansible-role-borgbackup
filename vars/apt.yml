@@ -4,9 +4,12 @@ borg_packages:
   - libacl1-dev
   - libacl1
   - build-essential
+  - python-setuptools
   - python3-dev
   - python3-pip
   - python3-msgpack
+  - openssh-client
+  - cron
 
 python_bin: python3
 pip_bin: pip3
