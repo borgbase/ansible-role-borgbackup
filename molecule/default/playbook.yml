@@ -1,0 +1,22 @@
+---
+- name: Converge
+  hosts: all
+  pre_tasks:
+    - name: Install openssh
+      package:
+        name: openssh-server
+        state: present
+  roles:
+    - role: ansible-role-borgbackup
+      borg_encryption_passphrase: CHANGEME
+      borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+      borg_source_directories:
+        - /srv/www
+        - /var/lib/automysqlbackup
+      borg_exclude_patterns:
+        - /srv/www/old-sites
+      borg_retention_policy:
+        keep_hourly: 3
+        keep_daily: 7
+        keep_weekly: 4
+        keep_monthly: 6

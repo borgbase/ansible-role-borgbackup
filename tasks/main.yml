@@ -1,6 +1,9 @@
 ---
-- include_vars: '{{ ansible_pkg_mgr }}.yml'
-- include: "{{ ansible_pkg_mgr }}.yml"
+- name: Include OS-specific variables
+  include_vars: '{{ ansible_pkg_mgr }}.yml'
+
+- name: Run OS-specific setup
+  include: "{{ ansible_pkg_mgr }}.yml"
 
 - name: Install required System Packages
   package:
@@ -9,6 +12,7 @@
   with_items: "{{ borg_packages }}"
 
 - name: Update setuptools if needed
+  tags: skip_ansible_lint
   pip:
     name: setuptools
     state: latest
@@ -16,9 +20,8 @@
 
 - name: Install required Python Packages
   pip:
-    name: "{{ item }}"
+    name: "{{ borg_python_packages }}"
     executable: "{{ pip_bin }}"
-  with_items: "{{ borg_python_packages }}"
 
 - name: Ensure root has SSH key.
   user:
@@ -30,11 +33,11 @@
 
 - debug:
     var: root_user['ssh_public_key']
-    
+
 - name: Create new repository for server
   borgbase:
     repository_name: "{{ bb_repo_name }}"
-    token: "{{ bb_token}}"
+    token: "{{ bb_token }}"
     new_ssh_key: "{{ bb_new_sshkey }}"
     ssh_key: "{{ bb_sshkey }}"
     append_only: "{{ bb_append }}"
@@ -46,15 +49,15 @@
   become: no
   register: repo_creation
   when: create_repo
- 
+
 - name: Set Repository Fact
   set_fact:
     borg_repository: "{{ repo_creation['data']['repoPath'] }}"
   when: create_repo
 
-- name: Ensures /etc/borgmatic.d exists
+- name: Ensures /etc/borgmatic exists
   file:
-    path: /etc/borgmatic.d
+    path: /etc/borgmatic
     state: directory
     mode: 0700
     owner: root
@@ -62,42 +65,44 @@
 - name: Add Borgmatic Configuration
   template:
     src: config.yaml.j2
-    dest: "/etc/borgmatic.d/{{ item | regex_replace('\\/$', '') | basename }}.yaml"
+    dest: "/etc/borgmatic/{{ borgmatic_config_name }}"
     mode: 0600
-  with_items: "{{ borg_source_directories }}"
-
-- debug: msg="/etc/borgmatic.d/{{ item | regex_replace('\\/$', '') | basename }}.yaml"
-  with_items: "{{ borg_source_directories }}"
 
 - name: Add cron-job for borgmatic (large repo, create and check separate)
+  tags: molecule-idempotence-notest
   block:
-    - cron:
+    - name: Add cron job for regular create and prune
+      cron:
         name: "borgmatic"
         hour: "{{ 6 |random }}"
         minute: "{{ 59 |random }}"
         user: "root"
         cron_file: borgmatic
-        job: "/usr/local/bin/borgmatic --create --prune"
-    - cron:
+        job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --create --prune"
+    - name: Add cron job for infrequent checks
+      cron:
         name: "borgmatic-check"
         day: "{{ 28 | random }}"
         hour: "{{ range(7, 24) | random }}"
         minute: "{{ 59 | random }}"
         user: "root"
         cron_file: borgmatic
-        job: "/usr/local/bin/borgmatic --check"
+        job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
   when: borgmatic_large_repo
 
 - name: Add cron-job for borgmatic (normal-sized repo)
+  tags: molecule-idempotence-notest
   block:
-    - cron:
+    - name: Add cron job for create, check and prune
+      cron:
         name: "borgmatic"
         hour: "{{ 6 | random }}"
         minute: "{{ 59 | random }}"
         user: "root"
         cron_file: borgmatic
         job: "/usr/local/bin/borgmatic"
-    - cron:
+    - name: Ensure separate check cron job is absent
+      cron:
         name: "borgmatic-check"
         state: absent
   when: not borgmatic_large_repo

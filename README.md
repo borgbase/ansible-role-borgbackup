@@ -10,6 +10,7 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 
 ### Optional Arguments
 - `borg_encryption_passphrase`: Password to use for repokey or keyfile. Empty if repo is unencrypted.
+- `borgmatic_config_name`: Name to use for the borgmatic config file. Defaults to `config.yml`
 - `borgmatic_large_repo`: Does repo-checking on a weekly basis instead of daily. Good for repos with 100GB+ size.
 - `borgmatic_failure_command`: Run this command when an error occurs. E.g. `curl -s -F "token=xxx" -F "user=xxx" -F "message=Error during backup" https://api.pushover.net/1/messages.json`
 - `borgmatic_before_backup_command`: Run this command before the backup. E.g. `dump-a-database /to/file.sql`
@@ -58,9 +59,20 @@ An Ansible Role that sets up automated remote backups on the target machine. Use
 ```
 
 ## Planned features
-- [ ] Testing via vagrant
+
+- [x] Testing
 - [ ] Multiple repos in one role-call instead of callng this role multiple times.
 - [ ] Support more OSs, like Red Hat/Fedora/CentOS, SuSE, Gentoo, Slackware, Arch, BSD
+
+
+## Contributing
+
+Pull requests (PR) are welcome, as long as they add features that are relevant for a meaningful number of users. All PRs are tested for style and functionality. To run tests locally (needs Docker):
+
+```
+$ pip install -r requirements-dev.txt
+$ molecule test
+```
 
 ## License
 

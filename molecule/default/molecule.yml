@@ -1,0 +1,26 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+platforms:
+  - name: centos-7
+    image: centos:7
+  # - name: centos-latest
+  #   image: centos:latest
+  - name: debian-oldstable
+    image: debian:oldstable
+  - name: debian-stable
+    image: debian:stable
+  # - name: ubuntu-latest
+  #   image: ubuntu:latest
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+verifier:
+  name: testinfra
+  lint:
+    name: flake8
