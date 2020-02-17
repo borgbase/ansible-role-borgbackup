@@ -33,7 +33,7 @@
 
 - debug:
     var: root_user['ssh_public_key']
-    
+
 - name: Create new repository for server
   borgbase:
     repository_name: "{{ bb_repo_name }}"
