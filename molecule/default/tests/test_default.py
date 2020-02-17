@@ -1,3 +1,10 @@
+"""
+Validate host properties using Pytest after Ansible is finished. Uses Testinfra
+
+Possible tests:
+- https://testinfra.readthedocs.io/en/latest/modules.html#host
+"""
+
 import os
 # import pytest
 import testinfra.utils.ansible_runner
@@ -8,7 +15,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_borgmatic_config(host):
-    f = host.file('/etc/borgmatic/config.yml')
+    f = host.file('/etc/borgmatic/config.yaml')
 
     assert f.exists
     assert f.user == 'root'
