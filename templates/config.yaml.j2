@@ -70,7 +70,7 @@ storage:
     umask: 0077
 
     # Maximum seconds to wait for acquiring a repository/cache lock.
-    lock_wait: 5
+    lock_wait: {{ borg_lock_wait_time }}
 
     # Name of the archive. Borg placeholders can be used. See the output of
     # "borg help placeholders" for details. Default is
