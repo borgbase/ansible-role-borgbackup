@@ -10,12 +10,18 @@ platforms:
     image: centos:7
   - name: centos-latest
     image: centos:latest
+  - name: fedora-latest
+    image: fedora:latest
   - name: debian-oldstable
     image: debian:oldstable
   - name: debian-stable
     image: debian:stable
-  # - name: ubuntu-latest
-  #   image: ubuntu:latest
+  - name: ubuntu-xenial
+    image: ubuntu:xenial
+  - name: ubuntu-trusty
+    image: ubuntu:trusty
+  - name: ubuntu-latest
+    image: ubuntu:latest
 provisioner:
   name: ansible
   lint:

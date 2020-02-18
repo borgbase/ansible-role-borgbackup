@@ -1,0 +1,21 @@
+---
+borg_packages:
+  - libacl-devel
+  - libacl
+  - gcc
+  - gcc-c++
+  - openssl-devel
+  - python3-pip
+  - python3-wheel
+  - python3-devel
+  - python3-setuptools
+  - openssh-clients
+  - cronie
+
+python_bin: python3
+pip_bin: pip3
+
+borg_python_packages:
+  - cython
+  - borgbackup
+  - borgmatic
