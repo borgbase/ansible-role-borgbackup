@@ -2,7 +2,7 @@
 borg_encryption_passphrase: ''
 borg_exclude_patterns: []
 borgmatic_config_name: config.yaml
-borgmatic_large_repo: false
+borgmatic_large_repo: true
 borgmatic_failure_command:
   - echo "`date` - Error while creating a backup."
 borgmatic_before_backup_command: []
