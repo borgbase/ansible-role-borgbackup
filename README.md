@@ -57,7 +57,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/borgba
 ### Optional Arguments
 - `borg_encryption_passphrase`: Password to use for repokey or keyfile. Empty if repo is unencrypted.
 - `borgmatic_config_name`: Name to use for the borgmatic config file. Defaults to `config.yml`
-- `borgmatic_large_repo`: Does repo-checking on a weekly basis instead of daily. Good for repos with 100GB+ size.
+- `borgmatic_large_repo`: Less frequent, monthly repo checking. Defaults to `true`
 - `borgmatic_failure_command`: Run this command when an error occurs. E.g. `curl -s -F "token=xxx" -F "user=xxx" -F "message=Error during backup" https://api.pushover.net/1/messages.json`
 - `borgmatic_before_backup_command`: Run this command before the backup. E.g. `dump-a-database /to/file.sql`
 - `borgmatic_after_backup_command`: Run this command after the backup. E.g. `rm /to/file.sql`
