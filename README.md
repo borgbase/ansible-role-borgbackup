@@ -9,7 +9,7 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
 Main features:
 - Set up Borg and Borgmatic
 - Add cron job at random time
-- Provision new [BorgBase.com](https://www.borgbase.com) repo (optional)
+- Provision new remote [BorgBase.com](https://www.borgbase.com) repo for storing backups (optional)
 
 
 ## Example Playbook
@@ -51,7 +51,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/borgba
 ## Role Variables
 
 ### Required Arguments
-- `borg_repository`: Full path to repository. Your own server or [BorgBase.com](https://www.borgbase.com) repo. Only required if not using the [BorgBase.com](https://www.borgbase.com) auto creation of repositories.
+- `borg_repository`: Full path to repository. Your own server or [BorgBase.com](https://www.borgbase.com) repo. Not required when using auto creation of repositories.
 - `borg_source_directories`: List of local folders to back up.
 
 ### Optional Arguments
