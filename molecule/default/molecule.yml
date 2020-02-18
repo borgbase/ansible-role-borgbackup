@@ -8,8 +8,8 @@ lint:
 platforms:
   - name: centos-7
     image: centos:7
-  # - name: centos-latest
-  #   image: centos:latest
+  - name: centos-latest
+    image: centos:latest
   - name: debian-oldstable
     image: debian:oldstable
   - name: debian-stable
