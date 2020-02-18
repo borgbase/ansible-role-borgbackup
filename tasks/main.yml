@@ -1,9 +1,15 @@
 ---
 - name: Include OS-specific variables
-  include_vars: '{{ ansible_pkg_mgr }}.yml'
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_os_family }}.yml"
 
 - name: Run OS-specific setup
-  include: "{{ ansible_pkg_mgr }}.yml"
+  include: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_os_family }}.yml"
 
 - name: Install required System Packages
   package:

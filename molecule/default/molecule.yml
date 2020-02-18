@@ -8,14 +8,20 @@ lint:
 platforms:
   - name: centos-7
     image: centos:7
-  # - name: centos-latest
-  #   image: centos:latest
+  - name: centos-latest
+    image: centos:latest
+  # - name: fedora-latest  # epel package not available
+  #   image: fedora:latest
   - name: debian-oldstable
     image: debian:oldstable
   - name: debian-stable
     image: debian:stable
-  # - name: ubuntu-latest
-  #   image: ubuntu:latest
+  - name: ubuntu-xenial
+    image: ubuntu:xenial
+  # - name: ubuntu-trusty  # Python too old
+  #   image: ubuntu:trusty
+  - name: ubuntu-latest
+    image: ubuntu:latest
 provisioner:
   name: ansible
   lint:
