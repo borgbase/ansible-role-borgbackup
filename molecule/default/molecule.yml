@@ -7,7 +7,6 @@ lint: |
   set -e
   yamllint .
   ansible-lint
-  # flake8
 platforms:
   - name: centos-7
     image: centos:7
@@ -28,4 +27,4 @@ platforms:
 provisioner:
   name: ansible
 verifier:
-  name: testinfra
+  name: ansible
