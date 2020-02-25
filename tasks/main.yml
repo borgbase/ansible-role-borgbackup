@@ -84,7 +84,7 @@
         minute: "{{ 59 |random }}"
         user: "root"
         cron_file: borgmatic
-        job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --create --prune"
+        job: "{{ borgmatic_backup_cron_job }}"
     - name: Add cron job for infrequent checks
       cron:
         name: "borgmatic-check"
@@ -93,7 +93,7 @@
         minute: "{{ 59 | random }}"
         user: "root"
         cron_file: borgmatic
-        job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --check"
+        job: "{{ borgmatic_check_cron_job }}"
   when: borgmatic_large_repo
 
 - name: Add cron-job for borgmatic (normal-sized repo)
@@ -106,7 +106,7 @@
         minute: "{{ 59 | random }}"
         user: "root"
         cron_file: borgmatic
-        job: "/usr/local/bin/borgmatic"
+        job: "{{ borgmatic_backup_cron_job }}"
     - name: Ensure separate check cron job is absent
       cron:
         name: "borgmatic-check"
