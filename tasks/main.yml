@@ -77,7 +77,7 @@
         minute: "{{ 59 |random }}"
         user: "root"
         cron_file: borgmatic
-        job: "/usr/local/bin/borgmatic --create --prune"
+        job: "/usr/local/bin/borgmatic --create"
     - cron:
         name: "borgmatic-check"
         day: "{{ 28 | random }}"
@@ -85,7 +85,7 @@
         minute: "{{ 59 | random }}"
         user: "root"
         cron_file: borgmatic
-        job: "/usr/local/bin/borgmatic --check"
+        job: "/usr/local/bin/borgmatic --check --prune"
   when: borgmatic_large_repo
 
 - name: Add cron-job for borgmatic (normal-sized repo)
