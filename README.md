@@ -1,6 +1,6 @@
 # Ansible Role: BorgBackup Client
 
-[![Build Status](https://travis-ci.org/borgbase/ansible-role-borgbackup.svg?branch=master)](https://travis-ci.org/borgbase/ansible-role-borgbackup) [![Ansible Galaxy](https://img.shields.io/ansible/role/30531)](https://galaxy.ansible.com/m3nu/ansible_role_borgbackup)
+![Test](https://github.com/m3nu/ansible-role-borgbackup/workflows/Test/badge.svg) [![Ansible Galaxy](https://img.shields.io/ansible/role/30531)](https://galaxy.ansible.com/m3nu/ansible_role_borgbackup)
 
 Set up encrypted, compressed and deduplicated backups using [BorgBackup](https://borgbackup.readthedocs.io/en/stable/) and [Borgmatic](https://github.com/witten/borgmatic). Currently supports Debian/Ubuntu and CentOS/Red Hat.
 
