@@ -13,5 +13,9 @@ jobs:
         python-version: 3.7
     - name: Install Molecule
       run: pip install molecule[lint,docker]
-    - name: Run Molecule
+    - name: Lint
+      run: |
+        yamllint .
+        ansible-lint
+    - name: Test using Molecule
       run: molecule test
