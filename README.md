@@ -71,6 +71,12 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/borgba
 - `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
 - `borg_retention_policy`: Retention policy for how many backups to keep in each category (daily, weekly, monthly, etc).
 - `ssh_key_file`: Path to a private ssh key file (default is `.ssh/id_ed25519`). It generates a ed25519 key if the file doesn't exist yet.
+- `borgmatic_cron_hour`: Hour when regular create and prune cron job will run. Defaults to `{{ 6 | random }}`
+- `borgmatic_cron_minute`: Minute when regular create and prune cron job will run. Defaults to  `{{ 59 | random }}`
+- `borgmatic_cron_checks_day`: Day when cron job for infrequent checks will run. Defaults to `{{ 28 | random }}`
+- `borgmatic_cron_checks_hour`: Hour when cron job for infrequent checks will run. Defaults to `{{ range(7, 24) | random }}`
+- `borgmatic_cron_checks_minute`: Minute when cron job for infrequent checks will run. Defaults to  `{{ 59 | random }}`
+
 
 ### Optional Arguments for [BorgBase.com](https://www.borgbase.com) repository auto creation
 This role can also set up a new repository on BorgBase, using the arguments below. Thanks to [Philipp Rintz](https://github.com/p-rintz) for contribution this feature.

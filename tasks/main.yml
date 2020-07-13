@@ -80,17 +80,17 @@
     - name: Add cron job for regular create and prune
       cron:
         name: "borgmatic"
-        hour: "{{ 6 |random }}"
-        minute: "{{ 59 |random }}"
+        hour: "{{ borgmatic_cron_hour }}"
+        minute: "{{ borgmatic_cron_minute }}"
         user: "root"
         cron_file: borgmatic
         job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --create --prune"
     - name: Add cron job for infrequent checks
       cron:
         name: "borgmatic-check"
-        day: "{{ 28 | random }}"
-        hour: "{{ range(7, 24) | random }}"
-        minute: "{{ 59 | random }}"
+        day: "{{ borgmatic_cron_checks_day }}"
+        hour: "{{ borgmatic_cron_checks_hour }}"
+        minute: "{{ borgmatic_cron_checks_minute }}"
         user: "root"
         cron_file: borgmatic
         job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --check"
@@ -102,8 +102,8 @@
     - name: Add cron job for create, check and prune
       cron:
         name: "borgmatic"
-        hour: "{{ 6 | random }}"
-        minute: "{{ 59 | random }}"
+        hour: "{{ borgmatic_cron_hour }}"
+        minute: "{{ borgmatic_cron_minute }}"
         user: "root"
         cron_file: borgmatic
         job: "/usr/local/bin/borgmatic"
