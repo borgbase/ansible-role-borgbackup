@@ -4,3 +4,4 @@
     pkg: epel-release
     state: installed
     update_cache: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
