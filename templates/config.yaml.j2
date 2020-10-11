@@ -171,3 +171,7 @@ hooks:
 {% for cmd in borgmatic_failure_command %}
         - {{ cmd }}
 {% endfor %}
+
+{% for hook in borgmatic_hooks %}
+    {{ hook }}: {{ borgmatic_hooks[hook] }}
+{% endfor %}
