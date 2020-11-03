@@ -61,6 +61,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/borgba
 - `borgmatic_failure_command`: Run this command when an error occurs. E.g. `curl -s -F "token=xxx" -F "user=xxx" -F "message=Error during backup" https://api.pushover.net/1/messages.json`
 - `borgmatic_before_backup_command`: Run this command before the backup. E.g. `dump-a-database /to/file.sql`
 - `borgmatic_after_backup_command`: Run this command after the backup. E.g. `rm /to/file.sql`
+- `borgmatic_hooks`: Hooks to monitor your backups e.g. with [Healthchecks](https://healthchecks.io/). See [official documentation](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/) for more.
 - `borgmatic_failure_command`: Run this command when an error occurs. E.g. `curl -s -F "token=xxx" -F "user=xxx" -F "message=Error during backup" https://api.pushover.net/1/messages.json`
 - `borg_exclude_patterns`: Paths or patterns to exclude from backup. See [official documentation](https://borgbackup.readthedocs.io/en/stable/usage/help.html#borg-help-patterns) for more.
 - `borg_one_file_system`: Don't cross file-system boundaries. Defaults to `true`
