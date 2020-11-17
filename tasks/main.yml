@@ -60,7 +60,7 @@
 
 - name: Set Repository Fact
   set_fact:
-    borg_repository: "{{ repo_creation['data']['repoPath'] }}"
+    borg_repository: "{{ [borg_repository] + [repo_creation['data']['repoPath']] }}"
   when: create_repo
 
 - name: Ensures /etc/borgmatic exists
