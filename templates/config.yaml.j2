@@ -11,11 +11,9 @@ location:
     repositories:
 {% if borg_repository is iterable and (borg_repository is not string and borg_repository is not mapping) %}
   {% for repo in borg_repository %}
-    {% if repo != "" %}
         - {{ repo }}
-    {% endif %}
   {% endfor %}
-{% elif borg_repository is defined %}
+{% elif borg_repository is defined and borg_repository is string %}
         - {{ borg_repository }}
 {% endif %}
 
