@@ -1,3 +1,4 @@
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
 # Full config: https://gist.github.com/coaxial/46e36d89d7b81887f7275d587fe04c44
 location:
     source_directories:
@@ -8,7 +9,13 @@ location:
     # Stay in same file system (do not cross mount points).
     one_file_system: {{ borg_one_file_system }}
     repositories:
+{% if borg_repository is iterable and (borg_repository is not string and borg_repository is not mapping) %}
+  {% for repo in borg_repository %}
+        - {{ repo }}
+  {% endfor %}
+{% elif borg_repository is defined and borg_repository is string %}
         - {{ borg_repository }}
+{% endif %}
 
     # Any paths matching these patterns are excluded from backups. Globs and tildes
     # are expanded. See the output of "borg help patterns" for more details.

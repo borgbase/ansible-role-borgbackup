@@ -51,7 +51,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/borgba
 ## Role Variables
 
 ### Required Arguments
-- `borg_repository`: Full path to repository. Your own server or [BorgBase.com](https://www.borgbase.com) repo. Not required when using auto creation of repositories.
+- `borg_repository`: Full path to repository. Your own server or [BorgBase.com](https://www.borgbase.com) repo. Not required when using auto creation of repositories. Can be a list if you want to backup to multiple repositories.
 - `borg_source_directories`: List of local folders to back up.
 
 ### Optional Arguments
@@ -80,7 +80,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/borgba
 
 
 ### Optional Arguments for [BorgBase.com](https://www.borgbase.com) repository auto creation
-This role can also set up a new repository on BorgBase, using the arguments below. Thanks to [Philipp Rintz](https://github.com/p-rintz) for contribution this feature.
+This role can also set up a new repository on BorgBase, using the arguments below. Thanks to [Philipp Rintz](https://github.com/p-rintz) for contribution of this feature.
 
 - `create_repo`: Whether to let the role create the repository for the server. Default: False
 - `bb_token`: Your [BorgBase.com](https://www.borgbase.com) API-Token. Should be Create Only for security reasons.
