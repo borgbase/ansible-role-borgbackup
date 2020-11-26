@@ -15,9 +15,8 @@
 
 - name: Install required System Packages
   package:
-    pkg: "{{ item }}"
+    name: "{{ borg_packages }}"
     state: present
-  with_items: "{{ borg_packages }}"
 
 - name: Update setuptools if needed
   tags: skip_ansible_lint
