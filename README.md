@@ -68,6 +68,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/borgba
 - `borg_lock_wait_time`: Config maximum seconds to wait for acquiring a repository/cache lock. Defaults to 5 seconds.
 - `borg_ssh_command`: Command to use instead of just "ssh". This can be used to specify ssh options.
 - `borg_remote_path`: Path to the borg executable on the remote. It will default to `borg`.
+- `borg_remote_rate_limit`: Remote network upload rate limit in kiBytes/second.
 - `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
 - `borg_retention_policy`: Retention policy for how many backups to keep in each category (daily, weekly, monthly, etc).
 - `ssh_key_file`: Path to a private ssh key file (default is `.ssh/id_ed25519`). It generates a ed25519 key if the file doesn't exist yet.
