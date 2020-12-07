@@ -126,7 +126,7 @@ You can also use the BorgBase-Ansible module directly if needed:
 Pull requests (PR) are welcome, as long as they add features that are relevant for a meaningful number of users. All PRs are tested for style and functionality. To run tests locally (needs Docker):
 
 ```
-$ pip install -r requirements-dev.txt
+$ pip install --user -r requirements-dev.txt
 $ molecule test
 ```
 

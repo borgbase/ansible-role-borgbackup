@@ -24,11 +24,13 @@
     name: setuptools
     state: latest
     executable: "{{ pip_bin }}"
+    extra_args: --user
 
 - name: Install required Python Packages
   pip:
     name: "{{ borg_python_packages }}"
     executable: "{{ pip_bin }}"
+    extra_args: --user
 
 - name: Ensure root has SSH key.
   user:
