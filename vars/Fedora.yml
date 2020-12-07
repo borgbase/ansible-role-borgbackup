@@ -5,17 +5,15 @@ borg_packages:
   - gcc
   - gcc-c++
   - openssl-devel
-  - python-pip
-  - python-wheel
-  - python-devel
-  - python-setuptools
+  - python3-pip
+  - python3-wheel
+  - python3-devel
+  - python3-setuptools
+  - python3-Cython
   - openssh-clients
   - cronie
-
-python_bin: python
-pip_bin: pip
-
-borg_python_packages:
-  - cython
   - borgbackup
   - borgmatic
+
+python_bin: python3
+pip_bin: pip3
