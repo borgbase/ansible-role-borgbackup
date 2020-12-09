@@ -94,7 +94,11 @@ storage:
     # also specify a prefix in the retention section to avoid accidental pruning of
     # archives with a different archive name format. And you should also specify a
     # prefix in the consistency section as well.
+{% if borg_archive_name_format is defined %}
+    archive_name_format: '{{ borg_archive_name_format | replace("'", "") }}'
+{% else %}
     archive_name_format: '{hostname}-{now:%Y-%m-%d-%H%M%S}'
+{% endif %}
 
     # Bypass Borg error about a repository that has been moved.
     relocated_repo_access_is_ok: {{ borgmatic_relocated_repo_access_is_ok }}
