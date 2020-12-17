@@ -29,6 +29,7 @@ bb_quota_size: 0
 bb_alertdays: 0
 bb_repo_name: "{{ inventory_hostname }}"
 bb_sshkey: "{{ root_user['ssh_public_key'] }}"
+borgmatic_cron_name: borgmatic
 borgmatic_cron_hour: "{{ 6 | random }}"
 borgmatic_cron_minute: "{{ 59 | random }}"
 borgmatic_cron_checks_day: "{{ range(1, 28) | random }}"
