@@ -6,7 +6,6 @@ borg_packages:
   - build-essential
   - python-setuptools
   - python3-dev
-  - python3-llfuse
   - python3-pip
   - python3-msgpack
   - openssh-client
