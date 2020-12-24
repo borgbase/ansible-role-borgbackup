@@ -1,5 +1,5 @@
 #jinja2: lstrip_blocks: "True", trim_blocks: "True"
-# Full config: https://gist.github.com/coaxial/46e36d89d7b81887f7275d587fe04c44
+# Full config: https://torsion.org/borgmatic/docs/reference/config.yaml
 location:
     source_directories:
 {% for dir in borg_source_directories %}
@@ -16,6 +16,12 @@ location:
 {% elif borg_repository is defined and borg_repository is string %}
         - {{ borg_repository }}
 {% endif %}
+
+    # Store atime into archive.
+    atime: {{ borgmatic_store_atime }}
+
+    # Store ctime into archive.
+    ctime: {{ borgmatic_store_ctime }}
 
     # Any paths matching these patterns are excluded from backups. Globs and tildes
     # are expanded. See the output of "borg help patterns" for more details.
@@ -90,6 +96,9 @@ storage:
     # prefix in the consistency section as well.
     archive_name_format: '{hostname}-{now}'
 
+    # Bypass Borg error about a repository that has been moved.
+    relocated_repo_access_is_ok: {{ borgmatic_relocated_repo_access_is_ok }}
+
 # Retention policy for how many backups to keep in each category. See
 # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-prune for details.
 # At least one of the "keep" options is required for pruning to work.
@@ -138,18 +147,21 @@ retention:
 # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-check and
 # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-extract for details.
 consistency:
-    # List of one or more consistency checks to run: "repository", "archives", and/or
-    # "extract". Defaults to "repository" and "archives". Set to "disabled" to disable
-    # all consistency checks. "repository" checks the consistency of the repository,
-    # "archive" checks all of the archives, and "extract" does an extraction dry-run
-    # of just the most recent archive.
+    # List of one or more consistency checks to run: "repository",
+    # "archives", "data", and/or "extract". Defaults to
+    # "repository" and "archives". Set to "disabled" to disable
+    # all consistency checks. "repository" checks the consistency
+    # of the repository, "archives" checks all of the archives,
+    # "data" verifies the integrity of the data within the
+    # archives, and "extract" does an extraction dry-run of the
+    # most recent archive. Note that "data" implies "archives".
     checks:
-        - repository
-        # - archives
-        # - disabled
+    {% for checks in borgmatic_checks %}
+        - {{ checks }}
+    {% endfor %}
 
     # Restrict the number of checked archives to the last n. Applies only to the "archives" check.
-    check_last: 3
+    check_last: {{ borgmatic_check_last }}
 
     # When performing the "archives" check, only consider archive names starting with
     # this prefix. Borg placeholders can be used. See the output of
@@ -163,14 +175,12 @@ consistency:
 hooks:
     # List of one or more shell commands or scripts to execute before creating a backup.
     before_backup:
-        - echo "`date` - Starting backup."
 {% for cmd in borgmatic_before_backup_command %}
         - {{ cmd }}
 {% endfor %}
 
     # List of one or more shell commands or scripts to execute after creating a backup.
     after_backup:
-        - echo "`date` - Finished backup."
 {% for cmd in borgmatic_after_backup_command %}
         - {{ cmd }}
 {% endfor %}

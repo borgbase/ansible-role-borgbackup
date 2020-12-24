@@ -5,8 +5,16 @@ borgmatic_config_name: config.yaml
 borgmatic_large_repo: true
 borgmatic_failure_command:
   - echo "`date` - Error while creating a backup."
-borgmatic_before_backup_command: []
-borgmatic_after_backup_command: []
+borgmatic_before_backup_command:
+  - echo "`date` - Starting backup."
+borgmatic_after_backup_command:
+  - echo "`date` - Finished backup."
+borgmatic_checks:
+  - repository
+borgmatic_check_last: 3
+borgmatic_store_atime: true
+borgmatic_store_ctime: true
+borgmatic_relocated_repo_access_is_ok: false
 borgmatic_hooks: []
 borg_one_file_system: true
 borg_exclude_from: []
