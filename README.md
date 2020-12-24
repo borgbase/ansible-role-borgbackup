@@ -56,6 +56,11 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/borgba
 
 ### Optional Arguments
 - `borg_encryption_passphrase`: Password to use for repokey or keyfile. Empty if repo is unencrypted.
+- `borgmatic_checks`: List of consistency checks. Defaults to `['repository']`
+- `borgmatic_check_last`: Number of archives to check. Defaults to `3`
+- `borgmatic_store_atime`: Store atime into archive. Defaults to `true`
+- `borgmatic_store_ctime`: Store ctime into archive. Defaults to `true`
+- `borgmatic_relocated_repo_access_is_ok`: Bypass Borg error about a repository that has been moved. Defaults to `false`
 - `borgmatic_config_name`: Name to use for the borgmatic config file. Defaults to `config.yaml`
 - `borgmatic_large_repo`: Less frequent, monthly repo checking. Defaults to `true`
 - `borgmatic_failure_command`: Run this command when an error occurs. E.g. `curl -s -F "token=xxx" -F "user=xxx" -F "message=Error during backup" https://api.pushover.net/1/messages.json`
