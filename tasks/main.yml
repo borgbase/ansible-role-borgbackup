@@ -84,7 +84,6 @@
     mode: 0600
 
 - name: Add cron-job for borgmatic (large repo, create and check separate)
-  tags: molecule-idempotence-notest
   block:
     - name: Add cron job for regular create and prune
       cron:
@@ -106,7 +105,6 @@
   when: borgmatic_large_repo
 
 - name: Add cron-job for borgmatic (normal-sized repo)
-  tags: molecule-idempotence-notest
   block:
     - name: Add cron job for create, check and prune
       cron:
