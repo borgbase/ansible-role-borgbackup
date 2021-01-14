@@ -87,9 +87,8 @@ def get_repo_id(name):
     for repo in res['data']['repoList']:
         if repo['name'] == name:
             repo_id = repo['id']
-            return True, repo_id
-
-    return False, ""
+            return repo_id
+    return None
 
 def edit_repo(repo_id, key_id):
     if module.params['append_only']:
@@ -176,16 +175,16 @@ def main():
     else:
         key_id = get_key_id(module.params['ssh_key'])
 
-    # Check if repo with given name exist
-    repo_exist, repo_id = get_repo_id(module.params['repository_name'])
+    # Check if repo with given name exists
+    repo_id = get_repo_id(module.params['repository_name'])
 
-    if repo_exist == True:
-        # Edit the repo
-        res = edit_repo(repo_id, key_id)
-
-    elif repo_exist == False:
+    if repo_id is None:
         # Add new repo using the key
         res = add_repo(key_id)
+
+    else:
+        # Edit the repo
+        res = edit_repo(repo_id, key_id)
 
     # Setup information for Ansible
     result = dict(
@@ -198,7 +197,7 @@ def main():
     # Test for success and change info
     if type(res) == dict:
         result['changed'] = True
-        if repo_exist == True:
+        if repo_exist:
             result['data'] = res["data"]["repoEdit"]["repoEdited"]
         else:
             result['data'] = res['data']['repoAdd']['repoAdded']
