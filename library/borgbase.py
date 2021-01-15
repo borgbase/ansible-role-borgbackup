@@ -82,6 +82,41 @@ def add_repo(key_id):
     res = client.execute(REPO_ADD, new_repo_vars)
     return res
 
+def get_repo_id(name):
+    res = client.execute(REPO_DETAILS)
+    for repo in res['data']['repoList']:
+        if repo['name'] == name:
+            repo_id = repo['id']
+            return repo_id
+    return None
+
+def edit_repo(repo_id, key_id):
+    if module.params['append_only']:
+        access_level = 'appendOnlyKeys'
+    else:
+        access_level = 'fullAccessKeys'
+
+    if not module.params['quota_enable']:
+        repo_vars = {
+            'id': repo_id,
+            'name': module.params['repository_name'],
+            access_level: [key_id],
+            'alertDays': module.params['alertdays'],
+            'region': module.params['region']
+        }
+    else:
+        repo_vars = {
+            'id': repo_id,
+            'name': module.params['repository_name'],
+            'quotaEnabled': module.params['quota_enable'],
+            'quota': 1000*module.params['quota'],
+            access_level: [key_id],
+            'alertDays': module.params['alertdays'],
+            'region': module.params['region']
+        }
+    res = client.execute(REPO_EDIT, repo_vars)
+    return res
+
 def main():
     global module
     module = AnsibleModule(
@@ -140,8 +175,16 @@ def main():
     else:
         key_id = get_key_id(module.params['ssh_key'])
 
-    # Add new repo using the key
-    res = add_repo(key_id)
+    # Check if repo with given name exists
+    repo_id = get_repo_id(module.params['repository_name'])
+
+    if repo_id is None:
+        # Add new repo using the key
+        res = add_repo(key_id)
+
+    else:
+        # Edit the repo
+        res = edit_repo(repo_id, key_id)
 
     # Setup information for Ansible
     result = dict(
@@ -154,7 +197,10 @@ def main():
     # Test for success and change info
     if type(res) == dict:
         result['changed'] = True
-        result['data'] = res['data']['repoAdd']['repoAdded']
+        if repo_exist:
+            result['data'] = res["data"]["repoEdit"]["repoEdited"]
+        else:
+            result['data'] = res['data']['repoAdd']['repoAdded']
         result['key_id'] = key_id
         module.exit_json(**result)
     else:
