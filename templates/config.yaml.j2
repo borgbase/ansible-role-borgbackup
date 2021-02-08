@@ -150,7 +150,7 @@ retention:
 {% if borg_prune_prefix is defined %}
     prefix: '{{ borg_prune_prefix | replace("'", "") }}'
 {% else %}
-{{ ('No custom archive name format provided.' if borg_archive_name_format is defined) | mandatory('Custom value for borg_archive_name_format was specified without providing the matching prune prefix. Please specify borg_prune_prefix as well.') }}
+{{ ('    # No custom archive name format provided.' if borg_archive_name_format is not defined) | mandatory('Custom value for borg_archive_name_format was specified without providing the matching prune prefix. Please specify borg_prune_prefix as well.') }}
     prefix: '{hostname}-'
 {% endif %}
 
@@ -182,7 +182,7 @@ consistency:
 {% elif borg_prune_prefix is defined %}
     prefix: '{{ borg_prune_prefix | replace("'", "") }}'
 {% else %}
-{{ ('No custom archive name format provided.' if borg_archive_name_format is defined) | mandatory('Custom value for borg_archive_name_format was specified without providing the matching consistency check prefix. Please specify borg_check_prefix as well.') }}
+{{ ('    # No custom archive name format provided.' if borg_archive_name_format is not defined) | mandatory('Custom value for borg_archive_name_format was specified without providing the matching consistency check prefix. Please specify borg_check_prefix as well.') }}
     prefix: '{hostname}-'
 {% endif %}
 
