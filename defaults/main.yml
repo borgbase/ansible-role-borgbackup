@@ -43,3 +43,7 @@ borgmatic_cron_minute: "{{ 59 | random(seed=inventory_hostname) }}"
 borgmatic_cron_checks_day: "{{ range(1, 28) | random(seed=inventory_hostname) }}"
 borgmatic_cron_checks_hour: "{{ range(9, 24) | random(seed=inventory_hostname) }}"
 borgmatic_cron_checks_minute: "{{ 59 | random(seed=inventory_hostname) }}"
+# the following are optional and defined by the user as needed
+# borg_archive_name_format: '{hostname}-{now}'
+# borg_prune_prefix: '{hostname}-'
+# borg_check_prefix: '{hostname}-'

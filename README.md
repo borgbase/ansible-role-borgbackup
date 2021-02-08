@@ -82,7 +82,9 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_cron_checks_day`: Day when cron job for infrequent checks will run. Defaults to `{{ 28 | random }}`
 - `borgmatic_cron_checks_hour`: Hour when cron job for infrequent checks will run. Defaults to `{{ range(7, 24) | random }}`
 - `borgmatic_cron_checks_minute`: Minute when cron job for infrequent checks will run. Defaults to  `{{ 59 | random }}`
-
+- `borg_archive_name_format`: The format for the archive name, e.g. `{hostname}-{now:%Y-%m-%dT%H:%M:%S.%f}`. Defaults to `{hostname}-{now}`
+- `borg_prune_prefix`: The prefix used to select archives to prune. Defaults to `{hostname}-`
+- `borg_check_prefix`: The prefix used to select archives to check for consistency. Defaults to `{hostname}-`
 
 ### Optional Arguments for [BorgBase.com](https://www.borgbase.com) repository auto creation
 This role can also set up a new repository on BorgBase, using the arguments below. Thanks to [Philipp Rintz](https://github.com/p-rintz) for contribution of this feature.

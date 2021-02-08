@@ -96,6 +96,8 @@ storage:
     # prefix in the consistency section as well.
 {% if borg_archive_name_format is defined %}
     archive_name_format: '{{ borg_archive_name_format | replace("'", "") }}'
+{% elif borg_prune_prefix is defined %}
+    archive_name_format: '{{ borg_prune_prefix | replace("'", "") }}-{now}'
 {% else %}
     archive_name_format: '{hostname}-{now:%Y-%m-%d-%H%M%S}'
 {% endif %}
@@ -145,7 +147,12 @@ retention:
     # When pruning, only consider archive names starting with this prefix.
     # Borg placeholders can be used. See the output of "borg help placeholders" for
     # details. Default is "{hostname}-".
+{% if borg_prune_prefix is defined %}
+    prefix: '{{ borg_prune_prefix | replace("'", "") }}'
+{% else %}
+{{ ('No custom archive name format provided.' if borg_archive_name_format is defined) | mandatory('Custom value for borg_archive_name_format was specified without providing the matching prune prefix. Please specify borg_prune_prefix as well.') }}
     prefix: '{hostname}-'
+{% endif %}
 
 # Consistency checks to run after backups. See
 # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-check and
@@ -170,7 +177,14 @@ consistency:
     # When performing the "archives" check, only consider archive names starting with
     # this prefix. Borg placeholders can be used. See the output of
     # "borg help placeholders" for details. Default is "{hostname}-".
+{% if borg_check_prefix is defined %}
+    prefix: '{{ borg_check_prefix | replace("'", "") }}'
+{% elif borg_prune_prefix is defined %}
+    prefix: '{{ borg_prune_prefix | replace("'", "") }}'
+{% else %}
+{{ ('No custom archive name format provided.' if borg_archive_name_format is defined) | mandatory('Custom value for borg_archive_name_format was specified without providing the matching consistency check prefix. Please specify borg_check_prefix as well.') }}
     prefix: '{hostname}-'
+{% endif %}
 
 # Shell commands or scripts to execute before and after a backup or if an error has occurred.
 # IMPORTANT: All provided commands and scripts are executed with user permissions of borgmatic.
