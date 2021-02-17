@@ -16,10 +16,8 @@ platforms:
     image: debian:oldstable
   - name: debian-stable
     image: debian:stable
-  - name: ubuntu-xenial
-    image: ubuntu:xenial
-  # - name: ubuntu-trusty  # Python too old
-  #   image: ubuntu:trusty
+  - name: ubuntu-bionic
+    image: ubuntu:bionic
   - name: ubuntu-latest
     image: ubuntu:latest
 provisioner:
