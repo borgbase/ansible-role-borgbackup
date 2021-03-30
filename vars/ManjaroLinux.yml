@@ -1,0 +1,8 @@
+---
+borg_packages:
+  - borgmatic
+  - openssh
+  - cronie
+
+python_bin: python3
+pip_bin: pip3
