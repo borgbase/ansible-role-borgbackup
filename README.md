@@ -17,7 +17,7 @@ Main features:
 ```
 - hosts: webservers
   roles:
-  - role: borgbackup
+  - role: m3nu.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
     borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
     borg_source_directories:
@@ -44,7 +44,7 @@ $ ansible-galaxy install m3nu.ansible_role_borgbackup
 Clone to local folder
 
 ```
-$ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/borgbackup
+$ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansible_role_borgbackup
 ```
 
 

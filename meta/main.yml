@@ -3,6 +3,8 @@ dependencies: []
 
 galaxy_info:
   author: Manuel Riel
+  role_name: ansible_role_borgbackup
+  namespace: m3nu
   description: Set up backup to remote machine using Borg and Borgmatic.
   company: "BorgBase.com"
   license: license (BSD, MIT)

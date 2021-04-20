@@ -10,10 +10,6 @@ platforms:
     image: centos:latest
   - name: fedora-latest
     image: fedora:latest
-  - name: fedora-31
-    image: fedora:31
-  - name: debian-oldstable
-    image: debian:oldstable
   - name: debian-stable
     image: debian:stable
   - name: ubuntu-bionic
@@ -24,3 +20,7 @@ provisioner:
   name: ansible
 verifier:
   name: ansible
+lint: |
+  set -e
+  yamllint .
+  ansible-lint .

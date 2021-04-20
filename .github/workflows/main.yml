@@ -12,10 +12,10 @@ jobs:
       with:
         python-version: 3.7
     - name: Install Molecule
-      run: pip install molecule[lint,docker]
-    - name: Lint
       run: |
-        yamllint .
-        ansible-lint
+        pip install -U pip setuptools wheel
+        pip install -r requirements-dev.txt
+    # - name: Debugging with tmate
+    #   uses: mxschmitt/action-tmate@v3.5
     - name: Test using Molecule
       run: molecule test

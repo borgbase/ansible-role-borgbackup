@@ -6,8 +6,9 @@
     - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
     - "{{ ansible_distribution }}.yml"
     - "{{ ansible_os_family }}.yml"
+    - "{{ ansible_lsb.id }}.yml"
 
-- name: Run OS-specific setup
+- name: Run OS-specific tasks
   include: "{{ item }}"
   with_first_found:
     - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
@@ -39,7 +40,8 @@
     ssh_key_type: ed25519
   register: root_user
 
-- debug:
+- name: Print key created for root user (use for remote repo)
+  debug:
     var: root_user['ssh_public_key']
 
 - name: Create new repository for server
