@@ -12,7 +12,7 @@ jobs:
       with:
         python-version: 3.7
     - name: Install Molecule
-      run: pip install molecule[lint,docker]
+      run: pip install -r requirements-dev.txt
     - name: Lint
       run: |
         yamllint .
