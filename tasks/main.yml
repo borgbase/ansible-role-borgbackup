@@ -40,7 +40,8 @@
     ssh_key_type: ed25519
   register: root_user
 
-- debug:
+- name: Print key created for root user (use for remote repo)
+  debug:
     var: root_user['ssh_public_key']
 
 - name: Create new repository for server

@@ -17,9 +17,5 @@ jobs:
         pip install -r requirements-dev.txt
     # - name: Debugging with tmate
     #   uses: mxschmitt/action-tmate@v3.5
-    - name: Lint
-      run: |
-        yamllint .
-        ansible-lint
     - name: Test using Molecule
       run: molecule test

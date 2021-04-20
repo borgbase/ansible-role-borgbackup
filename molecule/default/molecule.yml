@@ -4,8 +4,6 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: arch-latest
-    image: archlinux:latest
   - name: centos-7
     image: centos:7
   - name: centos-latest
@@ -22,3 +20,7 @@ provisioner:
   name: ansible
 verifier:
   name: ansible
+lint: |
+  set -e
+  yamllint .
+  ansible-lint .

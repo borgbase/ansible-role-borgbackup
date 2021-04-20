@@ -1,5 +1,8 @@
 ---
 # Based on ansible-lint config
+ignore: |
+  .direnv
+
 extends: default
 
 rules:
