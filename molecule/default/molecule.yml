@@ -5,17 +5,13 @@ driver:
   name: docker
 platforms:
   - name: arch-latest
-    image:archlinux:latest
+    image: archlinux:latest
   - name: centos-7
     image: centos:7
   - name: centos-latest
     image: centos:latest
   - name: fedora-latest
     image: fedora:latest
-  - name: fedora-31
-    image: fedora:31
-  - name: debian-oldstable
-    image: debian:oldstable
   - name: debian-stable
     image: debian:stable
   - name: ubuntu-bionic

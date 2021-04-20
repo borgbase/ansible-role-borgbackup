@@ -12,7 +12,11 @@ jobs:
       with:
         python-version: 3.7
     - name: Install Molecule
-      run: pip install -r requirements-dev.txt
+      run: |
+        pip install -U pip setuptools wheel
+        pip install -r requirements-dev.txt
+    # - name: Debugging with tmate
+    #   uses: mxschmitt/action-tmate@v3.5
     - name: Lint
       run: |
         yamllint .
