@@ -181,10 +181,11 @@ def main():
     if repo_id is None:
         # Add new repo using the key
         res = add_repo(key_id)
-
+        repo_exist = False
     else:
         # Edit the repo
         res = edit_repo(repo_id, key_id)
+        repo_exist = True
 
     # Setup information for Ansible
     result = dict(
