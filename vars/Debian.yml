@@ -8,6 +8,7 @@ borg_packages:
   - python3-dev
   - python3-pip
   - python3-msgpack
+  - python3-venv
   - openssh-client
   - cron
 

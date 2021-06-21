@@ -19,18 +19,28 @@
     name: "{{ borg_packages }}"
     state: present
 
-- name: Update setuptools if needed
-  tags: skip_ansible_lint
+- name: Create virtualenv for borg
   pip:
-    name: setuptools
-    state: latest
-    executable: "{{ pip_bin }}"
+    name: pip-tools
+    virtualenv: /opt/borgmatic
+    virtualenv_command: "{{ python_bin }} -m venv"
 
 - name: Install required Python Packages
   pip:
     name: "{{ borg_python_packages }}"
-    executable: "{{ pip_bin }}"
+    virtualenv: /opt/borgmatic
   when: borg_python_packages is defined
+
+- name: Create borgmatic command in /usr/local/bin
+  copy:
+    content: |
+      #!/bin/bash
+      . /opt/borgmatic/bin/activate
+      borgmatic "$@"
+    dest: /usr/local/bin/borgmatic
+    owner: root
+    group: root
+    mode: "0755"
 
 - name: Ensure root has SSH key.
   user:
