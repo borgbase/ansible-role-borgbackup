@@ -115,7 +115,7 @@
         minute: "{{ borgmatic_cron_minute }}"
         user: "root"
         cron_file: "{{ borgmatic_cron_name }}"
-        job: "borgmatic"
+        job: "borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
     - name: Ensure separate check cron job is absent
       cron:
         name: "{{ borgmatic_cron_name }}-check"
