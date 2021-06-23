@@ -1,19 +1,20 @@
 ---
 borg_packages:
-  - libacl-devel
-  - libacl
-  - gcc
-  - gcc-c++
-  - openssl-devel
-  - python3-pip
-  - python3-wheel
-  - python3-devel
-  - python3-setuptools
-  - python3-Cython
-  - openssh-clients
-  - cronie
   - borgbackup
   - borgmatic
+  - cronie
+  - gcc
+  - gcc-c++
+  - libacl
+  - libacl-devel
+  - openssh-clients
+  - openssl-devel
+  - python3-Cython
+  - python3-devel
+  - python3-pip
+  - python3-setuptools
+  - python3-virtualenv
+  - python3-wheel
 
 python_bin: python3
 pip_bin: pip3
