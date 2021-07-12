@@ -97,7 +97,7 @@ storage:
 {% if borg_archive_name_format is defined %}
     archive_name_format: '{{ borg_archive_name_format | replace("'", "") }}'
 {% elif borg_prune_prefix is defined %}
-    archive_name_format: '{{ borg_prune_prefix | replace("'", "") }}-{now}'
+    archive_name_format: '{{ borg_prune_prefix | replace("'", "") }}-{now:%Y-%m-%d-%H%M%S}'
 {% else %}
     archive_name_format: '{hostname}-{now:%Y-%m-%d-%H%M%S}'
 {% endif %}
