@@ -23,19 +23,23 @@ location:
     # Store ctime into archive.
     ctime: {{ borgmatic_store_ctime }}
 
+{% if borg_exclude_patterns|length %}
     # Any paths matching these patterns are excluded from backups. Globs and tildes
     # are expanded. See the output of "borg help patterns" for more details.
     exclude_patterns:
 {% for dir in borg_exclude_patterns %}
         - '{{ dir }}'
 {% endfor %}
+{% endif %}
 
+{% if borg_exclude_from|length %}
     # Read exclude patterns from one or more separate named files, one pattern per
     # line. See the output of "borg help patterns" for more details.
     exclude_from:
 {% for dir in borg_exclude_from %}
         - {{ dir }}
 {% endfor %}
+{% endif %}
 
     # Exclude directories that contain a CACHEDIR.TAG file. See
     # http://www.brynosaurus.com/cachedir/spec.html for details.
