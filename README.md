@@ -1,6 +1,6 @@
 # Ansible Role: BorgBackup Client
 
-![Test](https://github.com/m3nu/ansible-role-borgbackup/workflows/Test/badge.svg) [![Ansible Galaxy](https://img.shields.io/ansible/role/48519)](https://galaxy.ansible.com/m3nu/ansible_role_borgbackup)
+[![Test](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml/badge.svg)](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml) [![Ansible Galaxy](https://img.shields.io/ansible/role/48519)](https://galaxy.ansible.com/m3nu/ansible_role_borgbackup)
 
 Set up encrypted, compressed and deduplicated backups using [BorgBackup](https://borgbackup.readthedocs.io/en/stable/) and [Borgmatic](https://github.com/witten/borgmatic). Currently supports Debian/Ubuntu and CentOS/Red Hat.
 
@@ -95,7 +95,7 @@ This role can also set up a new repository on BorgBase, using the arguments belo
 - `bb_append`: Should the permission of the newly created repository be append only? Default: True
 - `bb_quota`: To use a quota for the Server. Default: False
 - `bb_quota_size`: Will need to be set if `bb_quota` is set to True. In Gigabyte.
-- `bb_alertdays`: After how many days of no backup activity should alerts be sent out? Defaults to off. 
+- `bb_alertdays`: After how many days of no backup activity should alerts be sent out? Defaults to off.
 - `bb_repo_name`: What name the created repository should have. Defaults to the inventory_hostname.
 
 
