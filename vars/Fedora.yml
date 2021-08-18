@@ -12,8 +12,11 @@ borg_packages:
   - python3-Cython
   - openssh-clients
   - cronie
-  - borgbackup
-  - borgmatic
 
 python_bin: python3
 pip_bin: pip3
+
+borg_python_packages:
+  - cython
+  - borgbackup
+  - borgmatic
