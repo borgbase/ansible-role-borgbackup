@@ -6,8 +6,8 @@ driver:
 platforms:
   - name: centos-7
     image: centos:7
-  - name: centos-latest
-    image: centos:latest
+  - name: centos-8
+    image: centos:8
   - name: fedora-latest
     image: fedora:latest
   - name: debian-bullseye
