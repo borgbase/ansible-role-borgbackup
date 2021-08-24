@@ -195,6 +195,15 @@ hooks:
         - {{ cmd }}
 {% endfor %}
 
+{% if borgmatic_hooks_multiple_commands %}
+{% for hook in borgmatic_hooks %}
+    {{ hook }}:
+{% for cmd in borgmatic_hooks[hook] %}
+        - {{ cmd }}
+{% endfor %}
+{% endfor %}
+{% else %}
 {% for hook in borgmatic_hooks %}
     {{ hook }}: {{ borgmatic_hooks[hook] }}
 {% endfor %}
+{% endif %}
