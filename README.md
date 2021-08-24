@@ -67,6 +67,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_before_backup_command`: Run this command before the backup. E.g. `dump-a-database /to/file.sql`
 - `borgmatic_after_backup_command`: Run this command after the backup. E.g. `rm /to/file.sql`
 - `borgmatic_hooks`: Hooks to monitor your backups e.g. with [Healthchecks](https://healthchecks.io/). See [official documentation](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/) for more.
+- `borgmatic_hooks_multiple_commands`: Allow multiple commands per hook defined under borgmatic_hooks. Defaults to `false`
 - `borg_exclude_patterns`: Paths or patterns to exclude from backup. See [official documentation](https://borgbackup.readthedocs.io/en/stable/usage/help.html#borg-help-patterns) for more.
 - `borg_one_file_system`: Don't cross file-system boundaries. Defaults to `true`
 - `borg_exclude_from`: Read exclude patterns from one or more separate named files, one pattern per line.
@@ -82,7 +83,6 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_cron_checks_day`: Day when cron job for infrequent checks will run. Defaults to `{{ 28 | random }}`
 - `borgmatic_cron_checks_hour`: Hour when cron job for infrequent checks will run. Defaults to `{{ range(7, 24) | random }}`
 - `borgmatic_cron_checks_minute`: Minute when cron job for infrequent checks will run. Defaults to  `{{ 59 | random }}`
-
 
 ### Optional Arguments for [BorgBase.com](https://www.borgbase.com) repository auto creation
 This role can also set up a new repository on BorgBase, using the arguments below. Thanks to [Philipp Rintz](https://github.com/p-rintz) for contribution of this feature.
