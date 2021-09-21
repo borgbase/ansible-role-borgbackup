@@ -1,5 +1,7 @@
 ---
 borg_packages:
+  - gcc
+  - python-pip
   - openssh
   - cronie
 
