@@ -2,10 +2,21 @@
 - name: Converge
   hosts: all
   pre_tasks:
+    - name: Set ssh server package name for non-Archlinux ansible_os_family
+      set_fact:
+        openssh_package: "openssh-server"
+      when: ansible_os_family != "Archlinux"
+
+    - name: Set ssh server package name for Archlinux ansible_os_family
+      set_fact:
+        openssh_package: "openssh"
+      when: ansible_os_family == "Archlinux"
+
     - name: Install openssh
       package:
-        name: openssh-server
+        name: "{{ openssh_package }}"
         state: present
+
   roles:
     - role: m3nu.ansible_role_borgbackup
       borg_encryption_passphrase: CHANGEME
