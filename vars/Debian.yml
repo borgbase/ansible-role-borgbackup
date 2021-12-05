@@ -10,6 +10,7 @@ borg_packages:
   - python3-msgpack
   - python3-venv
   - openssh-client
+  - libfuse-dev
   - cron
 
 python_bin: python3
@@ -17,5 +18,5 @@ pip_bin: pip3
 
 borg_python_packages:
   - cython
-  - borgbackup
+  - borgbackup[fuse]
   - borgmatic
