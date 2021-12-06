@@ -10,5 +10,14 @@ borg_python_packages:
   - borgbackup
   - borgmatic
 
+borg_packages_fuse:
+  - fuse2
+
+borg_python_packages_fuse:
+  - cython
+  - borgbackup[fuse]
+  - borgmatic
+  - python-llfuse
+
 python_bin: python3
 pip_bin: pip3

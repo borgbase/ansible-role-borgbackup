@@ -82,6 +82,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_cron_checks_day`: Day when cron job for infrequent checks will run. Defaults to `{{ 28 | random }}`
 - `borgmatic_cron_checks_hour`: Hour when cron job for infrequent checks will run. Defaults to `{{ range(7, 24) | random }}`
 - `borgmatic_cron_checks_minute`: Minute when cron job for infrequent checks will run. Defaults to  `{{ 59 | random }}`
+- `borgmatic_fuse_support`: Adds borgmatics fuse mount support. Defaults to `false`
 
 
 ### Optional Arguments for [BorgBase.com](https://www.borgbase.com) repository auto creation
