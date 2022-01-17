@@ -7,15 +7,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        path: ansible_role_borgbackup
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
     - name: Install Molecule
       run: |
+        cd ansible_role_borgbackup
         pip install -U pip setuptools wheel
         pip install -r requirements-dev.txt
     # - name: Debugging with tmate
     #   uses: mxschmitt/action-tmate@v3.5
     - name: Test using Molecule
-      run: molecule test
+      run: |
+        cd ansible_role_borgbackup
+        molecule test
