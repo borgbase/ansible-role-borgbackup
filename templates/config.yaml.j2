@@ -1,4 +1,5 @@
 #jinja2: lstrip_blocks: "True", trim_blocks: "True"
+---
 # Full config: https://torsion.org/borgmatic/docs/reference/config.yaml
 location:
     source_directories:
@@ -23,7 +24,7 @@ location:
     # Store ctime into archive.
     ctime: {{ borgmatic_store_ctime }}
 
-{% if borg_exclude_patterns|length %}
+{% if borg_exclude_patterns %}
     # Any paths matching these patterns are excluded from backups. Globs and tildes
     # are expanded. See the output of "borg help patterns" for more details.
     exclude_patterns:
@@ -32,7 +33,7 @@ location:
 {% endfor %}
 {% endif %}
 
-{% if borg_exclude_from|length %}
+{% if borg_exclude_from %}
     # Read exclude patterns from one or more separate named files, one pattern per
     # line. See the output of "borg help patterns" for more details.
     exclude_from:
