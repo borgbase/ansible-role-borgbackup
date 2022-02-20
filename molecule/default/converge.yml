@@ -17,9 +17,15 @@
         name: "{{ openssh_package }}"
         state: present
 
-    - name: Install yamllint
-      pip:
-        name: yamllint
+    - name: Install yamllint for checking config file
+      block:
+      - package:
+          name:
+          - python3-pip
+          - python3-setuptools
+          state: present
+      - pip:
+          name: yamllint
 
   roles:
     - role: m3nu.ansible_role_borgbackup
