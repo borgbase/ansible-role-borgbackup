@@ -82,14 +82,14 @@
           {% endif %}
   when: create_repo
 
-- name: Ensures /etc/borgmatic exists
+- name: Ensure /etc/borgmatic exists
   file:
     path: /etc/borgmatic
     state: directory
     mode: 0700
     owner: root
 
-- name: Add Borgmatic Configuration
+- name: Add Borgmatic configuration
   template:
     src: config.yaml.j2
     dest: "/etc/borgmatic/{{ borgmatic_config_name }}"

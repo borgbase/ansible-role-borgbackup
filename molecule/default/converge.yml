@@ -31,3 +31,9 @@
         keep_daily: 7
         keep_weekly: 4
         keep_monthly: 6
+
+  post_tasks:
+  - name: Install yamllint for checking config file
+    pip:
+      name: yamllint
+      executable: pip3
