@@ -17,6 +17,11 @@
         name: "{{ openssh_package }}"
         state: present
 
+    - name: Install yamllint
+      package:
+        name: yamllint
+        state: present
+
   roles:
     - role: m3nu.ansible_role_borgbackup
       borg_encryption_passphrase: CHANGEME
