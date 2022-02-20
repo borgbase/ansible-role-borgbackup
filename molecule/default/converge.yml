@@ -18,9 +18,8 @@
         state: present
 
     - name: Install yamllint
-      package:
+      pip:
         name: yamllint
-        state: present
 
   roles:
     - role: m3nu.ansible_role_borgbackup
