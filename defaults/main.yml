@@ -3,12 +3,12 @@ borg_encryption_passphrase: ''
 borg_exclude_patterns: []
 borgmatic_config_name: config.yaml
 borgmatic_large_repo: true
-borgmatic_hooks: []
-borgmatic_failure_command:
+borgmatic_hooks:
+  on_error:
   - echo "`date` - Error while creating a backup."
-borgmatic_before_backup_command:
+  before_backup:
   - echo "`date` - Starting backup."
-borgmatic_after_backup_command:
+  after_backup:
   - echo "`date` - Finished backup."
 borgmatic_checks:
   - repository
