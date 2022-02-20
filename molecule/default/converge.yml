@@ -17,16 +17,6 @@
         name: "{{ openssh_package }}"
         state: present
 
-    - name: Install yamllint for checking config file
-      block:
-      - package:
-          name:
-          - python3-pip
-          - python3-setuptools
-          state: present
-      - pip:
-          name: yamllint
-
   roles:
     - role: m3nu.ansible_role_borgbackup
       borg_encryption_passphrase: CHANGEME
@@ -41,3 +31,9 @@
         keep_daily: 7
         keep_weekly: 4
         keep_monthly: 6
+
+  post_tasks:
+  - name: Install yamllint for checking config file
+    pip:
+      name: yamllint
+      executable: pip3
