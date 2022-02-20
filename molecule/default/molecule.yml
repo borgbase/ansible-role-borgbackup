@@ -8,14 +8,12 @@ platforms:
     image: archlinux:latest
   - name: centos-7
     image: centos:7
-  - name: centos-8
-    image: centos:8
+  - name: almalinux-8
+    image: almalinux:8
   - name: fedora-latest
     image: fedora:latest
   - name: debian-bullseye
     image: debian:bullseye
-  - name: debian-buster
-    image: debian:buster
   - name: ubuntu-bionic
     image: ubuntu:bionic
   - name: ubuntu-latest
