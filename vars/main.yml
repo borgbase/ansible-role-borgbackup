@@ -1,0 +1,7 @@
+---
+borg_dependent_python_packages:
+  - cython
+  - pkgconfig
+borg_python_packages:
+  - borgbackup
+  - borgmatic
