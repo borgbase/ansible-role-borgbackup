@@ -33,6 +33,15 @@
     virtualenv: /opt/borgmatic
     virtualenv_command: "{{ python_bin }} -m venv"
 
+- name: Upgrade pip and setuptools  # noqa package-latest
+  pip:
+    name:
+      - pip
+      - setuptools
+    state: latest
+    virtualenv: /opt/borgmatic
+    virtualenv_command: "{{ python_bin }} -m venv"
+
 - name: Install dependent Python Packages
   pip:
     name: "{{ borg_dependent_python_packages }}"
