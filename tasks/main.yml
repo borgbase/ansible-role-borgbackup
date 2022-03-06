@@ -29,15 +29,9 @@
 
 - name: Create virtualenv for borg
   pip:
-    name: pip-tools
-    virtualenv: /opt/borgmatic
-    virtualenv_command: "{{ python_bin }} -m venv"
-
-- name: Upgrade pip and setuptools  # noqa package-latest
-  pip:
     name:
-      - pip
-      - setuptools
+    - pip
+    - setuptools
     state: latest
     virtualenv: /opt/borgmatic
     virtualenv_command: "{{ python_bin }} -m venv"
