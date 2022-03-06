@@ -1,9 +1,10 @@
 ---
 borg_packages:
-  - gcc
-  - python-pip
-  - openssh
   - cronie
+  - gcc
+  - openssh
+  - pkgconfig
+  - python-pip
 
 python_bin: python3
 pip_bin: pip3
