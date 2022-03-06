@@ -27,7 +27,7 @@
     name: "{{ borg_packages }}"
     state: present
 
-- name: Create virtualenv for borg
+- name: Create virtualenv for borg  # noqa package-latest
   pip:
     name:
     - pip
