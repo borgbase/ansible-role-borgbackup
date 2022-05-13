@@ -2,9 +2,9 @@
 
 [![Test](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml/badge.svg)](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml) [![Ansible Galaxy](https://img.shields.io/ansible/role/48519)](https://galaxy.ansible.com/m3nu/ansible_role_borgbackup)
 
-Set up encrypted, compressed and deduplicated backups using [BorgBackup](https://borgbackup.readthedocs.io/en/stable/) and [Borgmatic](https://github.com/witten/borgmatic). Currently supports Debian/Ubuntu and CentOS/Red Hat.
+Set up encrypted, compressed and deduplicated backups using [BorgBackup](https://borgbackup.readthedocs.io/en/stable/) and [Borgmatic](https://github.com/witten/borgmatic). Currently supports Debian/Ubuntu, CentOS/Red Hat/Fedora, Archlinux and Manjaro.
 
-Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Hosting for your Borg Repositories.
+Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Hosting for your Borg Repositories. To manage BorgBase repos via Ansible, also see Andy Hawkins' [BorgBase Collection](https://galaxy.ansible.com/adhawkins/borgbase).
 
 Main features:
 - Set up Borg and Borgmatic
@@ -44,13 +44,11 @@ Main features:
 ## Installation
 
 Download from Ansible Galaxy
-
 ```
 $ ansible-galaxy install m3nu.ansible_role_borgbackup
 ```
 
-Clone to local folder
-
+Clone latest version from Github
 ```
 $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansible_role_borgbackup
 ```
@@ -87,48 +85,6 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_store_atime`: Store atime into archive. Defaults to `true`
 - `borgmatic_store_ctime`: Store ctime into archive. Defaults to `true`
 - `ssh_key_file`: Path to a private ssh key file (default is `.ssh/id_ed25519`). It generates a ed25519 key if the file doesn't exist yet.
-
-
-### Optional Arguments for [BorgBase.com](https://www.borgbase.com) repository auto creation
-This role can also set up a new repository on BorgBase, using the arguments below. Thanks to [Philipp Rintz](https://github.com/p-rintz) for contribution of this feature.
-
-- `create_repo`: Whether to let the role create the repository for the server. Default: False
-- `bb_token`: Your [BorgBase.com](https://www.borgbase.com) API-Token. Should be Create Only for security reasons.
-- `bb_region`: Which region the backups should be saved in. Choice: "eu" or "us".
-- `bb_new_sshkey`: Whether to use the automatically created SSH_key. Default: True
-- `bb_sshkey`: If there is a key already available on [BorgBase.com](https://www.borgbase.com) that should be used, it can be set with this variable. The key needs to be exactly the same, including key-comment.
-- `bb_append`: Should the permission of the newly created repository be append only? Default: True
-- `bb_quota`: To use a quota for the Server. Default: False
-- `bb_quota_size`: Will need to be set if `bb_quota` is set to True. In Gigabyte.
-- `bb_alertdays`: After how many days of no backup activity should alerts be sent out? Defaults to off.
-- `bb_repo_name`: What name the created repository should have. Defaults to the inventory_hostname.
-
-
-### Use BorgBase Module Standalone
-You can also use the BorgBase-Ansible module directly if needed:
-
-```
-- name: Create new repository for server in EU with new SSH_key and quota
-  borgbase:
-    repository_name: "{{ inventory_hostname }}"
-    token: "Your Borgbase API Token"
-    new_ssh_key: True
-    ssh_key: "{{ some_variable }}"
-    append_only: True
-    quota_enable: True
-    quota: 1000 #in GB
-    region: eu
-    alertdays: 2
-  delegate_to: localhost
-```
-
-
-
-## Planned features
-
-- [x] Testing
-- [ ] Multiple repos in one role-call instead of callng this role multiple times.
-- [ ] Support more OSs, like Red Hat/Fedora/CentOS, SuSE, Gentoo, Slackware, Arch, BSD
 
 
 ## Contributing

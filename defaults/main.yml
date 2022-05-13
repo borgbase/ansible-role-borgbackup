@@ -28,15 +28,7 @@ borg_retention_policy:
   keep_daily: 7
   keep_weekly: 4
   keep_monthly: 6
-create_repo: False
 ssh_key_file: .ssh/id_ed25519
-bb_new_sshkey: True
-bb_append: True
-bb_quota: False
-bb_quota_size: 0
-bb_alertdays: 0
-bb_repo_name: "{{ inventory_hostname }}"
-bb_sshkey: "{{ root_user['ssh_public_key'] }}"
 borgmatic_cron_name: borgmatic
 borgmatic_cron_hour: "{{ 6 | random(seed=inventory_hostname) }}"
 borgmatic_cron_minute: "{{ 59 | random(seed=inventory_hostname) }}"
