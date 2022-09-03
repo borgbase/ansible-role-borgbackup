@@ -5,6 +5,7 @@ borg_packages:
   - openssh
   - pkgconfig
   - python-pip
+  - python-setuptools
 
 python_bin: python3
 pip_bin: pip3
