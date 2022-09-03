@@ -18,7 +18,7 @@ galaxy_info:
         - trusty
         - xenial
         - bionic
-    - name: Archlinux
+    - name: ArchLinux
       versions:
         - all
   galaxy_tags:
