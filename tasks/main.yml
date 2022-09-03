@@ -40,12 +40,14 @@
   pip:
     name: "{{ borg_dependent_python_packages }}"
     virtualenv: /opt/borgmatic
+    state: latest
   when: borg_dependent_python_packages is defined
 
 - name: Install main Python Packages
   pip:
     name: "{{ borg_python_packages }}"
     virtualenv: /opt/borgmatic
+    state: latest
   when: borg_python_packages is defined
 
 - name: Create borgmatic command in /usr/local/bin
@@ -93,7 +95,7 @@
         minute: "{{ borgmatic_cron_minute }}"
         user: "root"
         cron_file: "{{ borgmatic_cron_name }}"
-        job: "borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --create --prune"
+        job: "borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} create prune"
     - name: Add cron job for infrequent checks
       cron:
         name: "{{ borgmatic_cron_name }}-check"
@@ -102,7 +104,7 @@
         minute: "{{ borgmatic_cron_checks_minute }}"
         user: "root"
         cron_file: "{{ borgmatic_cron_name }}"
-        job: "borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} --check"
+        job: "borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} check"
   when: borgmatic_large_repo
 
 - name: Add cron-job for borgmatic (normal-sized repo)

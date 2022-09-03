@@ -10,6 +10,8 @@ platforms:
     image: centos:7
   - name: almalinux-8
     image: almalinux:8
+  - name: almalinux-9
+    image: almalinux:9
   - name: fedora-latest
     image: fedora:latest
   - name: debian-bullseye
