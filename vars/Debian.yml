@@ -3,6 +3,7 @@ borg_packages:
   - libssl-dev
   - libacl1-dev
   - libacl1
+  - libfuse3-dev
   - build-essential
   - python3-setuptools
   - python3-dev
