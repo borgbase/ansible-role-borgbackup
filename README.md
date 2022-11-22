@@ -85,6 +85,8 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_store_atime`: Store atime into archive. Defaults to `true`
 - `borgmatic_store_ctime`: Store ctime into archive. Defaults to `true`
 - `ssh_key_file`: Path to a private ssh key file (default is `.ssh/id_ed25519`). It generates a ed25519 key if the file doesn't exist yet.
+- `borg_version`: Force a specific borg version to be installed
+- `borgmatic_version`: Force a specific borgmatic version to be installed
 
 
 ## Contributing

@@ -3,5 +3,7 @@ borg_dependent_python_packages:
   - cython
   - pkgconfig
 borg_python_packages:
-  - borgbackup
-  - borgmatic
+  - name: borgbackup
+    version: "{{ borg_version }}"
+  - name: borgmatic
+    version: "{{ borgmatic_version }}"

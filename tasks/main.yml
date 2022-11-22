@@ -17,7 +17,7 @@
     - "{{ ansible_lsb.id }}.yml"
 
 - name: Run OS-specific tasks
-  include: "{{ item }}"
+  include_tasks: "{{ item }}"
   with_first_found:
     - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
     - "{{ ansible_os_family }}.yml"
@@ -44,9 +44,11 @@
 
 - name: Install main Python Packages
   pip:
-    name: "{{ borg_python_packages }}"
+    name: "{{ item.name }}"
+    version: "{{ item.version | default(omit, true) }}"
     virtualenv: /opt/borgmatic
   when: borg_python_packages is defined
+  loop: "{{ borg_python_packages }}"
 
 - name: Create borgmatic command in /usr/local/bin
   copy:
