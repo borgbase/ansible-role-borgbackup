@@ -1,1 +1,12 @@
 ---
+- name: Check if EPEL repo is enabled, if installation from distro is requested
+  when: borgmatic_install_method == 'package-manager'
+  block:
+  - name: Get list of installed packages
+    ansible.builtin.package_facts:
+      manager: auto
+  - name: Ensure EPEL is enabled
+    ansible.builtin.assert:
+      that:
+        - "'epel-release' in ansible_facts.packages"
+      fail_msg: Need EPEL repo to install via distro package.

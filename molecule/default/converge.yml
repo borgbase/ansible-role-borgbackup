@@ -39,13 +39,6 @@
           hostname: database1.example.org
           port: 5433
 
-    - role: m3nu.ansible_role_borgbackup
-      borg_encryption_passphrase: CHANGEME
-      borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
-      borg_source_directories:
-        - /srv/www
-      borgmatic_install_method: package-manager
-
   post_tasks:
   - name: Install yamllint for checking config file
     pip:
