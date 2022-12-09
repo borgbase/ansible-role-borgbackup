@@ -13,5 +13,9 @@ borg_packages:
   - openssh-client
   - cron
 
+borg_system_packages:
+  - borgbackup
+  - borgmatic
+
 python_bin: python3
 pip_bin: pip3

@@ -4,5 +4,9 @@ borg_packages:
   - openssh
   - cronie
 
+borg_system_packages:
+  - borg
+  - borgmatic
+
 python_bin: python3
 pip_bin: pip3

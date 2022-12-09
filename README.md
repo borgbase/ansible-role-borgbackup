@@ -87,7 +87,8 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `ssh_key_file`: Path to a private ssh key file (default is `.ssh/id_ed25519`). It generates a ed25519 key if the file doesn't exist yet.
 - `borg_version`: Force a specific borg version to be installed
 - `borgmatic_version`: Force a specific borgmatic version to be installed
-
+- `borgmatic_install_method`: By default `pip` is used to install borgmatic. To install via your distributions package manager set this to `package-manager` and overwrite the `borg_packages` variable to contain your distributions package names required to install borgmatic. Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk.
+- `borg_system_packages`: contains the names of distributions packages for `borg(backup)` and `borgmatic`, only used if `borgmatic_install_method` is set to `package-manager`.
 
 ## Contributing
 
