@@ -1,6 +1,0 @@
----
-- name: Install borgmatic and borg via distribution package manager
-  package:
-    name: "{{ item }}"
-    state: present
-  loop: "{{ borg_system_packages }}"

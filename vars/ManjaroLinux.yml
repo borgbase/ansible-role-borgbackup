@@ -1,10 +1,21 @@
 ---
-borg_packages:
-  - borgmatic
+borg_dep_packages:
   - openssh
   - cronie
 
-borg_system_packages:
+borg_pip_packages:  # untested
+  - libssl-dev
+  - libacl1-dev
+  - libacl1
+  - build-essential
+  - python3-setuptools
+  - python3-dev
+  - python3-pip
+  - python3-pkgconfig
+  - python3-msgpack
+  - python3-venv
+
+borg_distro_packages:
   - borg
   - borgmatic
 

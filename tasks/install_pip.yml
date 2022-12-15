@@ -1,4 +1,9 @@
 ---
+- name: Install build dependencies
+  package:
+    name: "{{ borg_pip_packages }}"
+    state: present
+
 - name: Create virtualenv for borg  # noqa package-latest
   pip:
     name:

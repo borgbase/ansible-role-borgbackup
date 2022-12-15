@@ -16,26 +16,14 @@
     - "{{ ansible_os_family }}.yml"
     - "{{ ansible_lsb.id }}.yml"
 
-- name: Run OS-specific tasks
-  include_tasks: "{{ item }}"
-  with_first_found:
-    - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
-    - "{{ ansible_os_family }}.yml"
-
-- name: Install required System Packages
+- name: Install general dependencies (cron and openssh)
   package:
-    name: "{{ borg_packages }}"
+    name: "{{ borg_dep_packages }}"
     state: present
 
-- name: Install borgmatic via pip
+- name: Install Borg and Borgmatic
   ansible.builtin.include_tasks:
-    file: install_pip.yml
-  when: borgmatic_install_method == 'pip'
-
-- name: Install borgmatic via distribution package manager
-  ansible.builtin.include_tasks:
-    file: install_pkg.yml
-  when: borgmatic_install_method == 'package-manager'
+    file: install_{{ borg_install_method }}.yml
 
 - name: Ensure root has SSH key.
   user:
