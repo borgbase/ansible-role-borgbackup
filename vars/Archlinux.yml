@@ -1,11 +1,17 @@
 ---
-borg_packages:
+borg_dep_packages:
   - cronie
-  - gcc
   - openssh
+
+borg_pip_packages:
+  - gcc
   - pkgconfig
   - python-pip
   - python-setuptools
+
+borg_distro_packages:
+  - borg
+  - borgmatic
 
 python_bin: python3
 pip_bin: pip3

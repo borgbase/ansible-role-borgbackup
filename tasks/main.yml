@@ -16,50 +16,14 @@
     - "{{ ansible_os_family }}.yml"
     - "{{ ansible_lsb.id }}.yml"
 
-- name: Run OS-specific tasks
-  include_tasks: "{{ item }}"
-  with_first_found:
-    - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
-    - "{{ ansible_os_family }}.yml"
-
-- name: Install required System Packages
+- name: Install general dependencies (cron and openssh)
   package:
-    name: "{{ borg_packages }}"
+    name: "{{ borg_dep_packages }}"
     state: present
 
-- name: Create virtualenv for borg  # noqa package-latest
-  pip:
-    name:
-    - pip
-    - setuptools
-    state: latest
-    virtualenv: /opt/borgmatic
-    virtualenv_command: "{{ python_bin }} -m venv"
-
-- name: Install dependent Python Packages
-  pip:
-    name: "{{ borg_dependent_python_packages }}"
-    virtualenv: /opt/borgmatic
-  when: borg_dependent_python_packages is defined
-
-- name: Install main Python Packages
-  pip:
-    name: "{{ item.name }}"
-    version: "{{ item.version | default(omit, true) }}"
-    virtualenv: /opt/borgmatic
-  when: borg_python_packages is defined
-  loop: "{{ borg_python_packages }}"
-
-- name: Create borgmatic command in /usr/local/bin
-  copy:
-    content: |
-      #!/bin/bash
-      . /opt/borgmatic/bin/activate
-      borgmatic "$@"
-    dest: /usr/local/bin/borgmatic
-    owner: root
-    group: root
-    mode: "0755"
+- name: Install Borg and Borgmatic
+  ansible.builtin.include_tasks:
+    file: install_{{ borg_install_method }}.yml
 
 - name: Ensure root has SSH key.
   user:

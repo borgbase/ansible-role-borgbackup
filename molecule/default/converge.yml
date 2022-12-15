@@ -38,6 +38,7 @@
         - name: users
           hostname: database1.example.org
           port: 5433
+      borg_install_method: pip
 
   post_tasks:
   - name: Install yamllint for checking config file

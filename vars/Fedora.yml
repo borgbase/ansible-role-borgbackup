@@ -1,5 +1,9 @@
 ---
-borg_packages:
+borg_dep_packages:
+  - cronie
+  - openssh-clients
+
+borg_pip_packages:
   - libacl-devel
   - libacl
   - gcc
@@ -10,8 +14,10 @@ borg_packages:
   - python3-devel
   - python3-setuptools
   - python3-Cython
-  - openssh-clients
-  - cronie
+
+borg_distro_packages:
+  - borgbackup
+  - borgmatic
 
 python_bin: python3
 pip_bin: pip3
