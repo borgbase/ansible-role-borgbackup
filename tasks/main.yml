@@ -1,6 +1,6 @@
 ---
 - name: Ensure legacy hooks aren't used
-  assert:
+  ansible.builtin.assert:
     that:
       - borgmatic_failure_command is undefined
       - borgmatic_before_backup_command is undefined
@@ -17,7 +17,7 @@
     - "{{ ansible_lsb.id }}.yml"
 
 - name: Install general dependencies (cron and openssh)
-  package:
+  ansible.builtin.package:
     name: "{{ borg_dep_packages }}"
     state: present
 
@@ -26,7 +26,7 @@
     file: install_{{ borg_install_method }}.yml
 
 - name: Ensure root has SSH key.
-  user:
+  ansible.builtin.user:
     name: "root"
     generate_ssh_key: yes
     ssh_key_file: "{{ ssh_key_file }}"
@@ -34,18 +34,18 @@
   register: root_user
 
 - name: Print key created for root user (use for remote repo)
-  debug:
+  ansible.builtin.debug:
     var: root_user['ssh_public_key']
 
 - name: Ensure /etc/borgmatic exists
-  file:
+  ansible.builtin.file:
     path: /etc/borgmatic
     state: directory
     mode: 0700
     owner: root
 
 - name: Add Borgmatic configuration
-  template:
+  ansible.builtin.template:
     src: config.yaml.j2
     dest: "/etc/borgmatic/{{ borgmatic_config_name }}"
     mode: 0600
@@ -53,7 +53,7 @@
 - name: Add cron-job for borgmatic (large repo, create and check separate)
   block:
     - name: Add cron job for regular create and prune
-      cron:
+      ansible.builtin.cron:
         name: "{{ borgmatic_cron_name }}"
         hour: "{{ borgmatic_cron_hour }}"
         minute: "{{ borgmatic_cron_minute }}"
@@ -61,7 +61,7 @@
         cron_file: "{{ borgmatic_cron_name }}"
         job: "borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} -C -p"
     - name: Add cron job for infrequent checks
-      cron:
+      ansible.builtin.cron:
         name: "{{ borgmatic_cron_name }}-check"
         day: "{{ borgmatic_cron_checks_day }}"
         hour: "{{ borgmatic_cron_checks_hour }}"
@@ -74,7 +74,7 @@
 - name: Add cron-job for borgmatic (normal-sized repo)
   block:
     - name: Add cron job for create, check and prune
-      cron:
+      ansible.builtin.cron:
         name: "{{ borgmatic_cron_name }}"
         hour: "{{ borgmatic_cron_hour }}"
         minute: "{{ borgmatic_cron_minute }}"
@@ -82,13 +82,13 @@
         cron_file: "{{ borgmatic_cron_name }}"
         job: "borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
     - name: Ensure separate check cron job is absent
-      cron:
+      ansible.builtin.cron:
         name: "{{ borgmatic_cron_name }}-check"
         state: absent
   when: not borgmatic_large_repo
 
 - name: Set PATH for borgmatic cron job.
-  cron:
+  ansible.builtin.cron:
     user: "root"
     cron_file: "{{ borgmatic_cron_name }}"
     name: PATH
