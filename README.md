@@ -8,7 +8,7 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
 
 Main features:
 - Set up Borg and Borgmatic
-- Add cron job at random time
+- Add systemd timer random time
 - Provision new remote [BorgBase.com](https://www.borgbase.com) repo for storing backups (optional)
 
 
@@ -58,19 +58,27 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 
 ### Required Arguments
 - `borg_repository`: Full path to repository. Your own server or [BorgBase.com](https://www.borgbase.com) repo. Not required when using auto creation of repositories. Can be a list if you want to backup to multiple repositories.
-- `borg_source_directories`: List of local folders to back up.
+
 
 ### Optional Arguments
+- `borg_dep_packages`: Dependancy Packages to install `borg(backup)` and `borgmatic`.
+- `borg_distro_packages`: contains the names of distributions packages for `borg(backup)` and `borgmatic`, only used if `borg_install_method` is set to `package`.
 - `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
 - `borg_encryption_passphrase`: Password to use for repokey or keyfile. Empty if repo is unencrypted.
 - `borg_exclude_from`: Read exclude patterns from one or more separate named files, one pattern per line.
 - `borg_exclude_patterns`: Paths or patterns to exclude from backup. See [official documentation](https://borgbackup.readthedocs.io/en/stable/usage/help.html#borg-help-patterns) for more.
+- `borg_install_method`: By default `pip` is used to install borgmatic. To install via your distributions package manager set this to `package` and (if needed) overwrite the `borg_distro_packages` variable to contain your distributions package names required to install borgmatic. Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk.
 - `borg_lock_wait_time`: Config maximum seconds to wait for acquiring a repository/cache lock. Defaults to 5 seconds.
 - `borg_one_file_system`: Don't cross file-system boundaries. Defaults to `true`
+- `borg_pip_packages`: Dependancy Packages (pip) to install `borg(backup)` and `borgmatic`.
 - `borg_remote_path`: Path to the borg executable on the remote. It will default to `borg`.
 - `borg_remote_rate_limit`: Remote network upload rate limit in kiBytes/second.
 - `borg_retention_policy`: Retention policy for how many backups to keep in each category (daily, weekly, monthly, etc).
+- `borg_source_directories`: List of local folders to back up. Default is `/etc/hostname` to prevent an empty backup.
 - `borg_ssh_command`: Command to use instead of just "ssh". This can be used to specify ssh options.
+- `borg_version`: Force a specific borg version to be installed
+- `borg_venv_path`: Path to store the venv for `borg(backup)` and `borgmatic`
+
 - `borgmatic_check_last`: Number of archives to check. Defaults to `3`
 - `borgmatic_checks`: List of consistency checks. Defaults to `['repository']`
 - `borgmatic_config_name`: Name to use for the borgmatic config file. Defaults to `config.yaml`
@@ -84,11 +92,11 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_relocated_repo_access_is_ok`: Bypass Borg error about a repository that has been moved. Defaults to `false`
 - `borgmatic_store_atime`: Store atime into archive. Defaults to `true`
 - `borgmatic_store_ctime`: Store ctime into archive. Defaults to `true`
-- `ssh_key_file`: Path to a private ssh key file (default is `.ssh/id_ed25519`). It generates a ed25519 key if the file doesn't exist yet.
-- `borg_version`: Force a specific borg version to be installed
 - `borgmatic_version`: Force a specific borgmatic version to be installed
-- `borg_install_method`: By default `pip` is used to install borgmatic. To install via your distributions package manager set this to `package` and (if needed) overwrite the `borg_distro_packages` variable to contain your distributions package names required to install borgmatic. Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk.
-- `borg_distro_packages`: contains the names of distributions packages for `borg(backup)` and `borgmatic`, only used if `borg_install_method` is set to `package`.
+
+- `borgbackup_user`: Name of the User to create Backups (Service Account)
+- `borgbackup_group`: Name of the Group to create Backups (Service Account)
+
 
 ## Contributing
 
