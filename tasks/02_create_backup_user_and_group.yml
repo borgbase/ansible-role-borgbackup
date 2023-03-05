@@ -8,14 +8,14 @@
   block:
     - name: Add local backup group
       ansible.builtin.group:
-        name: "{{ vault_borg.backup_group }}"
+        name: "{{ borgbackup_group }}"
         state: present
 
     - name: Add local backup user
       ansible.builtin.user:
-        name: "{{ vault_borg.backup_user }}"
+        name: "{{ borgbackup_user }}"
         shell: "/bin/bash"
-        groups: "{{ vault_borg.backup_group }}"
+        groups: "{{ borgbackup_group }}"
         comment: "Backup User Account"
         append: true
 
@@ -23,7 +23,7 @@
       community.general.sudoers:
         name: "backup"
         state: present
-        user: "{{ vault_borg.backup_user }}"
+        user: "{{ borgbackup_user }}"
         nopassword: true
         commands: 
           - "/opt/borgmatic/bin/borg"
