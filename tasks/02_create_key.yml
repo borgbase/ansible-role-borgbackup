@@ -1,12 +1,12 @@
 ---
-- name: Create ssh-key for {{ borgbackup_user }} if neeeded
+- name: Create ssh-key (if neeeded) for {{ borgbackup_user }} 
   when: 
     - install_backup is not defined or install_backup
     - backup_id_rsa is not defined or backup_id_rsa | length == 0
   tags:
     - install_backup
   block:
-    - name: Ensire /home/{{ borgbackup_user }}/.ssh directory exist
+    - name: Ensire directory exist
       ansible.builtin.file:
         path: "/home/{{ borgbackup_user }}/.ssh/"
         state: directory
@@ -21,7 +21,7 @@
         owner: "{{ borgbackup_user }}"
         group: "{{ borgbackup_group }}"
     
-    - name: Set key (/home/{{ borgbackup_user }}/.ssh) permission
+    - name: Set key permission
       ansible.builtin.file:
         path: "/home/{{ borgbackup_user }}/.ssh/id_rsa.pub"
         mode: "0644"
