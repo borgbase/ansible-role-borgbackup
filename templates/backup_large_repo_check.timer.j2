@@ -6,7 +6,7 @@ Description=Start creating of Backups - see: https://www.freedesktop.org/softwar
 [Timer]
 # Day-of-the-Week Year-Month-Day Hour:Minutes:Seconds
 # Persistent -> resume backup after shutdown
-OnCalendar= {% if borgmatic_timer_day_of_the_week is defined and borgmatic_timer_day_of_the_week | lenght > 0 %} {{ borgmatic_timer_day_of_the_week }} {% endif %} *-*-{{ borgmatic_timer_checks_day }} {{ borgmatic_timer_checks_hour }}:{{ borgmatic_timer_checks_minute }}:00
+OnCalendar= {% if borgmatic_timer_day_of_the_week is defined and borgmatic_timer_day_of_the_week | length > 0 %} {{ borgmatic_timer_day_of_the_week }} {% endif %} *-*-{{ borgmatic_timer_checks_day }} {{ borgmatic_timer_checks_hour }}:{{ borgmatic_timer_checks_minute }}:00
 Persistent=true
 
 [Install]
