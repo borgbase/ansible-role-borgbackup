@@ -1,6 +1,5 @@
 ---
 borg_dep_packages:
-  - cronie
   - openssh
 
 borg_pip_packages:
