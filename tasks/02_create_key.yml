@@ -1,0 +1,69 @@
+---
+- name: Create ssh-key for {{ borgbackup_user }} if neeeded
+  when: 
+    - install_backup is not defined or install_backup
+    - backup_id_rsa is not defined or backup_id_rsa | length == 0
+  tags:
+    - install_backup
+  block:
+    - name: Ensire /home/{{ borgbackup_user }}/.ssh directory exist
+      ansible.builtin.file:
+        path: "/home/{{ borgbackup_user }}/.ssh/"
+        state: directory
+        mode: "0700"
+        owner: "{{ borgbackup_user }}"
+        group: "{{ borgbackup_group }}"
+
+    - name: Generate an OpenSSH keypair with the default values (4096 bits, rsa)
+      community.crypto.openssh_keypair:
+        path: "/home/{{ borgbackup_user }}/.ssh/id_rsa"
+        mode: "0600"
+        owner: "{{ borgbackup_user }}"
+        group: "{{ borgbackup_group }}"
+    
+    - name: Set key (/home/{{ borgbackup_user }}/.ssh) permission
+      ansible.builtin.file:
+        path: "/home/{{ borgbackup_user }}/.ssh/id_rsa.pub"
+        mode: "0644"
+        owner: "{{ borgbackup_user }}"
+        group: "{{ borgbackup_group }}"
+
+    - name: Read ssh key
+      ansible.builtin.slurp:
+        src: "/home/{{ borgbackup_user }}/.ssh/id_rsa.pub"
+      register: backup_local_ssh_key
+
+    - name: Set authorized key taken from file
+      ansible.posix.authorized_key:
+        user: "{{ backup_repository | regex_search('(.*)@', '\\1') | first }}"
+        state: present
+        key: "{{ backup_local_ssh_key['content'] | b64decode }}"
+      # This is a bit tricky, the string backup_repository consists of three parts: 
+      # "username"@"FQDN":"path/to/store/backup".
+      # With the regex we use the FQDN part to store the ssh-key on the target system.
+      delegate_to: "{{ backup_repository | regex_search('@(.*):', '\\1') | first }}"
+
+- name: Install ssh cert and key
+  when:
+    - install_backup is not defined or install_backup
+    - backup_id_rsa is defined and backup_id_rsa | length > 0
+    - backup_id_rsa_pub is defined and backup_id_rsa_pub | length > 0
+  tags:
+    - install_backup
+  block:
+    - name: Copy existing id_rsa, not genereting one
+      ansible.builtin.copy:
+        content: "{{ backup_id_rsa }}"
+        dest: "/home/{{ borgbackup_user }}/.ssh/id_rsa"
+        mode: "0600"
+        owner: "{{ borgbackup_user }}"
+        group: "{{ borgbackup_group }}"
+
+    - name: Copy existing id_rsa.pub, not genereting one
+      ansible.builtin.copy:
+        content: "{{ backup_id_rsa_pub }}"
+        dest: "/home/{{ borgbackup_user }}/.ssh/id_rsa.pub"
+        mode: "0644"
+        owner: "{{ borgbackup_user }}"
+        group: "{{ borgbackup_group }}"
+...

@@ -1,0 +1,9 @@
+---
+- name: Init repository
+  when:
+    - install_backup is not defined or install_backup
+  tags:
+    - install_backup
+  ansible.builtin.command:
+    cmd: "su - {{ borgbackup_user }} -c '/usr/local/bin/borgmatic rcreate --encryption keyfile --append-only'"
+...
