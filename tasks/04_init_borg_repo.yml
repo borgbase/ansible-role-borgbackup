@@ -2,6 +2,7 @@
 - name: Init repository
   when:
     - install_backup is not defined or install_backup
+    - borgmatic_initialization_repo is not defined or borgmatic_initialization_repo
   tags:
     - install_backup
   ansible.builtin.command:
