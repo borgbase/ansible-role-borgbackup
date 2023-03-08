@@ -1,0 +1,71 @@
+---
+- name: Add cron-job for borgmatic (large repo, create and check separate)
+  when:
+    - install_backup is not defined or install_backup
+    - borgmatic_timer is defined and borgmatic_timer == "cron"
+    - borgmatic_large_repo
+  tags:
+    - install_backup
+  block:
+    # I don't like to re-do the installation of packages here, but cron 
+    # should not be one of the automatically installed packages since there
+    # is systemd-timer as an alternative.
+    - name: Install general dependencies (cron)
+      ansible.builtin.package:
+        name: "{{ borg_cron_package }}"
+        state: present
+
+    - name: Add cron job for regular create and prune
+      cron:
+        name: "{{ borgmatic_timer_cron_name }}"
+        hour: "{{ borgmatic_timer_hour }}"
+        minute: "{{ borgmatic_timer_minute }}"
+        user: "{{ borgbackup_user }}"
+        cron_file: "{{ borgmatic_timer_cron_name }}"
+        job: "/usr/local/bin/borgmatic -C -p -c /etc/borgmatic/{{ borgmatic_config_name }}"
+
+    - name: Add cron job for infrequent checks
+      cron:
+        name: "{{ borgmatic_timer_cron_name }}-check"
+        day: "{{ borgmatic_timer_checks_day }}"
+        hour: "{{ borgmatic_timer_checks_hour }}"
+        minute: "{{ borgmatic_timer_checks_minute }}"
+        user: "{{ borgbackup_user }}"
+        cron_file: "{{ borgmatic_timer_cron_name }}"
+        job: "/usr/local/bin/borgmatic -k -c /etc/borgmatic/{{ borgmatic_config_name }}"
+
+- name: Add cron-job for borgmatic (normal-sized repo)
+  when:
+    - install_backup is not defined or install_backup
+    - borgmatic_timer is defined and borgmatic_timer == "cron"
+    - not borgmatic_large_repo
+  tags:
+    - install_backup
+  block:
+    - name: Add cron job for create, check and prune
+      cron:
+        name: "{{ borgmatic_timer_cron_name }}"
+        hour: "{{ borgmatic_timer_hour }}"
+        minute: "{{ borgmatic_timer_minute }}"
+        user: "{{ borgbackup_user }}"
+        cron_file: "{{ borgmatic_timer_cron_name }}"
+        job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
+
+    - name: Ensure separate check cron job is absent
+      cron:
+        name: "{{ borgmatic_timer_cron_name }}-check"
+        state: absent
+
+- name: Set PATH for borgmatic cron job.
+  when:
+    - install_backup is not defined or install_backup
+    - borgmatic_timer is defined and borgmatic_timer == "cron"
+  tags:
+    - install_backup
+  cron:
+    user: "{{ borgbackup_user }}"
+    cron_file: "{{ borgmatic_timer_cron_name }}"
+    name: PATH
+    env: yes
+    value: /usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+...
