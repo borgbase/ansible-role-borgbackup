@@ -20,6 +20,7 @@ Main features:
   - role: m3nu.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
     borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+    borgmatic_timer: systemd
     borg_source_directories:
       - /srv/www
       - /var/lib/automysqlbackup
@@ -37,7 +38,6 @@ Main features:
       - name: users
         hostname: database1.example.org
         port: 5433
-
 ```
 
 
@@ -90,6 +90,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_hooks`: Hooks to monitor your backups e.g. with [Healthchecks](https://healthchecks.io/). See [official documentation](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/) for more.
 - `borgmatic_initialization_repo`: Auto initialization of the repo on the backup server. Defaults to `true`
 - `borgmatic_large_repo`: Less frequent, monthly repo checking. Defaults to `true`
+- `borgmatic_timer`: If the variable is set, a timer is installed. A choice must be made between `cron` and `systemd`.
 - `borgmatic_relocated_repo_access_is_ok`: Bypass Borg error about a repository that has been moved. Defaults to `false`
 - `borgmatic_store_atime`: Store atime into archive. Defaults to `true`
 - `borgmatic_store_ctime`: Store ctime into archive. Defaults to `true`
