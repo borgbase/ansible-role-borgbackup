@@ -14,8 +14,8 @@ borg_retention_policy:
   keep_weekly: 4
   keep_monthly: 6
 borg_version: false
-borgmatic_timer_systemd: true
-borgmatic_cron_name: "borgmatic"
+borgmatic_timer_cron_name: "borgmatic"
+borgmatic_timer: systemd
 borgmatic_timer_hour: "{{ range(0, 5) | random(seed=inventory_hostname) }}"
 borgmatic_timer_minute: "{{ range(0, 59) | random(seed=inventory_hostname) }}"
 borgmatic_timer_day_of_the_week: "{{ ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] | random }}" # or ""
