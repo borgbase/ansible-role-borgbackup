@@ -172,3 +172,11 @@ argument_specs:
         type: bool
         required: false
         description: Auto initialization of the repo on the backup server.
+      borgmatic_timer_cron_name:
+        type: str
+        required: false
+        description: Name of the cron Job
+      borgmatic_timer:
+        type: str
+        required: false
+        description: If the variable is set, a timer is installed. A choice must be made between "cron" and "systemd".
