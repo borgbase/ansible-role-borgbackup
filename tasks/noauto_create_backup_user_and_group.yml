@@ -1,0 +1,39 @@
+---
+- name: Setup backup environment
+  tags:
+    - install_backup
+  when:
+    - install_backup is not defined or install_backup
+    - backup_create_local_user is not defined or backup_create_local_user
+    - borgbackup_user != "root"
+  block:
+    - name: Add local backup group
+      ansible.builtin.group:
+        name: "{{ borgbackup_group }}"
+        state: present
+
+    - name: Add local backup user
+      ansible.builtin.user:
+        name: "{{ borgbackup_user }}"
+        shell: "/bin/bash"
+        groups: "{{ borgbackup_group }}"
+        comment: "Backup User Account"
+        append: true
+      register: user_info
+
+    - name: Save the user_info, we need them for the home_dir
+      ansible.builtin.set_fact:
+        backup_user_info: "{{ user_info }}"
+
+    - name: Add sudo users
+      community.general.sudoers:
+        name: "backup"
+        state: present
+        user: "{{ borgbackup_user }}"
+        nopassword: true
+        commands: 
+          - "/opt/borgmatic/bin/borg"
+          - "/usr/local/bin/borgmatic -C -p -c /etc/borgmatic/{{ borgmatic_config_name }}"
+          - "/usr/local/bin/borgmatic -k -c /etc/borgmatic/{{ borgmatic_config_name }}"
+          - "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
+...
