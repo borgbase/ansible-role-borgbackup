@@ -39,6 +39,9 @@
           hostname: database1.example.org
           port: 5433
       borg_install_method: pip
+      backup_ssh_key_file: "{{ backup_user_info.home }}/.ssh/id_rsa"
+      backup_ssh_command: "ssh -i {{ backup_ssh_key_file }} -o StrictHostKeyChecking=no"
+      borgmatic_timer: "systemd"
 
   post_tasks:
   - name: Install yamllint for checking config file
