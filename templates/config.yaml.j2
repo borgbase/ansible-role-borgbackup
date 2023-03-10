@@ -112,7 +112,7 @@ storage:
 
     # Path for Borg encryption key files. Defaults to
     # $borg_base_directory/.config/borg/keys
-    borg_keys_directory: /home/{{ borgbackup_user }}/.config/borg/keys
+    borg_keys_directory: {{ backup_user_info.home }}/.config/borg/keys
 
 # Retention policy for how many backups to keep in each category. See
 # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-prune for details.

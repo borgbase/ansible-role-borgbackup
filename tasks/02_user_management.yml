@@ -1,20 +1,31 @@
 ---
 # So in different positions in that role we need the user home
 # Since we cannot be sure that this FSH is compatible we will determine it.
-- name: Get home if borgbackup_user == "root"
-  when: borgbackup_user == "root"
-  ansible.builtin.user:
-    name: "{{ borgbackup_user }}"
-    state: present
-  register: user_info
-  changed_when: false
-  check_mode: true  # Important, otherwise user will be created
+- name: Get home dir
+  when: 
+    - borgbackup_user == "root"
+    - install_backup is not defined or install_backup
+  tags:
+    - install_backup
+  block:
+    - name: Get home if borgbackup_user == "root"
+      ansible.builtin.user:
+        name: "{{ borgbackup_user }}"
+        state: present
+      register: user_info
+      changed_when: false
+      check_mode: true  # Important, otherwise user will be created
 
-- name: Save the user_info, we need them for the home_dir
-  ansible.builtin.set_fact:
-    backup_user_info: "{{ user_info }}"
+    - name: Save the user_info, we need them for the home_dir
+      ansible.builtin.set_fact:
+      backup_user_info: "{{ user_info }}"
 
 - name: Create User if borgbackup_user != "root"
+  when: 
+    - borgbackup_user == "root"
+    - install_backup is not defined or install_backup
+  tags:
+    - install_backup
   ansible.builtin.include_tasks:
     file: noauto_create_backup_user_and_group.yml
 ...

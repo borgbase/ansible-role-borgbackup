@@ -12,7 +12,7 @@ Main features:
 - Provision new remote [BorgBase.com](https://www.borgbase.com) repo for storing backups (optional)
 
 
-## Example Playbook
+## Example Playbook with root as backup user
 
 ```
 - hosts: webservers
@@ -40,6 +40,37 @@ Main features:
         port: 5433
 ```
 
+## Example Playbook with service user
+```
+- hosts: webservers
+  roles:
+  - role: m3nu.ansible_role_borgbackup
+    borg_encryption_passphrase: CHANGEME
+    borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+    borgmatic_timer: systemd
+    backup_ssh_key_file: "{{ backup_user_info.home }}/.ssh/id_rsa"
+    backup_ssh_command: "ssh -i {{ backup_ssh_key_file }} -o StrictHostKeyChecking=no"
+    borgmatic_timer: systemd
+    borgbackup_user: "srv_backup"
+    borgbackup_group: "srv_backup"
+    borg_source_directories:
+      - /srv/www
+      - /var/lib/automysqlbackup
+    borg_exclude_patterns:
+      - /srv/www/old-sites
+    borg_retention_policy:
+      keep_hourly: 3
+      keep_daily: 7
+      keep_weekly: 4
+      keep_monthly: 6
+    borgmatic_hooks:
+      before_backup:
+      - echo "`date` - Starting backup."
+      postgresql_databases:
+      - name: users
+        hostname: database1.example.org
+        port: 5433
+```
 
 ## Installation
 
