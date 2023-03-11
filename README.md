@@ -48,8 +48,8 @@ Main features:
     borg_encryption_passphrase: CHANGEME
     borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
     borgmatic_timer: systemd
-    backup_ssh_key_file: "{{ backup_user_info.home }}/.ssh/id_rsa"
-    backup_ssh_command: "ssh -i {{ backup_ssh_key_file }} -o StrictHostKeyChecking=no"
+    borg_ssh_key_file: "{{ backup_user_info.home }}/.ssh/id_rsa"
+    borg_ssh_command: "ssh -i {{ backup_ssh_key_file }} -o StrictHostKeyChecking=no"
     borgmatic_timer: systemd
     borgbackup_user: "srv_backup"
     borgbackup_group: "srv_backup"
