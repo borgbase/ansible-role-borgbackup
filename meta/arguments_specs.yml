@@ -181,7 +181,3 @@ argument_specs:
         type: str
         required: false
         description: If the variable is set, a timer is installed. A choice must be made between "cron" and "systemd".
-      install_backup:
-        type: bool
-        required: false
-        description: If the varialbe is set to false the installation of the rolle is skipped.

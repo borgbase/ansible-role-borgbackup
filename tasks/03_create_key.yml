@@ -1,7 +1,6 @@
 ---
 - name: Create ssh-key (if neeeded) for {{ borgbackup_user }} 
   when: 
-    - install_backup is not defined or install_backup
     - backup_id_rsa is not defined or backup_id_rsa | length == 0
   tags:
     - install_backup
@@ -45,7 +44,6 @@
 
 - name: Install ssh cert and key for user
   when:
-    - install_backup is not defined or install_backup
     - backup_id_rsa is defined and backup_id_rsa | length > 0
     - backup_id_rsa_pub is defined and backup_id_rsa_pub | length > 0
   tags:

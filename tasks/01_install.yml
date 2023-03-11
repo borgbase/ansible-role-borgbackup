@@ -1,6 +1,5 @@
 ---
 - name: Install borgbackup
-  when: install_backup is not defined or install_backup
   tags:
     - install_backup
   block:

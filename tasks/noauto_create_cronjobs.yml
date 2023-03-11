@@ -1,7 +1,6 @@
 ---
 - name: Add cron-job for borgmatic (large repo, create and check separate)
   when:
-    - install_backup is not defined or install_backup
     - borgmatic_timer is defined and borgmatic_timer == "cron"
     - borgmatic_large_repo
   tags:
@@ -36,7 +35,6 @@
 
 - name: Add cron-job for borgmatic (normal-sized repo)
   when:
-    - install_backup is not defined or install_backup
     - borgmatic_timer is defined and borgmatic_timer == "cron"
     - not borgmatic_large_repo
   tags:
@@ -58,7 +56,6 @@
 
 - name: Set PATH for borgmatic cron job.
   when:
-    - install_backup is not defined or install_backup
     - borgmatic_timer is defined and borgmatic_timer == "cron"
   tags:
     - install_backup

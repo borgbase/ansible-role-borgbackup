@@ -1,7 +1,6 @@
 ---
 - name: Create borgbackup timer
   when:
-    - install_backup is not defined or install_backup
     - borgmatic_timer is defined and borgmatic_timer == "systemd"
   tags:
     - install_backup

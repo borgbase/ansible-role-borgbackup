@@ -3,7 +3,6 @@
   tags:
     - install_backup
   when:
-    - install_backup is not defined or install_backup
     - backup_create_local_user is not defined or backup_create_local_user
     - borgbackup_user != "root"
   block:
