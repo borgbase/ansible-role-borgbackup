@@ -33,14 +33,18 @@
       register: backup_local_ssh_key
 
     - name: Set authorized key taken from file
+      when:
+        - borgmatic_initialization_repo is defined and borgmatic_initialization_repo
       ansible.posix.authorized_key:
-        user: "{{ backup_repository | regex_search('(.*)@', '\\1') | first }}"
+        # borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+        # habe thee parts: "username"@"FQDN":"path/to/store/backup", specific:
+        #   a) user: m5vz9gp4
+        #   b) fqdn: m5vz9gp4.repo.borgbase.co
+        #   c) dir: repo
+        user: "{{ borg_repository | regex_search('(.*)@', '\\1') | first }}" # part a)
         state: present
         key: "{{ backup_local_ssh_key['content'] | b64decode }}"
-      # This is a bit tricky, the string backup_repository consists of three parts: 
-      # "username"@"FQDN":"path/to/store/backup".
-      # With the regex we use the FQDN part to store the ssh-key on the target system.
-      delegate_to: "{{ backup_repository | regex_search('@(.*):', '\\1') | first }}"
+      delegate_to: "{{ borg_repository | regex_search('@(.*):', '\\1') | first }}" # part b)
 
 - name: Install ssh cert and key for user
   when:
