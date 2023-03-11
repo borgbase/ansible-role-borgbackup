@@ -18,7 +18,7 @@
         state: present
 
   roles:
-    - role: m3nu.ansible_role_borgbackup
+    - role: conloos.ansible-role-borgbackup
       borg_encryption_passphrase: CHANGEME
       borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
       borg_source_directories:
