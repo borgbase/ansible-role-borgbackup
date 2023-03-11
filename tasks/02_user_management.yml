@@ -2,7 +2,7 @@
 # So in different positions in that role we need the user home
 # Since we cannot be sure that this FSH is compatible we will determine it.
 - name: Get home dir
-  when: 
+  when:
     - borgbackup_user == "root"
     - install_backup is not defined or install_backup
   tags:
@@ -18,10 +18,10 @@
 
     - name: Save the user_info, we need them for the home_dir
       ansible.builtin.set_fact:
-      backup_user_info: "{{ user_info }}"
+        backup_user_info: "{{ user_info }}"
 
 - name: Create User if borgbackup_user != "root"
-  when: 
+  when:
     - borgbackup_user == "root"
     - install_backup is not defined or install_backup
   tags:
