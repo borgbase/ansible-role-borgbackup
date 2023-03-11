@@ -181,3 +181,7 @@ argument_specs:
         type: str
         required: false
         description: If the variable is set, a timer is installed. A choice must be made between "cron" and "systemd".
+      borg_ssh_key_type:
+        type: str
+        required: false
+        description: The algorithm used to generate the SSH private key
