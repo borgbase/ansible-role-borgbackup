@@ -1,7 +1,10 @@
 ---
+# In this Play an ssh key pair is created for login to the backup server and secure data transfer.
+# If you select: "borgmatic_initialization_repo: true",
+# the key will automaticly be added to the authorized_keys on the target system.
+# We do not want the possibly existing key to be used/distributed, 
+# so a backup-specific (backup/backup.pub) one is created.
 - name: Create ssh-key (if neeeded) for {{ borgbackup_user }} 
-  when: 
-    - backup_id_rsa is not defined or backup_id_rsa | length == 0
   tags:
     - install_backup
   block:
@@ -13,34 +16,36 @@
         owner: "{{ borgbackup_user }}"
         group: "{{ borgbackup_group }}"
 
-    - name: Generate an OpenSSH keypair with the default values (4096 bits, rsa)
+    - name: Generate an OpenSSH keypair
       community.crypto.openssh_keypair:
-        path: "{{ backup_user_info.home }}/.ssh/id_rsa"
+        path: "{{ backup_user_info.home }}/.ssh/backup"
         mode: "0600"
+        type: "{{ borg_ssh_key_type }}"
         owner: "{{ borgbackup_user }}"
         group: "{{ borgbackup_group }}"
     
     - name: Set key permission
       ansible.builtin.file:
-        path: "{{ backup_user_info.home }}/.ssh/id_rsa.pub"
+        path: "{{ backup_user_info.home }}/.ssh/backup.pub"
         mode: "0644"
         owner: "{{ borgbackup_user }}"
         group: "{{ borgbackup_group }}"
 
     - name: Read ssh key
       ansible.builtin.slurp:
-        src: "{{ backup_user_info.home }}/.ssh/id_rsa.pub"
+        src: "{{ backup_user_info.home }}/.ssh/backup.pub"
       register: backup_local_ssh_key
 
     - name: Set authorized key taken from file
       when:
         - borgmatic_initialization_repo is defined and borgmatic_initialization_repo
       ansible.posix.authorized_key:
-        # borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
-        # habe thee parts: "username"@"FQDN":"path/to/store/backup", specific:
-        #   a) user: m5vz9gp4
-        #   b) fqdn: m5vz9gp4.repo.borgbase.co
-        #   c) dir: repo
+        # example:
+        #   borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+        #   have three parts: "username"@"FQDN":"path/to/store/backup", specific:
+        #     a) user: m5vz9gp4
+        #     b) fqdn: m5vz9gp4.repo.borgbase.co
+        #     c) dir: repo
         user: "{{ borg_repository | regex_search('(.*)@', '\\1') | first }}" # part a)
         state: present
         key: "{{ backup_local_ssh_key['content'] | b64decode }}"
