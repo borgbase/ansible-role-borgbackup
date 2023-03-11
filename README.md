@@ -146,4 +146,4 @@ MIT/BSD
 
 ## Author
 
-© 2018-2020 Manuel Riel and contributors.
+© 2018-2023 Manuel Riel and contributors.
