@@ -5,9 +5,10 @@ borg_one_file_system: true
 borg_exclude_from: []
 borg_encryption_passcommand: false
 borg_lock_wait_time: 5
-borg_ssh_command: false # If you use a useraccount and not root see the next lines
-# borg_ssh_key_file: "{{ backup_user_info.home }}/.ssh/id_rsa"
+borg_ssh_key_file: "{{ backup_user_info.home }}/.ssh/backup"
+borg_ssh_command: "ssh -i {{ backup_ssh_key_file }}"
 # borg_ssh_command: "ssh -i {{ backup_ssh_key_file }} -o StrictHostKeyChecking=no"
+borg_ssh_key_type: "rsa"
 borg_remote_path: false
 borg_remote_rate_limit: 0
 borg_retention_policy:
