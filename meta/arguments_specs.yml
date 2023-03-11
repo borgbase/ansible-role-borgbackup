@@ -171,6 +171,7 @@ argument_specs:
       borgmatic_initialization_repo:
         type: bool
         required: false
+        default: false
         description: Auto initialization of the repo on the backup server.
       borgmatic_timer_cron_name:
         type: str
