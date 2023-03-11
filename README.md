@@ -92,6 +92,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 
 
 ### Optional Arguments
+- `install_backup`: If the varialbe (bool) is set to false the installation of the rolle is skipped.
 - `borg_dep_packages`: Dependancy Packages to install `borg(backup)` and `borgmatic`.
 - `borg_distro_packages`: contains the names of distributions packages for `borg(backup)` and `borgmatic`, only used if `borg_install_method` is set to `package`.
 - `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
