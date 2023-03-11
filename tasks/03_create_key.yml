@@ -50,4 +50,9 @@
         state: present
         key: "{{ backup_local_ssh_key['content'] | b64decode }}"
       delegate_to: "{{ borg_repository | regex_search('@(.*):', '\\1') | first }}" # part b)
+
+    - name: Print key if the borgmatic_initialization_repo is false
+      when: borgmatic_initialization_repo is not defined or not borgmatic_initialization_repo
+      ansible.builtin.debug:
+        msg: "The generated key is: {{ backup_local_ssh_key['content'] | b64decode }}"
 ...
