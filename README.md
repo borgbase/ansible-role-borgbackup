@@ -48,7 +48,7 @@ Main features:
     borg_encryption_passphrase: CHANGEME
     borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
     borgmatic_timer: systemd
-    borg_ssh_key_file: "{{ backup_user_info.home }}/.ssh/id_rsa"
+    borg_ssh_key_file: "{{ backup_user_info.home }}/.ssh/backup"
     borg_ssh_command: "ssh -i {{ backup_ssh_key_file }} -o StrictHostKeyChecking=no"
     borgmatic_timer: systemd
     borgbackup_user: "srv_backup"
@@ -107,7 +107,9 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borg_remote_rate_limit`: Remote network upload rate limit in kiBytes/second.
 - `borg_retention_policy`: Retention policy for how many backups to keep in each category (daily, weekly, monthly, etc).
 - `borg_source_directories`: List of local folders to back up. Default is `/etc/hostname` to prevent an empty backup.
+- `borg_ssh_key_file`: SSH-key to be used. Default `~/.ssh/backup`
 - `borg_ssh_command`: Command to use instead of just "ssh". This can be used to specify ssh options.
+- `borg_ssh_key_type`: The algorithm used to generate the SSH private key. Choose: `rsa`, `dsa`, `rsa1`, `ecdsa`, `ed25519`. Default: `rsa`
 - `borg_version`: Force a specific borg version to be installed
 - `borg_venv_path`: Path to store the venv for `borg(backup)` and `borgmatic`
 
