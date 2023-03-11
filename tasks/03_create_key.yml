@@ -45,27 +45,4 @@
         state: present
         key: "{{ backup_local_ssh_key['content'] | b64decode }}"
       delegate_to: "{{ borg_repository | regex_search('@(.*):', '\\1') | first }}" # part b)
-
-- name: Install ssh cert and key for user
-  when:
-    - backup_id_rsa is defined and backup_id_rsa | length > 0
-    - backup_id_rsa_pub is defined and backup_id_rsa_pub | length > 0
-  tags:
-    - install_backup
-  block:
-    - name: Copy existing id_rsa, not genereting one
-      ansible.builtin.copy:
-        content: "{{ backup_id_rsa }}"
-        dest: "{{ backup_user_info.home }}/.ssh/id_rsa"
-        mode: "0600"
-        owner: "{{ borgbackup_user }}"
-        group: "{{ borgbackup_group }}"
-
-    - name: Copy existing id_rsa.pub, not genereting one
-      ansible.builtin.copy:
-        content: "{{ backup_id_rsa_pub }}"
-        dest: "{{ backup_user_info.home }}/.ssh/id_rsa.pub"
-        mode: "0644"
-        owner: "{{ borgbackup_user }}"
-        group: "{{ borgbackup_group }}"
 ...
