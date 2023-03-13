@@ -32,7 +32,5 @@
         nopassword: true
         commands: 
           - "/opt/borgmatic/bin/borg"
-          - "/usr/local/bin/borgmatic -C -p -c /etc/borgmatic/{{ borgmatic_config_name }}"
-          - "/usr/local/bin/borgmatic -k -c /etc/borgmatic/{{ borgmatic_config_name }}"
           - "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
 ...

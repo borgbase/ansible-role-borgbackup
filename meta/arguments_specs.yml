@@ -49,14 +49,6 @@ argument_specs:
         type: str
         default: root
         description: Name of the Group to create Backups (Service Account)
-      backup_id_rsa:
-        type: path
-        required: false
-        description: Path to the ssh-cert for the backup user
-      backup_id_rsa_pub:
-        type: path
-        required: false
-        description: Path to the ssh-key for the backup user
       borg_source_directories:
         type: List
         default: "/etc/hostname"
@@ -109,6 +101,10 @@ argument_specs:
         type: int
         required: false
         description: Remote network upload rate limit in kiBytes/second.
+      borg_ssh_key_file:
+        type: str
+        required: false
+        description: Path to ssh-key
       borg_ssh_command:
         type: str
         description: Command to use instead of just ssh. This can be used to specify ssh options.

@@ -6,8 +6,8 @@ borg_exclude_from: []
 borg_encryption_passcommand: false
 borg_lock_wait_time: 5
 borg_ssh_key_file: "{{ backup_user_info.home }}/.ssh/backup"
-borg_ssh_command: "ssh -i {{ backup_ssh_key_file }}"
-# borg_ssh_command: "ssh -i {{ backup_ssh_key_file }} -o StrictHostKeyChecking=no"
+borg_ssh_command: "ssh -i {{ borg_ssh_key_file }}"
+# borg_ssh_command: "ssh -i {{ borg_ssh_key_file }} -o StrictHostKeyChecking=no"
 borg_ssh_key_type: "rsa"
 borg_remote_path: false
 borg_remote_rate_limit: 0
@@ -21,14 +21,9 @@ borgmatic_timer_cron_name: "borgmatic"
 borgmatic_timer: systemd
 borgmatic_timer_hour: "{{ range(0, 5) | random(seed=inventory_hostname) }}"
 borgmatic_timer_minute: "{{ range(0, 59) | random(seed=inventory_hostname) }}"
-borgmatic_timer_day_of_the_week: "{{ ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] | random }}" # or ""
-borgmatic_timer_checks_day: "*" # "{{ range(1, 28) | random(seed=inventory_hostname) }}"
-borgmatic_timer_checks_hour: "{{ range(9, 24) | random(seed=inventory_hostname) }}"
-borgmatic_timer_checks_minute: "{{ 59 | random(seed=inventory_hostname) }}"
 borg_install_method: pip
 
 borgmatic_config_name: config.yaml
-borgmatic_large_repo: true
 borgmatic_hooks:
   on_error:
   - echo "`date` - Error while creating a backup."
@@ -37,7 +32,10 @@ borgmatic_hooks:
   after_backup:
   - echo "`date` - Finished backup."
 borgmatic_checks:
-  - repository
+  - name: repository
+    frequency: "2 Weeks"
+  - name: archives
+    frequency: "1 month"
 borgmatic_check_last: 3
 borgmatic_store_atime: true
 borgmatic_store_ctime: true

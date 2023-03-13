@@ -5,85 +5,39 @@
   tags:
     - install_backup
   block:
-    - name: Add systemd.timer for borgmatic (large repo, create and check separate)
-      when: borgmatic_large_repo
-      block:
-        - name: Copy systemd files
-          ansible.builtin.template:
-            src: "{{ item.src }}"
-            dest: "{{ item.dest }}"
-            owner: root
-            group: root
-            backup: true
-            mode: "{{ item.mode }}"
-          with_items:
-            - { src: "backup_large_repo_check.timer.j2", dest: "/usr/lib/systemd/system/backup_large_repo_check.timer", mode: "0644" }
-            - { src: "backup_large_repo_check.service.j2", dest: "/usr/lib/systemd/system/backup_large_repo_check.service", mode: "0644" }
-            - { src: "backup_large_repo.timer.j2", dest: "/usr/lib/systemd/system/backup_large_repo.timer", mode: "0644" }
-            - { src: "backup_large_repo.service.j2", dest: "/usr/lib/systemd/system/backup_large_repo.service", mode: "0644" }
+    - name: Copy systemd files
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: root
+        backup: true
+        mode: "{{ item.mode }}"
+      with_items:
+        - { src: "backup.timer.j2", dest: "/usr/lib/systemd/system/backup.timer", mode: "0644" }
+        - { src: "backup.service.j2", dest: "/usr/lib/systemd/system/backup.service", mode: "0644" }
 
-        - name: Populate service facts (large repo, create and check separate)
-          ansible.builtin.service_facts:
+    - name: Populate service facts
+      ansible.builtin.service_facts:
 
-        - name: Restart borgmatic services (large repo, create and check separate)
-          ansible.builtin.systemd:
-            name: "{{ item }}"
-            state: restarted
-            enabled: true
-            masked: false
-            daemon_reload: true
-          when: "item in services"
-          with_items:
-            - "backup_large_repo_check.service"
-            - "backup_large_repo.service"
-
-        # bug: Need own section without masked else the timer are skipped
-        - name: Restart borgmatic timers (large repo, create and check separate)
-          ansible.builtin.systemd:
-            name: "{{ item }}"
-            state: started
-            enabled: true
-            daemon_reload: true
-          with_items:
-            - "backup_large_repo_check.timer"
-            - "backup_large_repo.timer"
-
-    - name: Add systemd.timer for borgmatic (normal-sized repo)
-      when: not borgmatic_large_repo
-      block:
-        - name: Copy systemd files (normal-sized repo)
-          ansible.builtin.template:
-            src: "{{ item.src }}"
-            dest: "{{ item.dest }}"
-            owner: root
-            group: root
-            backup: true
-            mode: "{{ item.mode }}"
-          with_items:
-            - { src: "backup_normal_repo.timer.j2", dest: "/usr/lib/systemd/system/backup_normal_repo.timer", mode: "0644" }
-            - { src: "backup_normal_repo.service.j2", dest: "/usr/lib/systemd/system/backup_normal_repo.service", mode: "0644" }
-
-        - name: Populate service facts
-          ansible.builtin.service_facts:
-
-        - name: Restart borgmatic services (normal-sized repo)
-          ansible.builtin.systemd:
-            name: "{{ item }}"
-            state: started
-            enabled: true
-            masked: false
-            daemon_reload: true
-          when: "item in services"
-          with_items:
-            - backup_normal_repo.service
-        
-        # bug: Need own section without masked else the timer ar skipped
-        - name: Restart borgmatic timers (normal-sized repo)
-          ansible.builtin.systemd:
-            name: "{{ item }}"
-            state: started
-            enabled: true
-            daemon_reload: true
-          with_items:
-            - "backup_normal_repo.timer"
+    - name: Restart borgmatic services
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+        masked: false
+        daemon_reload: true
+      when: "item in services"
+      with_items:
+        - backup.service
+    
+    # bug: Need own section without masked else the timer are skipped
+    - name: Restart borgmatic timers
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+      with_items:
+        - "backup.timer"
 ...

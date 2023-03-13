@@ -1,0 +1,13 @@
+# Managed by Ansible, please don't edit manually
+
+[Unit]
+Description=Start creating of Backups - see: https://www.freedesktop.org/software/systemd/man/systemd.time.html#
+
+[Timer]
+# Day-of-the-Week Year-Month-Day Hour:Minutes:Seconds
+# Persistent -> resume backup after shutdown
+OnCalendar= *-*-* {{ borgmatic_timer_hour }}:{{ borgmatic_timer_minute }}:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
