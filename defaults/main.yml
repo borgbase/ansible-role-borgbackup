@@ -31,6 +31,7 @@ borgmatic_hooks:
   - echo "`date` - Starting backup."
   after_backup:
   - echo "`date` - Finished backup."
+# See: https://torsion.org/borgmatic/docs/how-to/deal-with-very-large-backups/#check-frequency
 borgmatic_checks:
   - name: repository
     frequency: "2 Weeks"
