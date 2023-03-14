@@ -53,7 +53,6 @@ Main features:
     borgmatic_timer: systemd
     borgbackup_user: "srv_backup"
     borgbackup_group: "srv_backup"
-    borgmatic_initialization_repo: false
     borg_source_directories:
       - /srv/www
       - /var/lib/automysqlbackup
@@ -119,7 +118,6 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_timer_hour`: Hour when regular create and prune cron/systemd-timer job will run. Defaults to `{{ 6 | random }}`
 - `borgmatic_timer_minute`: Minute when regular create and prune cron/systemd-timer job will run. Defaults to  `{{ 59 | random }}`
 - `borgmatic_hooks`: Hooks to monitor your backups e.g. with [Healthchecks](https://healthchecks.io/). See [official documentation](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/) for more.
-- `borgmatic_initialization_repo`: Auto initialization of the repo on the backup server. Defaults to `false`
 - `borgmatic_timer`: If the variable is set, a timer is installed. A choice must be made between `cron` and `systemd`.
 - `borgmatic_relocated_repo_access_is_ok`: Bypass Borg error about a repository that has been moved. Defaults to `false`
 - `borgmatic_store_atime`: Store atime into archive. Defaults to `true`
