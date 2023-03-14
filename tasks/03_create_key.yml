@@ -1,7 +1,5 @@
 ---
 # In this Play an ssh key pair is created for login to the backup server and secure data transfer.
-# If you select: "borgmatic_initialization_repo: true",
-# the key will automaticly be added to the authorized_keys on the target system.
 # We do not want the possibly existing key to be used/distributed, 
 # so a backup-specific (backup/backup.pub) one is created.
 - name: Create ssh-key (if neeeded) for {{ borgbackup_user }} 
@@ -36,23 +34,7 @@
         src: "{{ backup_user_info.home }}/.ssh/backup.pub"
       register: backup_local_ssh_key
 
-    - name: Set authorized key taken from file
-      when:
-        - borgmatic_initialization_repo is defined and borgmatic_initialization_repo
-      ansible.posix.authorized_key:
-        # example:
-        #   borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
-        #   have three parts: "username"@"FQDN":"path/to/store/backup", specific:
-        #     a) user: m5vz9gp4
-        #     b) fqdn: m5vz9gp4.repo.borgbase.co
-        #     c) dir: repo
-        user: "{{ borg_repository | regex_search('(.*)@', '\\1') | first }}" # part a)
-        state: present
-        key: "{{ backup_local_ssh_key['content'] | b64decode }}"
-      delegate_to: "{{ borg_repository | regex_search('@(.*):', '\\1') | first }}" # part b)
-
-    - name: Print key if the borgmatic_initialization_repo is false
-      when: borgmatic_initialization_repo is not defined or not borgmatic_initialization_repo
+    - name: Print key
       ansible.builtin.debug:
         msg: "The generated key is: {{ backup_local_ssh_key['content'] | b64decode }}"
 ...

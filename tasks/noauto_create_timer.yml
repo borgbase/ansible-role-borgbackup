@@ -20,11 +20,11 @@
     - name: Populate service facts
       ansible.builtin.service_facts:
 
-    - name: Restart borgmatic services
+    - name: Stop borgmatic services
       ansible.builtin.systemd:
         name: "{{ item }}"
-        state: started
-        enabled: true
+        state: stopped
+        enabled: false
         masked: false
         daemon_reload: true
       when: "item in services"
@@ -32,12 +32,17 @@
         - backup.service
     
     # bug: Need own section without masked else the timer are skipped
-    - name: Restart borgmatic timers
+    - name: Stop borgmatic timers
       ansible.builtin.systemd:
         name: "{{ item }}"
-        state: started
-        enabled: true
+        state: stopped
+        enabled: false
         daemon_reload: true
       with_items:
         - "backup.timer"
+
+    - name: Show hints
+      when: "'backup_init_repo' not in ansible_run_tags"
+      ansible.builtin.debug:
+        msg: "Attention: Since the repo was not initialized automatically, the systemd service (backup.service) and the timer (backup.timer) are not activated."
 ...
