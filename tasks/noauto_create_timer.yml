@@ -20,29 +20,34 @@
     - name: Populate service facts
       ansible.builtin.service_facts:
 
-    - name: Stop borgmatic services
-      ansible.builtin.systemd:
-        name: "{{ item }}"
-        state: stopped
-        enabled: false
-        masked: false
-        daemon_reload: true
-      when: "item in services"
-      with_items:
-        - backup.service
-    
-    # bug: Need own section without masked else the timer are skipped
-    - name: Stop borgmatic timers
-      ansible.builtin.systemd:
-        name: "{{ item }}"
-        state: stopped
-        enabled: false
-        daemon_reload: true
-      with_items:
-        - "backup.timer"
+      # If the role is running and the repo is not yet initialized, an error will occur.
+      # Therefore the service is stopped by default and must be started manually.
+    - name: Stop fresh installed backup.timer and backup.service
+      when: ('backup.service' not in services)
+      block: 
+        - name: Stop borgmatic services
+          ansible.builtin.systemd:
+            name: "{{ item }}"
+            state: stopped
+            enabled: false
+            masked: false
+            daemon_reload: true
+          when: "item in services"
+          with_items:
+            - backup.service
+        
+        # bug: Need own section without masked else the timer are skipped
+        - name: Stop borgmatic timers
+          ansible.builtin.systemd:
+            name: "{{ item }}"
+            state: stopped
+            enabled: false
+            daemon_reload: true
+          with_items:
+            - "backup.timer"
 
-    - name: Show hints
-      when: "'backup_init_repo' not in ansible_run_tags"
-      ansible.builtin.debug:
-        msg: "Attention: Since the repo was not initialized automatically, the systemd service (backup.service) and the timer (backup.timer) are not activated."
+        - name: Show hints
+          when: "'backup_init_repo' not in ansible_run_tags"
+          ansible.builtin.debug:
+            msg: "Attention: Since the repo was not initialized automatically, the systemd service (backup.service) and the timer (backup.timer) are not activated."
 ...
