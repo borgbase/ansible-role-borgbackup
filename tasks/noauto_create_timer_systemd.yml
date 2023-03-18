@@ -21,10 +21,6 @@
     - name: Populate service facts
       ansible.builtin.service_facts:
 
-    - name: Print service facts
-      ansible.builtin.debug:
-        var: ansible_facts.services
-
       # If the role is running and the repo is not yet initialized, an error will occur.
       # Therefore the service is stopped by default and must be started manually.
     - name: Stop fresh installed borgmatic.timer and borgmatic.service
