@@ -183,7 +183,6 @@ Main features:
 ```
 
 
-
 ## Installation
 
 Download from Ansible Galaxy
@@ -194,6 +193,20 @@ $ ansible-galaxy install m3nu.ansible_role_borgbackup
 Clone latest version from Github
 ```
 $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansible_role_borgbackup
+```
+
+
+## Tags:
+This Role supports the following ansible tags:
+
+- `install_backup`: Tag for only run that part.
+- `backup_install_helper` Tag to additionally install the backup helper skripts. Currently only docker.
+
+### Example
+To install the helper scrit.
+
+```
+$ ANSIBLE_STDOUT_CALLBACK=yaml ansible-playbook test.example.com -t backup_install_helper
 ```
 
 

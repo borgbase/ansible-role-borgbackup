@@ -1,27 +1,34 @@
 ---
-- name: Create borgmatic command in /usr/local/bin
-  ansible.builtin.copy:
-    content: |
-      #!/bin/bash
-      . "{{ borg_venv_path }}"/bin/activate
-      borgmatic "$@"
-    dest: /usr/local/bin/borgmatic
-    mode: "0755"
-    owner: "{{ borgbackup_user }}"
-    group: "{{ borgbackup_group }}"
+- name: Create links to the Borgmatic and Borg binarys
+  tags:
+    - install_backup
+  block:
+    - name: Create borgmatic command in /usr/local/bin
+      ansible.builtin.copy:
+        content: |
+          #!/bin/bash
+          . "{{ borg_venv_path }}"/bin/activate
+          borgmatic "$@"
+        dest: /usr/local/bin/borgmatic
+        mode: "0755"
+        owner: "{{ borgbackup_user }}"
+        group: "{{ borgbackup_group }}"
 
-- name: Create borg command in /usr/local/bin
-  ansible.builtin.copy:
-    content: |
-      #!/bin/bash
-      . "{{ borg_venv_path }}"/bin/activate
-      borg "$@"
-    dest: /usr/local/bin/borg
-    mode: "0755"
-    owner: "{{ borgbackup_user }}"
-    group: "{{ borgbackup_group }}"
+    - name: Create borg command in /usr/local/bin
+      ansible.builtin.copy:
+        content: |
+          #!/bin/bash
+          . "{{ borg_venv_path }}"/bin/activate
+          borg "$@"
+        dest: /usr/local/bin/borg
+        mode: "0755"
+        owner: "{{ borgbackup_user }}"
+        group: "{{ borgbackup_group }}"
 
 - name: Install helper scripts
+  tags:
+    - never
+    - backup_install_helper
   ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"

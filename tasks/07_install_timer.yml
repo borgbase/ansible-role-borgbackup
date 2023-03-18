@@ -1,20 +1,10 @@
 ---
 - name: Create borgbackup timer
   when:
-    - borgmatic_timer is defined and borgmatic_timer == "systemd"
+    - borgmatic_timer is defined and borgmatic_timer | length > 0
   tags:
     - install_backup
   block:
-    - name: Timer Systemd
+    - name: Start timer install script
       ansible.builtin.include_tasks:
-        file: noauto_create_timer.yml
-
-- name: Create borgbackup cron
-  when:
-    - borgmatic_timer is defined or borgmatic_timer == "cron"
-  tags:
-    - install_backup
-  block:
-    - name: Install cron backup job
-      ansible.builtin.include_tasks:
-        file: noauto_create_cronjobs.yml
+        file: noauto_create_timer_{{ borgmatic_timer }}.yml

@@ -1,8 +1,8 @@
 ---
 - name: Add and run all plays
-  include_tasks: "{{ element }}"
+  include_tasks: "{{ bak_element }}"
   with_items: "{{ lookup('ansible.builtin.fileglob', '*.yml').split(',') | reject('search', 'main.yml') | reject('search', 'noauto_*') | sort }}"
   loop_control:
-    loop_var: element
+    loop_var: bak_element
   tags: always
 ...
