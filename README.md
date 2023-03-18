@@ -169,7 +169,7 @@ Main features:
             daemon_reload: true
           when: "item in services"
           with_items:
-            - backup.service
+            - borgmatic.service
         
         # bug: Need own section without masked else the timer are skipped
         - name: Start borgmatic timers
@@ -179,7 +179,7 @@ Main features:
             enabled: true
             daemon_reload: true
           with_items:
-            - "backup.timer"
+            - "borgmatic.timer"
 ```
 
 
