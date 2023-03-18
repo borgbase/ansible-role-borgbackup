@@ -41,7 +41,7 @@
       borg_install_method: pip
       borg_ssh_key_file: "{{ backup_user_info.home }}/.ssh/backup"
       borg_ssh_command: "ssh -i {{ borg_ssh_key_file }} -o StrictHostKeyChecking=no"
-      borgmatic_timer: "systemd"
+      borgmatic_timer: cron
 
   post_tasks:
   - name: Install yamllint for checking config file
