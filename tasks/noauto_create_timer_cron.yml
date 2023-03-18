@@ -1,4 +1,9 @@
 ---
+- name: Ensure Cron is installed
+  ansible.builtin.package:
+    name: "{{ borg_cron_package }}"
+    state: present
+
 - name: Add cron-job for borgmatic
   when:
     - borgmatic_timer is defined and borgmatic_timer == "cron"

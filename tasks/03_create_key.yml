@@ -1,12 +1,12 @@
 ---
 # In this Play an ssh key pair is created for login to the backup server and secure data transfer.
-# We do not want the possibly existing key to be used/distributed, 
+# We do not want the possibly existing key to be used/distributed,
 # so a backup-specific (backup/backup.pub) one is created.
-- name: Create ssh-key (if neeeded) for {{ borgbackup_user }} 
+- name: Create ssh-key (if neeeded) for {{ borgbackup_user }}
   tags:
     - install_backup
   block:
-    - name: Ensire directory exist
+    - name: Ensure directory exist
       ansible.builtin.file:
         path: "{{ backup_user_info.home }}/.ssh/"
         state: directory
@@ -21,7 +21,7 @@
         type: "{{ borg_ssh_key_type }}"
         owner: "{{ borgbackup_user }}"
         group: "{{ borgbackup_group }}"
-    
+
     - name: Set key permission
       ansible.builtin.file:
         path: "{{ backup_user_info.home }}/.ssh/backup.pub"
