@@ -87,12 +87,6 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 ```
 
 
-## Tags:
-This role supports the following Ansible tags:
-
-- `backup_install_helper` Install optional helper scripts from `files` folder. Currently only Docker.
-
-
 ## Role Variables
 
 ### Required Variables
@@ -117,7 +111,7 @@ This role supports the following Ansible tags:
 - `borg_ssh_key_name`: Name of the SSH public and pivate key. Default `id_ed25519`
 - `borg_ssh_key_file_path`: SSH-key to be used. Default `~/.ssh/{{ borg_ssh_key_name }}`
 - `borg_ssh_key_type`: The algorithm used to generate the SSH private key. Choose: `rsa`, `dsa`, `rsa1`, `ecdsa`, `ed25519`. Default: `ed25519`
-- `borg_ssh_command`: Command to use instead of just "ssh". This can be used to specify ssh options.
+- `borg_ssh_command`: Command to use instead of just "ssh". This can be used to specify SSH options.
 - `borg_version`: Force a specific borg version to be installed
 - `borg_venv_path`: Path to store the venv for `borg(backup)` and `borgmatic`
 

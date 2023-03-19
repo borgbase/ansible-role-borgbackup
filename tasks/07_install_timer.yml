@@ -1,5 +1,5 @@
 ---
-- name: Create borgbackup timer
+- name: Install timer to run Borgmatic
   when:
     - borgmatic_timer is defined and borgmatic_timer | length > 0
   block:

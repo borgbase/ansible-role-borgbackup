@@ -15,13 +15,13 @@
         virtualenv: "{{ borg_venv_path }}"
         virtualenv_command: "{{ python_bin }} -m venv"
 
-    - name: Install dependent Python Packages
+    - name: Install dependent Python packages
       ansible.builtin.pip:
         name: "{{ borg_dependent_python_packages }}"
         virtualenv: "{{ borg_venv_path }}"
       when: borg_dependent_python_packages is defined
 
-    - name: Install main Python Packages
+    - name: Install main Python packages
       ansible.builtin.pip:
         name: "{{ item.name }}"
         version: "{{ item.version | default(omit, true) }}"
@@ -29,7 +29,7 @@
       when: borg_python_packages is defined
       loop: "{{ borg_python_packages }}"
 
-- name: Create links to Borgmatic and Borg binarys
+- name: Create links to Borgmatic and Borg binaries
   block:
     - name: Create borgmatic command in /usr/local/bin
       ansible.builtin.copy:
