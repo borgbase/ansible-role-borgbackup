@@ -16,7 +16,7 @@
 
     - name: Generate an OpenSSH keypair
       community.crypto.openssh_keypair:
-        path: "{{ backup_user_info.home }}/.ssh/backup"
+        path: "{{ borg_ssh_key_file_path }}"
         mode: "0600"
         type: "{{ borg_ssh_key_type }}"
         owner: "{{ borgbackup_user }}"
@@ -24,14 +24,14 @@
 
     - name: Set key permission
       ansible.builtin.file:
-        path: "{{ backup_user_info.home }}/.ssh/backup.pub"
+        path: "{{ borg_ssh_key_file_path }}.pub"
         mode: "0644"
         owner: "{{ borgbackup_user }}"
         group: "{{ borgbackup_group }}"
 
     - name: Read ssh key
       ansible.builtin.slurp:
-        src: "{{ backup_user_info.home }}/.ssh/backup.pub"
+        src: "{{ borg_ssh_key_file_path }}.pub"
       register: backup_local_ssh_key
 
     - name: Print key
