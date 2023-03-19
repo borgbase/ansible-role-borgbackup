@@ -1,28 +1,23 @@
 ---
-# In this Play an ssh key pair is created for login to the backup server and secure data transfer.
-# We do not want the possibly existing key to be used/distributed,
-# so a backup-specific (backup/backup.pub) one is created.
-- name: Create ssh-key (if neeeded) for {{ borgbackup_user }}
-  tags:
-    - install_backup
+- name: Create SSH key (if neeeded) for {{ borg_user }}
   block:
     - name: Ensure directory exist
       ansible.builtin.file:
         path: "{{ backup_user_info.home }}/.ssh/"
         state: directory
         mode: "0700"
-        owner: "{{ borgbackup_user }}"
-        group: "{{ borgbackup_group }}"
+        owner: "{{ borg_user }}"
+        group: "{{ borg_group }}"
 
     - name: Generate an OpenSSH keypair
       community.crypto.openssh_keypair:
         path: "{{ borg_ssh_key_file_path }}"
         mode: "0600"
         type: "{{ borg_ssh_key_type }}"
-        owner: "{{ borgbackup_user }}"
-        group: "{{ borgbackup_group }}"
+        owner: "{{ borg_user }}"
+        group: "{{ borg_group }}"
 
-    - name: Read ssh key
+    - name: Read SSH key
       ansible.builtin.slurp:
         src: "{{ borg_ssh_key_file_path }}.pub"
       register: backup_local_ssh_key

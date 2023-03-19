@@ -10,5 +10,5 @@
     group: "{{ item.group }}"
     mode: "{{ item.mode }}"
   with_items:
-    - { src: "docker.sh", dest: "/usr/local/bin/docker.sh", owner: "{{ borgbackup_user }}", group: "{{ borgbackup_group }}", mode: "0770" }
+    - { src: "docker.sh", dest: "/usr/local/bin/docker.sh", owner: "{{ borg_user }}", group: "{{ borg_group }}", mode: "0770" }
 ...

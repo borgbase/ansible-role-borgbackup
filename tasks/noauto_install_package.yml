@@ -1,7 +1,5 @@
 ---
 - name: Install borgbackup by distro
-  tags:
-    - install_backup
   block:
     - name: Check if EPEL repo is enabled, if installation from distro is requested
       when: ansible_os_family == 'RedHat'

@@ -3,13 +3,11 @@
 # Since we cannot be sure that this FSH is compatible we will determine it.
 - name: Get home dir
   when:
-    - borgbackup_user == "root"
-  tags:
-    - install_backup
+    - borg_user == "root"
   block:
-    - name: Get home if borgbackup_user == "root"
+    - name: Get home if borg_user == "root"
       ansible.builtin.user:
-        name: "{{ borgbackup_user }}"
+        name: "{{ borg_user }}"
         state: present
       register: user_info
       changed_when: false
@@ -19,11 +17,9 @@
       ansible.builtin.set_fact:
         backup_user_info: "{{ user_info }}"
 
-- name: Create User if borgbackup_user != "root"
+- name: Create user if borg_user != "root"
   when:
-    - borgbackup_user != "root"
-  tags:
-    - install_backup
+    - borg_user != "root"
   ansible.builtin.include_tasks:
     file: noauto_create_backup_user_and_group.yml
 ...

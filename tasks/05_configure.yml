@@ -1,21 +1,19 @@
 ---
-- name: Configure borgbackup
-  tags:
-    - install_backup
+- name: Add Borgmatic config file
   block:
     - name: Ensure /etc/borgmatic exists
       ansible.builtin.file:
         path: /etc/borgmatic
         state: directory
         mode: "0700"
-        owner: "{{ borgbackup_user }}"
-        group: "{{ borgbackup_group }}"
+        owner: "{{ borg_user }}"
+        group: "{{ borg_group }}"
 
     - name: Add Borgmatic configuration
       ansible.builtin.template:
         src: config.yaml.j2
         dest: "/etc/borgmatic/{{ borgmatic_config_name }}"
         mode: "0600"
-        owner: "{{ borgbackup_user }}"
-        group: "{{ borgbackup_group }}"
+        owner: "{{ borg_user }}"
+        group: "{{ borg_group }}"
 ...

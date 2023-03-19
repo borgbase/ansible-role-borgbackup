@@ -1,14 +1,16 @@
-# Ansible Role: BorgBackup Client
-The following example installs and configures the Borgmatic client and also initializes the repo on the BackupServer.
+# Additional Examples
 
-## Fullautomated Playbook with service user -> this has sudo power
+## Use service user and copy SSH key to target server
+
+Installs and configures the Borgmatic client and also initializes the repo on the remote backup server.
+
 ```
 - name: Configure backup
   hosts: test.lab
   pre_tasks:
-  - name: Get home of {{ borgbackup_user }}
+  - name: Get home of {{ borg_user }}
     ansible.builtin.user:
-      name: "{{ borgbackup_user }}"
+      name: "{{ borg_user }}"
       state: present
     register: user_info
     changed_when: false
@@ -21,9 +23,8 @@ The following example installs and configures the Borgmatic client and also init
   vars:
     borg_encryption_passphrase: "CHANGEME"
     borg_repository: "USER@TARGET_SERVER:/PATH/TO/BACKUP"
-    borgbackup_user: "srv_backup"
-    borgbackup_group: "srv_backup"
-    borg_repository: "{{ vault_borg.backup_user }}@{{ backup_server }}:{{ backup_path }}/{{ ansible_host }}"
+    borg_user: "srv_backup"
+    borg_group: "srv_backup"
     borg_ssh_key_file_path: "{{ backup_user_info.home }}/.ssh/backup"
     borg_ssh_command: "ssh -i {{ borg_ssh_key_file_path }} -o StrictHostKeyChecking=no"
     borgmatic_timer: systemd
@@ -77,7 +78,7 @@ The following example installs and configures the Borgmatic client and also init
 
         - name: Init repository
           ansible.builtin.command:
-            cmd: "su - {{ borgbackup_user }} -c '/usr/local/bin/borgmatic rcreate --encryption keyfile --append-only'"
+            cmd: "su - {{ borg_user }} -c '/usr/local/bin/borgmatic rcreate --encryption keyfile --append-only'"
 
     - name: Activate systemd service and timer
       when:
@@ -99,7 +100,7 @@ The following example installs and configures the Borgmatic client and also init
           when: "item in services"
           with_items:
             - borgmatic.service
-        
+
         # bug: Need own section without masked else the timer are skipped
         - name: Start borgmatic timers
           ansible.builtin.systemd:

@@ -1,7 +1,5 @@
 ---
 - name: Install Borg and Borgmatic via pip
-  tags:
-    - install_backup
   block:
     - name: Install build dependencies
       ansible.builtin.package:
@@ -32,8 +30,6 @@
       loop: "{{ borg_python_packages }}"
 
 - name: Create links to Borgmatic and Borg binarys
-  tags:
-    - install_backup
   block:
     - name: Create borgmatic command in /usr/local/bin
       ansible.builtin.copy:
@@ -43,8 +39,8 @@
           borgmatic "$@"
         dest: /usr/local/bin/borgmatic
         mode: "0755"
-        owner: "{{ borgbackup_user }}"
-        group: "{{ borgbackup_group }}"
+        owner: "{{ borg_user }}"
+        group: "{{ borg_group }}"
 
     - name: Create borg command in /usr/local/bin
       ansible.builtin.copy:
@@ -54,8 +50,8 @@
           borg "$@"
         dest: /usr/local/bin/borg
         mode: "0755"
-        owner: "{{ borgbackup_user }}"
-        group: "{{ borgbackup_group }}"
+        owner: "{{ borg_user }}"
+        group: "{{ borg_group }}"
 
 
 ...

@@ -2,8 +2,6 @@
 - name: Create borgbackup timer
   when:
     - borgmatic_timer is defined and borgmatic_timer | length > 0
-  tags:
-    - install_backup
   block:
     - name: Start timer install script
       ansible.builtin.include_tasks:

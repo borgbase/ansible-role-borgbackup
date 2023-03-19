@@ -1,7 +1,5 @@
 ---
 - name: Install borgbackup
-  tags:
-    - install_backup
   block:
     - name: Ensure legacy hooks aren't used
       ansible.builtin.assert:

@@ -8,8 +8,7 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
 
 Main features:
 - Set up Borg and Borgmatic
-- Add systemd timer random time
-- Provision new remote [BorgBase.com](https://www.borgbase.com) repo for storing backups (optional)
+- Schedule regular backups using Cron or Systemd timer.
 
 
 ## Example Playbook with root as backup user and Cron timer
@@ -19,7 +18,7 @@ Main features:
   roles:
   - role: m3nu.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
-    borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+    borg_repository: ssh://m5vz9gp4@m5vz9gp4.repo.borgbase.com/./repo
     borgmatic_timer: cron
     borg_source_directories:
       - /srv/www
@@ -49,12 +48,12 @@ If you already use this role and use the user: "root" or the SSH key id_ed25519!
   roles:
   - role: m3nu.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
-    borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+    borg_repository: ssh://m5vz9gp4@m5vz9gp4.repo.borgbase.com/./repo
     borgmatic_timer: systemd
     borg_ssh_key_file_path: "{{ backup_user_info.home }}/.ssh/backup"
     borg_ssh_command: "ssh -i {{ borg_ssh_key_file_path }} -o StrictHostKeyChecking=no"
-    borgbackup_user: "srv_backup"
-    borgbackup_group: "srv_backup"
+    borg_user: "srv_backup"
+    borg_group: "srv_backup"
     borg_source_directories:
       - /srv/www
       - /var/lib/automysqlbackup
@@ -89,26 +88,18 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 
 
 ## Tags:
-This Role supports the following ansible tags:
+This role supports the following Ansible tags:
 
-- `install_backup`: Tag for only run that part.
-- `backup_install_helper` Tag to additionally install the backup helper skripts. Currently only docker.
-
-### Example
-To install the helper scrit.
-
-```
-$ ANSIBLE_STDOUT_CALLBACK=yaml ansible-playbook test.example.com -t backup_install_helper
-```
+- `backup_install_helper` Install optional helper scripts from `files` folder. Currently only Docker.
 
 
 ## Role Variables
 
-### Required Arguments
-- `borg_repository`: Full path to repository. Your own server or [BorgBase.com](https://www.borgbase.com) repo. Not required when using auto creation of repositories. Can be a list if you want to backup to multiple repositories.
+### Required Variables
+- `borg_repository`: Full path to repository. Your own server or [BorgBase.com](https://www.borgbase.com) repo.
+  Can be a list if you want to backup to multiple repositories.
 
-
-### Optional Arguments
+### Optional Variables
 - `borg_dep_packages`: Dependancy Packages to install `borg(backup)` and `borgmatic`.
 - `borg_distro_packages`: contains the names of distributions packages for `borg(backup)` and `borgmatic`, only used if `borg_install_method` is set to `package`.
 - `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
@@ -142,8 +133,8 @@ $ ANSIBLE_STDOUT_CALLBACK=yaml ansible-playbook test.example.com -t backup_insta
 - `borgmatic_store_ctime`: Store ctime into archive. Defaults to `true`
 - `borgmatic_version`: Force a specific borgmatic version to be installed
 
-- `borgbackup_user`: Name of the User to create Backups (Service Account)
-- `borgbackup_group`: Name of the Group to create Backups (Service Account)
+- `borg_user`: Name of the User to create Backups (service account)
+- `borg_group`: Name of the Group to create Backups (service account)
 
 
 ## Contributing

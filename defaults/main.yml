@@ -36,9 +36,9 @@ borgmatic_hooks:
 # See: https://torsion.org/borgmatic/docs/how-to/deal-with-very-large-backups/#check-frequency
 borgmatic_checks:
   - name: repository
-    frequency: "2 Weeks"
+    frequency: "4 weeks"
   - name: archives
-    frequency: "1 month"
+    frequency: "6 weeks"
 borgmatic_check_last: 3
 borgmatic_store_atime: true
 borgmatic_store_ctime: true
@@ -46,6 +46,6 @@ borgmatic_relocated_repo_access_is_ok: false
 borgmatic_version: false
 
 borg_venv_path: "/opt/borgmatic"
-borgbackup_user: "root"
-borgbackup_group: "root"
+borg_user: "root"
+borg_group: "root"
 ...

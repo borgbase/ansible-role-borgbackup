@@ -11,7 +11,7 @@ ConditionACPower=true
 
 [Service]
 Type=oneshot
-User={{ borgbackup_user }}
+User={{ borg_user }}
 ExecStart=/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}
 
 # Source: https://projects.torsion.org/borgmatic-collective/borgmatic/raw/branch/master/sample/systemd/borgmatic.service

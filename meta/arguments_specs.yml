@@ -16,7 +16,7 @@ argument_specs:
         type: str
         required: false
         description: |
-          Contains the names of distributions packages for borg(backup) and borgmatic, 
+          Contains the names of distributions packages for borg(backup) and borgmatic,
           only used if `borg_install_method` is set to package
       borg_pip_packages:
         type: str
@@ -32,8 +32,8 @@ argument_specs:
         default: pip
         description: |
           By default pip is used to install borgmatic.
-          To install via your distributions package manager set this to package and (if needed) 
-          overwrite the borg_distro_packages variable to contain your distributions package names 
+          To install via your distributions package manager set this to package and (if needed)
+          overwrite the borg_distro_packages variable to contain your distributions package names
           required to install borgmatic.
           Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk.
       borgmatic_config_name:
@@ -41,11 +41,11 @@ argument_specs:
         required: false
         default: config.yaml
         description: Name to use for the borgmatic config file.
-      borgbackup_user:
+      borg_user:
         type: str
         default: root
         description: Name of the User to create Backups (Service Account)
-      borgbackup_group:
+      borg_group:
         type: str
         default: root
         description: Name of the Group to create Backups (Service Account)
@@ -137,11 +137,11 @@ argument_specs:
           description: Number of weekly archives to keep.
         keep_monthly:
           type: int
-          required: false 
+          required: false
           description: Number of monthly archives to keep.
         keep_yearly:
           type: int
-          required: false 
+          required: false
           description: Number of yearly archives to keep.
       borgmatic_checks:
         type: List
@@ -152,8 +152,8 @@ argument_specs:
           Defaults to "repository" and "archives".
           Set to "disabled" to disable all consistency checks.
           "repository" checks the consistency of the repository,
-          "archives" checks all of the archives, "data" verifies 
-          the integrity of the data within the  archives, and 
+          "archives" checks all of the archives, "data" verifies
+          the integrity of the data within the  archives, and
           "extract" does an extraction dry-run of the  most recent archive.
           Note that "data" implies "archives".
       borgmatic_check_last:

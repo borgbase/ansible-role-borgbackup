@@ -4,16 +4,14 @@
     name: "{{ borg_cron_package }}"
     state: present
 
-- name: Add cron-job for borgmatic
-  tags:
-    - install_backup
+- name: Add Cron job for borgmatic
   block:
     - name: Add cron job for create, check and prune
       cron:
         name: "{{ borgmatic_timer_cron_name }}"
         hour: "{{ borgmatic_timer_hour }}"
         minute: "{{ borgmatic_timer_minute }}"
-        user: "{{ borgbackup_user }}"
+        user: "{{ borg_user }}"
         cron_file: "{{ borgmatic_timer_cron_name }}"
         job: "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
 
@@ -23,10 +21,8 @@
         state: absent
 
 - name: Set PATH for borgmatic cron job.
-  tags:
-    - install_backup
   cron:
-    user: "{{ borgbackup_user }}"
+    user: "{{ borg_user }}"
     cron_file: "{{ borgmatic_timer_cron_name }}"
     name: PATH
     env: yes
