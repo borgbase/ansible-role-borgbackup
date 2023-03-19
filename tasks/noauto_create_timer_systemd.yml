@@ -1,4 +1,18 @@
 ---
+- name: Register existence of Borgmatic cron file.
+  cron:
+    name: "{{ borgmatic_timer_cron_name }}"
+    cron_file: "{{ borgmatic_timer_cron_name }}"
+    state: absent
+  check_mode: true
+  register: cron_file_exists
+
+- name: Ensure no Borgmatic Cron file exists.
+  ansible.builtin.assert:
+    that:
+      - not cron_file_exists.changed
+    fail_msg: Found an existing Borgmatic Cron job. Please remove before using Systemd timer.
+
 - name: Create borgbackup timer
   block:
     - name: Copy systemd files
@@ -21,7 +35,7 @@
     - name: Stop fresh installed borgmatic.timer and borgmatic.service
       when: "'borgmatic.service' not in ansible_facts.services"
       block:
-        - name: Set borgmatic services to stopped - fresh installed
+        - name: Set borgmatic services to stopped - newly installed
           ansible.builtin.systemd:
             name: "{{ item }}"
             state: stopped
@@ -33,7 +47,7 @@
             - borgmatic.service
 
         # bug: Need own section without masked else the timer are skipped
-        - name: Set borgmatic timers to stopped - fresh installed
+        - name: Set borgmatic timers to stopped - newly installed
           ansible.builtin.systemd:
             name: "{{ item }}"
             state: stopped

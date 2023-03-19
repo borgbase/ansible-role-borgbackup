@@ -7,8 +7,9 @@ Set up encrypted, compressed and deduplicated backups using [BorgBackup](https:/
 Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Hosting for your Borg Repositories. To manage BorgBase repos via Ansible, also see Andy Hawkins' [BorgBase Collection](https://galaxy.ansible.com/adhawkins/borgbase).
 
 Main features:
-- Set up Borg and Borgmatic
-- Schedule regular backups using Cron or Systemd timer.
+- Install Borg and Borgmatic from PyPi or distro package
+- Set up Borgmatic config
+- Schedule regular backups using Cron or Systemd timer
 
 
 ## Example Playbook with root as backup user and Cron timer
@@ -40,7 +41,7 @@ Main features:
 ```
 
 ## Example Playbook with service user and Systemd timer
-`` Attention: `` The following implementation leads to problems.
+**Attention**: The following implementation leads to problems.
 If you already use this role and use the user: "root" or the SSH key id_ed25519!
 
 ```
@@ -51,7 +52,7 @@ If you already use this role and use the user: "root" or the SSH key id_ed25519!
     borg_repository: ssh://m5vz9gp4@m5vz9gp4.repo.borgbase.com/./repo
     borgmatic_timer: systemd
     borg_ssh_key_file_path: "{{ backup_user_info.home }}/.ssh/backup"
-    borg_ssh_command: "ssh -i {{ borg_ssh_key_file_path }} -o StrictHostKeyChecking=no"
+    borg_ssh_command: "ssh -i {{ borg_ssh_key_file_path }} -o StrictHostKeyChecking=accept-new"
     borg_user: "srv_backup"
     borg_group: "srv_backup"
     borg_source_directories:

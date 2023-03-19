@@ -6,7 +6,7 @@
 
 - name: Add Cron job for borgmatic
   block:
-    - name: Add cron job for create, check and prune
+    - name: Add single Cron job for borgmatic
       cron:
         name: "{{ borgmatic_timer_cron_name }}"
         hour: "{{ borgmatic_timer_hour }}"
@@ -18,6 +18,7 @@
     - name: Ensure separate check cron job is absent
       cron:
         name: "{{ borgmatic_timer_cron_name }}-check"
+        cron_file: "{{ borgmatic_timer_cron_name }}"
         state: absent
 
 - name: Set PATH for borgmatic cron job.

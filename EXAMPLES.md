@@ -26,7 +26,7 @@ Installs and configures the Borgmatic client and also initializes the repo on th
     borg_user: "srv_backup"
     borg_group: "srv_backup"
     borg_ssh_key_file_path: "{{ backup_user_info.home }}/.ssh/backup"
-    borg_ssh_command: "ssh -i {{ borg_ssh_key_file_path }} -o StrictHostKeyChecking=no"
+    borg_ssh_command: "ssh -i {{ borg_ssh_key_file_path }} -o StrictHostKeyChecking=accept-new"
     borgmatic_timer: systemd
     borg_source_directories:
       - /srv/www
