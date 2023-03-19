@@ -1,8 +1,24 @@
 # Additional Examples
 
+## Custom SSH key for backups only
+
+```
+- hosts: webservers
+  roles:
+  - role: m3nu.ansible_role_borgbackup
+    borg_encryption_passphrase: CHANGEME
+    borg_repository: ssh://m5vz9gp4@m5vz9gp4.repo.borgbase.com/./repo
+    borgmatic_timer: systemd
+    borg_ssh_key_file_path: "{{ backup_user_info.home }}/.ssh/backup"
+    borg_ssh_command: "ssh -i {{ borg_ssh_key_file_path }} -o StrictHostKeyChecking=accept-new"
+    borg_user: backupuser
+    borg_group: backupuser
+```
+
 ## Use service user and copy SSH key to target server
 
-Installs and configures the Borgmatic client and also initializes the repo on the remote backup server.
+Installs and configures the Borgmatic client and also initializes the repo on the
+remote backup server. (not tested)
 
 ```
 - name: Configure backup

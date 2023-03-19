@@ -6,16 +6,16 @@ Set up encrypted, compressed and deduplicated backups using [BorgBackup](https:/
 
 Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Hosting for your Borg Repositories. To manage BorgBase repos via Ansible, also see Andy Hawkins' [BorgBase Collection](https://galaxy.ansible.com/adhawkins/borgbase).
 
-Main features:
-- Install Borg and Borgmatic from PyPi or distro package
+**Main features**
+- Install Borg and Borgmatic from PyPi or distro packages
 - Set up Borgmatic config
 - Schedule regular backups using Cron or Systemd timer
 
 
-## Example Playbook with root as backup user and Cron timer
+## Example playbook with root as backup user and Cron timer
 
 ```
-- hosts: webservers
+- hosts: all
   roles:
   - role: m3nu.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
@@ -40,39 +40,24 @@ Main features:
         port: 5433
 ```
 
-## Example Playbook with service user and Systemd timer
-**Attention**: The following implementation leads to problems.
-If you already use this role and use the user: "root" or the SSH key id_ed25519!
+## Example playbook with service user and Systemd timer
+**Attention**: If you used an older version of this role, be sure to remove any
+leftover cron jobs before using Systemd timers.
 
 ```
-- hosts: webservers
+- hosts: all
   roles:
   - role: m3nu.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
     borg_repository: ssh://m5vz9gp4@m5vz9gp4.repo.borgbase.com/./repo
     borgmatic_timer: systemd
-    borg_ssh_key_file_path: "{{ backup_user_info.home }}/.ssh/backup"
-    borg_ssh_command: "ssh -i {{ borg_ssh_key_file_path }} -o StrictHostKeyChecking=accept-new"
     borg_user: "srv_backup"
     borg_group: "srv_backup"
     borg_source_directories:
       - /srv/www
       - /var/lib/automysqlbackup
-    borg_exclude_patterns:
-      - /srv/www/old-sites
-    borg_retention_policy:
-      keep_hourly: 3
-      keep_daily: 7
-      keep_weekly: 4
-      keep_monthly: 6
-    borgmatic_hooks:
-      before_backup:
-      - echo "`date` - Starting backup."
-      postgresql_databases:
-      - name: users
-        hostname: database1.example.org
-        port: 5433
 ```
+
 
 
 ## Installation
@@ -95,7 +80,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
   Can be a list if you want to backup to multiple repositories.
 
 ### Optional Variables
-- `borg_dep_packages`: Dependancy Packages to install `borg(backup)` and `borgmatic`.
+- `borg_dep_packages`: Dependency Packages to install `borg(backup)` and `borgmatic`.
 - `borg_distro_packages`: contains the names of distributions packages for `borg(backup)` and `borgmatic`, only used if `borg_install_method` is set to `package`.
 - `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
 - `borg_encryption_passphrase`: Password to use for repokey or keyfile. Empty if repo is unencrypted.
@@ -117,8 +102,8 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borg_venv_path`: Path to store the venv for `borg(backup)` and `borgmatic`
 
 - `borgmatic_check_last`: Number of archives to check. Defaults to `3`
-- `borgmatic_checks`: List of consistency checks. Defaults to `['repository']`
-- `borgmatic_config_name`: Name to use for the borgmatic config file. Defaults to `config.yaml`
+- `borgmatic_checks`: List of consistency checks. Defaults to monthly checks. See [docs](https://torsion.org/borgmatic/docs/how-to/deal-with-very-large-backups/#check-frequency) for all options.
+- `borgmatic_config_name`: Name to use for the Borgmatic config file. Defaults to `config.yaml`
 - `borgmatic_timer_hour`: Hour when regular create and prune cron/systemd-timer job will run. Defaults to `{{ 6 | random }}`
 - `borgmatic_timer_minute`: Minute when regular create and prune cron/systemd-timer job will run. Defaults to  `{{ 59 | random }}`
 - `borgmatic_hooks`: Hooks to monitor your backups e.g. with [Healthchecks](https://healthchecks.io/). See [official documentation](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/) for more.
