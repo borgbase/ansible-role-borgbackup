@@ -101,7 +101,7 @@ argument_specs:
         type: int
         required: false
         description: Remote network upload rate limit in kiBytes/second.
-      borg_ssh_key_file:
+      borg_ssh_key_file_path:
         type: str
         required: false
         description: Path to ssh-key
@@ -176,3 +176,7 @@ argument_specs:
         type: str
         required: false
         description: The algorithm used to generate the SSH private key
+      borg_ssh_key_name:
+        type: str
+        required: false
+        description: Name of the SSH public and private key
