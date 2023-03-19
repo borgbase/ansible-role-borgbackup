@@ -51,6 +51,7 @@
     mode: 0600
 
 - name: Add cron-job for borgmatic (large repo, create and check separate)
+  when: borgmatic_large_repo
   block:
     - name: Add cron job for regular create and prune
       cron:
@@ -69,9 +70,9 @@
         user: "root"
         cron_file: "{{ borgmatic_cron_name }}"
         job: "borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} -k"
-  when: borgmatic_large_repo
 
 - name: Add cron-job for borgmatic (normal-sized repo)
+  when: not borgmatic_large_repo
   block:
     - name: Add cron job for create, check and prune
       cron:
@@ -85,7 +86,6 @@
       cron:
         name: "{{ borgmatic_cron_name }}-check"
         state: absent
-  when: not borgmatic_large_repo
 
 - name: Set PATH for borgmatic cron job.
   cron:
