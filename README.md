@@ -50,7 +50,6 @@ Main features:
     borgmatic_timer: systemd
     borg_ssh_key_file: "{{ backup_user_info.home }}/.ssh/backup"
     borg_ssh_command: "ssh -i {{ borg_ssh_key_file }} -o StrictHostKeyChecking=no"
-    borgmatic_timer: systemd
     borgbackup_user: "srv_backup"
     borgbackup_group: "srv_backup"
     borg_source_directories:
