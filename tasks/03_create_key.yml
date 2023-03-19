@@ -22,13 +22,6 @@
         owner: "{{ borgbackup_user }}"
         group: "{{ borgbackup_group }}"
 
-    - name: Set key permission
-      ansible.builtin.file:
-        path: "{{ borg_ssh_key_file_path }}.pub"
-        mode: "0644"
-        owner: "{{ borgbackup_user }}"
-        group: "{{ borgbackup_group }}"
-
     - name: Read ssh key
       ansible.builtin.slurp:
         src: "{{ borg_ssh_key_file_path }}.pub"
