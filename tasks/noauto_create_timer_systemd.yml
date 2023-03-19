@@ -35,7 +35,7 @@
             - borgmatic.service
 
         # bug: Need own section without masked else the timer are skipped
-        - name: Set  borgmatic timers to stopped - fresh installed
+        - name: Set borgmatic timers to stopped - fresh installed
           ansible.builtin.systemd:
             name: "{{ item }}"
             state: stopped

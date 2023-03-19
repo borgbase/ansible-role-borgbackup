@@ -12,7 +12,7 @@ Main features:
 - Provision new remote [BorgBase.com](https://www.borgbase.com) repo for storing backups (optional)
 
 
-## Example Playbook with root as backup user
+## Example Playbook with root as backup user and Cron timer
 
 ```
 - hosts: webservers
@@ -20,7 +20,7 @@ Main features:
   - role: m3nu.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
     borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
-    borgmatic_timer: systemd
+    borgmatic_timer: cron
     borg_source_directories:
       - /srv/www
       - /var/lib/automysqlbackup
@@ -40,7 +40,7 @@ Main features:
         port: 5433
 ```
 
-## Example Playbook with service user
+## Example Playbook with service user and Systemd timer
 `` Attention: `` The following implementation leads to problems.
 If you already use this role and use the user: "root" or the SSH key id_ed25519!
 
