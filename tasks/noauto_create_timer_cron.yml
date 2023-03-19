@@ -5,8 +5,6 @@
     state: present
 
 - name: Add cron-job for borgmatic
-  when:
-    - borgmatic_timer is defined and borgmatic_timer == "cron"
   tags:
     - install_backup
   block:
@@ -25,8 +23,6 @@
         state: absent
 
 - name: Set PATH for borgmatic cron job.
-  when:
-    - borgmatic_timer is defined and borgmatic_timer == "cron"
   tags:
     - install_backup
   cron:
