@@ -73,7 +73,7 @@ storage:
     # Type of compression to use when creating archives. See
     # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-create for details.
     # Defaults to no compression.
-    compression: auto,zstd
+    compression: {{ borg_compression|default('auto,zstd') }}
 
     # Remote network upload rate limit in kiBytes/second.
 {% if borg_remote_rate_limit %}
