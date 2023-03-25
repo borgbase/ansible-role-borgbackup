@@ -39,8 +39,6 @@
           borgmatic "$@"
         dest: /usr/local/bin/borgmatic
         mode: "0755"
-        owner: "{{ borg_user }}"
-        group: "{{ borg_group }}"
 
     - name: Create borg command in /usr/local/bin
       ansible.builtin.copy:
@@ -50,8 +48,4 @@
           borg "$@"
         dest: /usr/local/bin/borg
         mode: "0755"
-        owner: "{{ borg_user }}"
-        group: "{{ borg_group }}"
-
-
 ...
