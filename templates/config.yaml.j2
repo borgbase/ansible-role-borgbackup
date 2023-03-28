@@ -1,11 +1,18 @@
 #jinja2: lstrip_blocks: "True", trim_blocks: "True"
 ---
+# Managed by Ansible, please don't edit manually
+
 # Full config: https://torsion.org/borgmatic/docs/reference/config.yaml
 location:
+{% if borg_source_directories is not defined or borg_source_directories | length == 0 %}
     source_directories:
-{% for dir in borg_source_directories %}
+        - /etc/hostname # prevent empty backupconfig
+{% else %}
+    source_directories:
+    {% for dir in borg_source_directories %}
         - {{ dir }}
-{% endfor %}
+    {% endfor %}
+{% endif %}
 
     # Stay in same file system (do not cross mount points).
     one_file_system: {{ borg_one_file_system }}

@@ -1,0 +1,60 @@
+# Managed by Ansible, please don't edit manually
+
+[Unit]
+Description=borgmatic backup
+Wants=backup_normal_repo.timer
+Wants=network-online.target
+After=network-online.target
+# Prevent borgmatic from running unless the machine is plugged into power. Remove this line if you
+# want to allow borgmatic to run anytime.
+ConditionACPower=true
+
+[Service]
+Type=oneshot
+User={{ borg_user }}
+ExecStart=borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}
+
+# Source: https://projects.torsion.org/borgmatic-collective/borgmatic/raw/branch/master/sample/systemd/borgmatic.service
+# Security settings for systemd running as root, optional but recommended to improve security. You
+# can disable individual settings if they cause problems for your use case. For more details, see
+# the systemd manual: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
+LockPersonality=true
+# Certain borgmatic features like Healthchecks integration need MemoryDenyWriteExecute to be off.
+# But you can try setting it to "yes" for improved security if you don't use those features.
+MemoryDenyWriteExecute=no
+NoNewPrivileges=yes
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectClock=yes
+ProtectControlGroups=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+# To restrict write access further, change "ProtectSystem" to "strict" and uncomment
+# "ReadWritePaths", "ReadOnlyPaths", "ProtectHome", and "BindPaths". Then add any local repository
+# paths to the list of "ReadWritePaths" and local backup source paths to "ReadOnlyPaths". This
+# leaves most of the filesystem read-only to borgmatic.
+ProtectSystem=full
+# ReadWritePaths=-/mnt/my_backup_drive
+# ReadOnlyPaths=-/var/lib/my_backup_source
+# This will mount a tmpfs on top of /root and pass through needed paths
+# ProtectHome=tmpfs
+# BindPaths=-/root/.cache/borg -/root/.config/borg -/root/.borgmatic
+
+# May interfere with running external programs within borgmatic hooks.
+# CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_RAW
+
+# Lower CPU and I/O priority.
+Nice=19
+CPUSchedulingPolicy=batch
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+IOWeight=100

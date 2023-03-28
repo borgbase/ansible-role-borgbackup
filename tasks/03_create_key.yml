@@ -1,0 +1,28 @@
+---
+- name: Create SSH key (if neeeded) for {{ borg_user }}
+  block:
+    - name: Ensure directory exist
+      ansible.builtin.file:
+        path: "{{ backup_user_info.home }}/.ssh/"
+        state: directory
+        mode: "0700"
+        owner: "{{ borg_user }}"
+        group: "{{ borg_group }}"
+
+    - name: Generate an OpenSSH keypair
+      community.crypto.openssh_keypair:
+        path: "{{ borg_ssh_key_file_path }}"
+        mode: "0600"
+        type: "{{ borg_ssh_key_type }}"
+        owner: "{{ borg_user }}"
+        group: "{{ borg_group }}"
+
+    - name: Read SSH key
+      ansible.builtin.slurp:
+        src: "{{ borg_ssh_key_file_path }}.pub"
+      register: backup_local_ssh_key
+
+    - name: Print key
+      ansible.builtin.debug:
+        msg: "The generated key is: {{ backup_local_ssh_key['content'] | b64decode }}"
+...

@@ -1,0 +1,29 @@
+---
+- name: Install borgbackup
+  block:
+    - name: Ensure legacy hooks aren't used
+      ansible.builtin.assert:
+        that:
+          - borgmatic_failure_command is undefined
+          - borgmatic_before_backup_command is undefined
+          - borgmatic_after_backup_command is undefined
+        msg: Please use the new borgmatic_hooks variable instead of individual before/after/failure hooks.
+
+    - name: Include OS-specific variables
+      include_vars: "{{ item }}"
+      with_first_found:
+        - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - "{{ ansible_lsb.id }}.yml"
+
+    - name: Install general dependencies (openssh)
+      ansible.builtin.package:
+        name: "{{ borg_dep_packages }}"
+        state: present
+
+    - name: Install Borg and Borgmatic
+      ansible.builtin.include_tasks:
+        file: noauto_install_{{ borg_install_method }}.yml
+...

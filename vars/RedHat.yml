@@ -1,7 +1,8 @@
 ---
 borg_dep_packages:
-  - cronie
   - openssh-clients
+
+borg_cron_package: cronie
 
 borg_pip_packages:
   - libacl-devel
