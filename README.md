@@ -11,6 +11,13 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
 - Set up Borgmatic config
 - Schedule regular backups using Cron or Systemd timer
 
+## Breaking changes
+- Older versions of this role set up a separate Cron job for creating and checking
+  backups. With recent Borgmatic version, this feature is now managed in Borgmatic.
+  As a result the extra Cron job will be removed by this role.
+- Older versions of this role only supported Cron for scheduling. If you use
+  Systemd timers, be sure to remove the Cron job in `/etc/cron.d/borgmatic` first.
+  The role will also alert you when trying to use both timers.
 
 ## Example playbook with root as backup user and Cron timer
 
@@ -19,18 +26,9 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
   roles:
   - role: m3nu.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
-    borg_repository: ssh://m5vz9gp4@m5vz9gp4.repo.borgbase.com/./repo
-    borgmatic_timer: cron
+    borg_repository: ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
     borg_source_directories:
-      - /srv/www
-      - /var/lib/automysqlbackup
-    borg_exclude_patterns:
-      - /srv/www/old-sites
-    borg_retention_policy:
-      keep_hourly: 3
-      keep_daily: 7
-      keep_weekly: 4
-      keep_monthly: 6
+      - /var/www
     borgmatic_hooks:
       before_backup:
       - echo "`date` - Starting backup."
@@ -41,21 +39,23 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
 ```
 
 ## Example playbook with service user and Systemd timer
-**Attention**: If you used an older version of this role, be sure to remove any
-leftover cron jobs before using Systemd timers.
 
 ```
 - hosts: all
   roles:
   - role: m3nu.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
-    borg_repository: ssh://m5vz9gp4@m5vz9gp4.repo.borgbase.com/./repo
+    borg_repository: ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
     borgmatic_timer: systemd
-    borg_user: "srv_backup"
-    borg_group: "srv_backup"
+    borg_user: "backupuser"
+    borg_group: "backupuser"
     borg_source_directories:
-      - /srv/www
-      - /var/lib/automysqlbackup
+      - /var/www
+    borg_retention_policy:
+      keep_hourly: 3
+      keep_daily: 7
+      keep_weekly: 4
+      keep_monthly: 6
 ```
 
 
