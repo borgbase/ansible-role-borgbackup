@@ -184,7 +184,4 @@ consistency:
 # Do not forget to set secure permissions on this file as well as on any script listed (chmod 0700) to
 # prevent potential shell injection or privilege escalation.
 hooks:
-{% for hook in borgmatic_hooks %}
-    {{ hook }}:
-        {{ borgmatic_hooks[hook] | to_nice_yaml(indent=2) | trim | indent(8) }}
-{% endfor %}
+{{ {'hooks': borgmatic_hooks} | to_nice_yaml(indent=4, width=1000) }}
