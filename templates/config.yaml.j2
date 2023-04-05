@@ -149,11 +149,6 @@ retention:
     keep_yearly: {{ borg_retention_policy.keep_yearly }}
 {% endif %}
 
-    # When pruning, only consider archive names starting with this prefix.
-    # Borg placeholders can be used. See the output of "borg help placeholders" for
-    # details. Default is "{hostname}-".
-    prefix: '{hostname}-'
-
 # Consistency checks to run after backups. See
 # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-check and
 # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-extract for details.
@@ -173,11 +168,6 @@ consistency:
 
     # Restrict the number of checked archives to the last n. Applies only to the "archives" check.
     check_last: {{ borgmatic_check_last }}
-
-    # When performing the "archives" check, only consider archive names starting with
-    # this prefix. Borg placeholders can be used. See the output of
-    # "borg help placeholders" for details. Default is "{hostname}-".
-    prefix: '{hostname}-'
 
 # Shell commands or scripts to execute before and after a backup or if an error has occurred.
 # IMPORTANT: All provided commands and scripts are executed with user permissions of borgmatic.
