@@ -110,6 +110,9 @@ storage:
     # Bypass Borg error about a repository that has been moved.
     relocated_repo_access_is_ok: {{ borgmatic_relocated_repo_access_is_ok }}
 
+    # Bypass Borg error about a previously unknown unencrypted repository.
+    unknown_unencrypted_repo_access_is_ok: {{ borgmatic_unknown_unencrypted_repo_access_is_ok }}
+
 # Retention policy for how many backups to keep in each category. See
 # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-prune for details.
 # At least one of the "keep" options is required for pruning to work.
