@@ -41,7 +41,7 @@ borgmatic_check_last: 3
 borgmatic_store_atime: true
 borgmatic_store_ctime: true
 borgmatic_relocated_repo_access_is_ok: false
-borgmatic_version: false
+borgmatic_version: ">=1.7.11"
 
 borg_venv_path: "/opt/borgmatic"
 borg_user: "root"
