@@ -18,7 +18,7 @@
         state: present
 
   roles:
-    - role: m3nu.ansible_role_borgbackup
+    - role: borgbase.ansible_role_borgbackup
       borg_install_method: pip
       borgmatic_timer: cron
       borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo

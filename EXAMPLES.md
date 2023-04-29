@@ -5,7 +5,7 @@
 ```
 - hosts: webservers
   roles:
-  - role: m3nu.ansible_role_borgbackup
+  - role: borgbase.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
     borg_repository: ssh://m5vz9gp4@m5vz9gp4.repo.borgbase.com/./repo
     borgmatic_timer: systemd
