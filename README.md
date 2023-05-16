@@ -1,6 +1,6 @@
 # Ansible Role: BorgBackup Client
 
-[![Test](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml/badge.svg)](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml) [![Ansible Galaxy](https://img.shields.io/ansible/role/48519)](https://galaxy.ansible.com/m3nu/ansible_role_borgbackup)
+[![Test](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml/badge.svg)](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml) [![Ansible Galaxy](https://img.shields.io/ansible/role/48519)](https://galaxy.ansible.com/borgbase/ansible_role_borgbackup)
 
 Set up encrypted, compressed and deduplicated backups using [BorgBackup](https://borgbackup.readthedocs.io/en/stable/) and [Borgmatic](https://github.com/witten/borgmatic). Currently supports Debian/Ubuntu, CentOS/Red Hat/Fedora, Archlinux and Manjaro.
 
@@ -24,7 +24,7 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
 ```
 - hosts: all
   roles:
-  - role: m3nu.ansible_role_borgbackup
+  - role: borgbase.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
     borg_repository: ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
     borg_source_directories:
@@ -43,7 +43,7 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
 ```
 - hosts: all
   roles:
-  - role: m3nu.ansible_role_borgbackup
+  - role: borgbase.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
     borg_repository: ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
     borgmatic_timer: systemd
@@ -64,7 +64,7 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
 
 Download from Ansible Galaxy
 ```
-$ ansible-galaxy install m3nu.ansible_role_borgbackup
+$ ansible-galaxy install borgbase.ansible_role_borgbackup
 ```
 
 Clone latest version from Github
