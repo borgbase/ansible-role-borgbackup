@@ -119,6 +119,11 @@ storage:
 # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-prune for details.
 # At least one of the "keep" options is required for pruning to work.
 retention:
+{% if borg_retention_policy.keep_within is defined %}
+    # Keep all archives within this time interval.
+    keep_within: {{ borg_retention_policy.keep_within }}
+{% endif %}
+
 {% if borg_retention_policy.keep_secondly is defined %}
     # Number of secondly archives to keep.
     keep_secondly: {{ borg_retention_policy.keep_secondly }}
