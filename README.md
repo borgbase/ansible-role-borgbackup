@@ -26,7 +26,8 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
   roles:
   - role: borgbase.ansible_role_borgbackup
     borg_encryption_passphrase: CHANGEME
-    borg_repository: ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
+    borg_repository:
+      - ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
     borg_source_directories:
       - /var/www
     borgmatic_hooks:
