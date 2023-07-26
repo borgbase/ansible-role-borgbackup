@@ -1,0 +1,63 @@
+---
+- name: Register existence of Borgmatic cron file.
+  cron:
+    name: "{{ borgmatic_timer_cron_name }}"
+    cron_file: "{{ borgmatic_timer_cron_name }}"
+    state: absent
+  check_mode: true
+  register: cron_file_exists
+
+- name: Ensure no Borgmatic Cron file exists.
+  ansible.builtin.assert:
+    that:
+      - not cron_file_exists.changed
+    fail_msg: Found an existing Borgmatic Cron job. Please remove before using Systemd timer.
+
+- name: Create borgbackup timer
+  block:
+    - name: Copy systemd files
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: root
+        backup: true
+        mode: "{{ item.mode }}"
+      with_items:
+        - { src: "borgmatic.timer.j2", dest: "/usr/lib/systemd/system/borgmatic.timer", mode: "0644" }
+        - { src: "borgmatic.service.j2", dest: "/usr/lib/systemd/system/borgmatic.service", mode: "0644" }
+
+    - name: Populate service facts
+      ansible.builtin.service_facts:
+
+      # If the role is running and the repo is not yet initialized, an error will occur.
+      # Therefore the service is stopped by default and must be started manually.
+    - name: Stop fresh installed borgmatic.timer and borgmatic.service
+      when: "'borgmatic.service' not in ansible_facts.services"
+      block:
+        - name: Set borgmatic services to stopped - newly installed
+          ansible.builtin.systemd:
+            name: "{{ item }}"
+            state: stopped
+            enabled: false
+            masked: false
+            daemon_reload: true
+          when: item in ansible_facts.services
+          with_items:
+            - borgmatic.service
+
+        # bug: Need own section without masked else the timer are skipped
+        - name: Set borgmatic timers to stopped - newly installed
+          ansible.builtin.systemd:
+            name: "{{ item }}"
+            state: stopped
+            enabled: false
+            daemon_reload: true
+          with_items:
+            - "borgmatic.timer"
+
+        - name: Show hints
+          when: "'backup_init_repo' not in ansible_run_tags"
+          ansible.builtin.debug:
+            msg: "Attention: Since the repo was not initialized automatically, the systemd service (borgmatic.service) and the timer (borgmatic.timer) are not activated."
+...

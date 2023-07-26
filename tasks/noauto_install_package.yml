@@ -1,0 +1,21 @@
+---
+- name: Install borgbackup by distro
+  block:
+    - name: Check if EPEL repo is enabled, if installation from distro is requested
+      when: borg_require_epel
+      block:
+      - name: Get list of installed packages
+        ansible.builtin.package_facts:
+          manager: auto
+      - name: Ensure EPEL is enabled
+        ansible.builtin.assert:
+          that:
+            - "'epel-release' in ansible_facts.packages"
+          fail_msg: Need EPEL repo to install via distro package.
+
+    - name: Install borgmatic and borg via distribution package manager
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ borg_distro_packages }}"
+...

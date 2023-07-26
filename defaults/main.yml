@@ -1,25 +1,13 @@
 ---
 borg_encryption_passphrase: ''
 borg_exclude_patterns: []
-borgmatic_config_name: config.yaml
-borgmatic_large_repo: true
-borgmatic_hooks:
-  on_error:
-  - echo "`date` - Error while creating a backup."
-  before_backup:
-  - echo "`date` - Starting backup."
-  after_backup:
-  - echo "`date` - Finished backup."
-borgmatic_checks:
-  - repository
-borgmatic_check_last: 3
-borgmatic_store_atime: true
-borgmatic_store_ctime: true
-borgmatic_relocated_repo_access_is_ok: false
 borg_one_file_system: true
 borg_exclude_from: []
 borg_encryption_passcommand: false
 borg_lock_wait_time: 5
+borg_ssh_key_type: "ed25519"
+borg_ssh_key_name: "id_{{ borg_ssh_key_type }}"
+borg_ssh_key_file_path: "{{ backup_user_info.home }}/.ssh/{{ borg_ssh_key_name }}"
 borg_ssh_command: false
 borg_remote_path: false
 borg_remote_rate_limit: 0
@@ -28,13 +16,34 @@ borg_retention_policy:
   keep_daily: 7
   keep_weekly: 4
   keep_monthly: 6
-ssh_key_file: .ssh/id_ed25519
-borgmatic_cron_name: borgmatic
-borgmatic_cron_hour: "{{ 6 | random(seed=inventory_hostname) }}"
-borgmatic_cron_minute: "{{ 59 | random(seed=inventory_hostname) }}"
-borgmatic_cron_checks_day: "{{ range(1, 28) | random(seed=inventory_hostname) }}"
-borgmatic_cron_checks_hour: "{{ range(9, 24) | random(seed=inventory_hostname) }}"
-borgmatic_cron_checks_minute: "{{ 59 | random(seed=inventory_hostname) }}"
 borg_version: false
-borgmatic_version: false
-borg_install_method: pip
+borgmatic_timer_cron_name: "borgmatic"
+borgmatic_timer: cron
+borgmatic_timer_hour: "{{ range(0, 5) | random(seed=inventory_hostname) }}"
+borgmatic_timer_minute: "{{ range(0, 59) | random(seed=inventory_hostname) }}"
+borg_install_method: "pip"
+borg_require_epel: "{{ ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora' }}"
+
+borgmatic_config_name: config.yaml
+borgmatic_hooks:
+  on_error:
+    - echo "`date` - Error while creating a backup."
+  before_backup:
+    - echo "`date` - Starting backup."
+  after_backup:
+    - echo "`date` - Finished backup."
+borgmatic_checks:
+  - name: repository
+    frequency: "4 weeks"
+  - name: archives
+    frequency: "6 weeks"
+borgmatic_check_last: 3
+borgmatic_store_atime: true
+borgmatic_store_ctime: true
+borgmatic_relocated_repo_access_is_ok: false
+borgmatic_version: ">=1.7.11"
+
+borg_venv_path: "/opt/borgmatic"
+borg_user: "root"
+borg_group: "root"
+...

@@ -1,0 +1,182 @@
+argument_specs:
+  main:
+    # https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html#role-argument-validation
+    # https://docs.ansible.com/ansible/latest/dev_guide/developing_program_flow_modules.html#argument-spec
+    short_description: Role to install borgbackup and borgmatic.
+    description: Role to install borgbackup and borgmatic
+    author:
+      - 2018-2020 Manuel Riel and contributors.
+      - Frank Dornheim
+    options:
+      borg_dep_packages:
+        type: str
+        required: false
+        description: Dependancy Packages to install borg(backup) and borgmatic.
+      borg_distro_packages:
+        type: str
+        required: false
+        description: |
+          Contains the names of distributions packages for borg(backup) and borgmatic,
+          only used if `borg_install_method` is set to package
+      borg_pip_packages:
+        type: str
+        required: false
+        description: Dependancy Packages (pip) to install borg(backup) and borgmatic.
+      borg_venv_path:
+        type: str
+        required: false
+        description:  Path to store the venv for borg(backup) and borgmatic.
+      borg_install_method:
+        type: str
+        required: false
+        default: pip
+        description: |
+          By default pip is used to install borgmatic.
+          To install via your distributions package manager set this to package and (if needed)
+          overwrite the borg_distro_packages variable to contain your distributions package names
+          required to install borgmatic.
+          Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk.
+      borgmatic_config_name:
+        type: str
+        required: false
+        default: config.yaml
+        description: Name to use for the borgmatic config file.
+      borg_user:
+        type: str
+        default: root
+        description: Name of the User to create Backups (Service Account)
+      borg_group:
+        type: str
+        default: root
+        description: Name of the Group to create Backups (Service Account)
+      borg_source_directories:
+        type: List
+        default: "/etc/hostname"
+        required: false
+        description: List of local folders to back up.
+      borg_one_file_system:
+        type: str
+        required: false
+        description: Don't cross file-system boundaries.
+      borg_repository:
+        type: List
+        required: true
+        description: |
+          Full path to repository.
+          Your own server or [BorgBase.com](https://www.borgbase.com) repo.
+          Not required when using auto creation of repositories.
+          Can be a list if you want to backup to multiple repositories.
+      borgmatic_store_atime:
+        type: bool
+        required: false
+        description: Store atime into archive.
+      borgmatic_store_ctime:
+        type: bool
+        required: false
+        description: Store ctime into archive.
+      borg_exclude_patterns:
+        type: List
+        required: false
+        description: Any paths matching these patterns are excluded from backups. Globs and tildes are expanded.
+      borg_exclude_from:
+        type: List
+        required: false
+        description: Read exclude patterns from one or more separate named files, one pattern per line.
+      borg_remote_path:
+        type: str
+        required: false
+        description: Alternate Borg remote executable. Defaults to "borg"
+      borg_encryption_passphrase:
+        type: str
+        description: |
+          The standard output of this command is used to unlock the encryption key.
+          Only use on repositories that were initialized with passcommand/repokey encryption.
+          Note that if both encryption_passcommand and encryption_passphrase are set,
+          then encryption_passphrase takes precedence.
+      borg_encryption_passcommand:
+        type: str
+        required: false
+        description: secret-tool lookup borg-repository repo-name
+      borg_remote_rate_limit:
+        type: int
+        required: false
+        description: Remote network upload rate limit in kiBytes/second.
+      borg_ssh_key_file_path:
+        type: str
+        required: false
+        description: Path to ssh-key
+      borg_ssh_command:
+        type: str
+        description: Command to use instead of just ssh. This can be used to specify ssh options.
+      borg_lock_wait_time:
+        type: int
+        description: Maximum seconds to wait for acquiring a repository/cache lock.
+      borgmatic_relocated_repo_access_is_ok:
+        type: bool
+        description: Bypass Borg error about a repository that has been moved.
+      borg_retention_policy:
+        keep_secondly:
+          type: int
+          required: false
+          description: Number of secondly archives to keep.
+        keep_minutely:
+          type: int
+          required: false
+          description: Number of minutely archives to keep.
+        keep_hourly:
+          type: int
+          required: false
+          description: Number of hourly archives to keep.
+        keep_daily:
+          type: int
+          required: false
+          description: Number of daily archives to keep.
+        keep_weekly:
+          type: int
+          required: false
+          description: Number of weekly archives to keep.
+        keep_monthly:
+          type: int
+          required: false
+          description: Number of monthly archives to keep.
+        keep_yearly:
+          type: int
+          required: false
+          description: Number of yearly archives to keep.
+      borgmatic_checks:
+        type: List
+        required: false
+        description: |
+          List of one or more consistency checks to run
+          "repository", "archives", "data", and/or "extract".
+          Defaults to "repository" and "archives".
+          Set to "disabled" to disable all consistency checks.
+          "repository" checks the consistency of the repository,
+          "archives" checks all of the archives, "data" verifies
+          the integrity of the data within the  archives, and
+          "extract" does an extraction dry-run of the  most recent archive.
+          Note that "data" implies "archives".
+      borgmatic_check_last:
+        type: int
+        required: false
+        description: Restrict the number of checked archives to the last n. Applies only to the "archives" check.
+      borgmatic_hooks:
+        type: dict
+        required: false
+        description: Shell commands or scripts to execute before and after a backup or if an error has occurred.
+      borgmatic_timer_cron_name:
+        type: str
+        required: false
+        description: Name of the cron Job
+      borgmatic_timer:
+        type: str
+        required: false
+        description: If the variable is set, a timer is installed. A choice must be made between "cron" and "systemd".
+      borg_ssh_key_type:
+        type: str
+        required: false
+        description: The algorithm used to generate the SSH private key
+      borg_ssh_key_name:
+        type: str
+        required: false
+        description: Name of the SSH public and private key

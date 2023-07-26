@@ -18,9 +18,11 @@
         state: present
 
   roles:
-    - role: m3nu.ansible_role_borgbackup
-      borg_encryption_passphrase: CHANGEME
+    - role: borgbase.ansible_role_borgbackup
+      borg_install_method: pip
+      borgmatic_timer: cron
       borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+      borg_encryption_passphrase: CHANGEME
       borg_source_directories:
         - /srv/www
         - /var/lib/automysqlbackup
@@ -38,7 +40,6 @@
         - name: users
           hostname: database1.example.org
           port: 5433
-      borg_install_method: pip
 
   post_tasks:
   - name: Install yamllint for checking config file
