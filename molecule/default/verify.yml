@@ -4,10 +4,13 @@
   tasks:
   - name: Ensure Borgmatic is installed correctly
     command: borgmatic --version
+    changed_when: false
 
   - name: Ensure Borg is installed correctly
     command: borgmatic borg --version
+    changed_when: false
 
   - name: Ensure produced YAML is valid
     command: |
       yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" /etc/borgmatic/config.yaml
+    changed_when: false
