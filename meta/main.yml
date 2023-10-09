@@ -21,6 +21,7 @@ galaxy_info:
     - name: ArchLinux
       versions:
         - all
+    - name: Docker
   galaxy_tags:
     - backup
     - cloud

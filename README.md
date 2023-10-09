@@ -59,7 +59,23 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
       keep_monthly: 6
 ```
 
+## Example playbook using Docker
 
+```
+- hosts: all
+  roles:
+    - role: borgbase.ansible_role_borgbackup
+      borg_install_method: docker
+      borgmatic_timer: cron
+      borg_repository: ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
+      borg_encryption_passphrase: CHANGEME
+      borg_source_directories:
+        - /var/www
+      borg_ssh_private_key: !vault |
+                $ANSIBLE_VAULT;1.1;AES256
+                65373636303732303236313234666230386333636233313631663135323734626265616532633064
+                316334...truncated
+```
 
 ## Installation
 
@@ -87,7 +103,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borg_encryption_passphrase`: Password to use for repokey or keyfile. Empty if repo is unencrypted.
 - `borg_exclude_from`: Read exclude patterns from one or more separate named files, one pattern per line.
 - `borg_exclude_patterns`: Paths or patterns to exclude from backup. See [official documentation](https://borgbackup.readthedocs.io/en/stable/usage/help.html#borg-help-patterns) for more.
-- `borg_install_method`: By default `pip` is used to install borgmatic. To install via your distributions package manager set this to `package` and (if needed) overwrite the `borg_distro_packages` variable to contain your distributions package names required to install borgmatic. Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk.
+- `borg_install_method`: By default `pip` is used to install borgmatic. To install via your distributions package manager set this to `package` and (if needed) overwrite the `borg_distro_packages` variable to contain your distributions package names required to install borgmatic. Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk. To install via a Docker container, set this to "docker". Docker must be installed on target host.
 - `borg_require_epel`: When using `borg_install_method: package` on RHEL-based distributions, the EPEL repo is required. To disable the check (e.g. when using a custom mirror instead of the `epel-release` package), set this to `false`. Defaults to `{{ ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora' }}` (i.e. `true` on Enterprise Linux-based distros).
 - `borg_lock_wait_time`: Config maximum seconds to wait for acquiring a repository/cache lock. Defaults to 5 seconds.
 - `borg_one_file_system`: Don't cross file-system boundaries. Defaults to `true`
@@ -99,6 +115,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borg_ssh_key_name`: Name of the SSH public and pivate key. Default `id_ed25519`
 - `borg_ssh_key_file_path`: SSH-key to be used. Default `~/.ssh/{{ borg_ssh_key_name }}`
 - `borg_ssh_key_type`: The algorithm used to generate the SSH private key. Choose: `rsa`, `dsa`, `rsa1`, `ecdsa`, `ed25519`. Default: `ed25519`
+- `borg_ssh_private_key`: Content of the ssh private key, may you want to provide it. Only keys without passphrase is supported. Most useful for Docker deployments. IMPORTANT! Be sure to provide the content of this variable via an Ansible Vault.
 - `borg_ssh_command`: Command to use instead of just "ssh". This can be used to specify SSH options.
 - `borg_version`: Force a specific borg version to be installed
 - `borg_venv_path`: Path to store the venv for `borg(backup)` and `borgmatic`
@@ -115,9 +132,12 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_store_ctime`: Store ctime into archive. Defaults to `true`
 - `borgmatic_version`: Force a specific borgmatic version to be installed
 
-- `borg_user`: Name of the User to create Backups (service account)
-- `borg_group`: Name of the Group to create Backups (service account)
+- `borg_user`: Name of the User to create Backups (service account). When using Docker, must be root.
+- `borg_group`: Name of the Group to create Backups (service account). When using Docker, must be root.
 
+- `borgmatic_docker_image_name`: When using borg_install_method=docker, name docker image to build. Defaults to `ansible_borgmatic`
+- `borgmatic_docker_container_name`: When using borg_install_method=docker, name of the docker container. Defaults to `ansible_borgmatic`
+- `borgmatic_docker_timezone`: Timezone to use when using borg_install_method=docker. Defaults to `UTC`
 
 ## Contributing
 
