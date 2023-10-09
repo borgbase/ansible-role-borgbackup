@@ -17,10 +17,6 @@
     ansible.builtin.set_fact:
       borgmatic_docker_tag: "{{ borgmatic_version | regex_search('\\d+\\.\\d+(\\.\\d+){0,1}') }}"
 
-  - name: Debug borgmatic_docker_tag
-    debug:
-      var: borgmatic_docker_tag
-
   - name: Assert source path exists
     ansible.builtin.stat:
       path: "{{ item }}"
@@ -57,11 +53,6 @@
         {%- endfor -%}
         {{ volumes }}
 
-  - name: Debug volume list
-    ansible.builtin.debug:
-      var: volumes
-      verbosity: 1
-
   - name: Modify borg_source_directories to reflect path in container
     ansible.builtin.set_fact:
       borg_source_directories: >-
@@ -70,11 +61,6 @@
         {%-   set _ = sources.append("/sources" + source) -%}
         {%- endfor -%}
         {{ sources }}
-
-  - name: Debug borg_source_directories
-    ansible.builtin.debug:
-      var: borg_source_directories
-      verbosity: 1
 
   - name: Modify borg_repository to reflect path in container
     ansible.builtin.set_fact:
@@ -89,11 +75,6 @@
         {%- endfor -%}
         {{ repositories }}
       borg_repository_flat: "{{ borg_repository | join('|') }}"
-
-  - name: Debug borg_repository
-    ansible.builtin.debug:
-      var: borg_repository
-      verbosity: 1
 
   - name: Check if ssh repo in the list
     when:
