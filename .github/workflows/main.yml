@@ -19,3 +19,5 @@ jobs:
     #   uses: mxschmitt/action-tmate@v3.5
     - name: Test using Molecule
       run: molecule test
+    - name: Test Docker scenario using Molecule
+      run: molecule test -s docker

@@ -1,0 +1,96 @@
+---
+- name: Converge
+  hosts: all
+  pre_tasks:
+    - name: Set ssh server package name for non-Archlinux ansible_os_family
+      set_fact:
+        openssh_package: "openssh-server"
+        pip3_extra_args: ""
+      when: ansible_os_family != "Archlinux"
+
+    - name: Set ssh server package name and pip3 argument for Archlinux ansible_os_family
+      set_fact:
+        openssh_package: "openssh"
+        pip3_extra_args: "--break-system-packages"
+      when: ansible_os_family == "Archlinux"
+
+    - name: Install openssh
+      package:
+        name: "{{ openssh_package }}"
+        state: present
+
+    - name: Define borg_source_directories
+      ansible.builtin.set_fact:
+        borg_source_directories_tmp:
+          - /srv/www
+          - /var/lib/automysqlbackup
+
+    - name: Create backup source folders on the docker host
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: "0777"
+        state: directory
+      with_items: "{{ borg_source_directories_tmp }}"
+
+    - name: Define borg_repository
+      ansible.builtin.set_fact:
+        borg_repository_tmp:
+          - m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+          - /local_borg_repo
+
+    - name: Create local repository folders on the docker host
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: "0777"
+        state: directory
+      with_items: "{{ borg_repository_tmp }}"
+      when: item[0] == "/"
+
+  roles:
+    - role: borgbase.ansible_role_borgbackup
+      borg_install_method: docker
+      borgmatic_timer: cron
+      borg_repository: "{{ borg_repository_tmp }}"
+      borg_encryption_passphrase: CHANGEME
+      borg_source_directories:  "{{ borg_source_directories_tmp }}"
+      borg_exclude_patterns:
+        - /srv/www/old-sites
+      borg_retention_policy:
+        keep_hourly: 3
+        keep_daily: 7
+        keep_weekly: 4
+        keep_monthly: 6
+      borgmatic_hooks:
+        before_backup:
+        - echo "`date` - Starting backup."
+        postgresql_databases:
+        - name: users
+          hostname: database1.example.org
+          port: 5433
+      borg_ssh_private_key: !vault |
+                $ANSIBLE_VAULT;1.1;AES256
+                65373636303732303236313234666230386333636233313631663135323734626265616532633064
+                3163346333616539663732636366626535326238623761320a336130633135643735613433636538
+                33333336656238306163303431393562303863633137646337633861346265353131396434393531
+                6564386438356330380a373138353364316535653338396164383861396538333336666436663832
+                32613439616136313331333336636232323231623363633661656632316237653633363466313734
+                35316262653366373137393761393835643166666436333635383334643636616436623030376234
+                33343565363863613161373561616237313138633765376263656536303565363838376163313963
+                37656431316335663030336236633663313937353362653639303836366436383334373132666334
+                39313562316330613131383738613136616631336461626362313764313637356233373437613962
+                31363564643266353737656261613232366336386230333963393935353763343236333564376462
+                36653538363131616133653463613633343036363931316334613136653265636262313235366434
+                31306562363034336431373535393364346435323130386265346431343836613135353430366534
+                61323861653464313763303261656430393930623664396630666133383038313939303030396362
+                34363435316434656462366339346637396134623337633133386638646463633063363133656164
+                35396237366363383637333662366437633361356466616137623362623439323433656562636238
+                66633964323831386435306163343566666533663363343262346332373764366635643961333130
+                63346431326432313234653132383664396165313538346161316264653235616161353833633234
+                31343663346434633863393934653631376334346666346437366639613032343632356635613932
+                62306361343336386435653939386339343066366531356632643730643330353931663239326130
+                39346364363263363332363637616133323761636437313138633630363237383363393432386362
+                33633330323536346430636234373032346663336630623334363363393661376531376337313066
+                64626434356535346461326339376435643738353463343035306433343630653335643635613939
+                37323564323130356338643237383966313539663132656533656434626166373839653435343835
+                62373131393235333934356133643963613665626532643164343063666632626561666330373930
+                6132

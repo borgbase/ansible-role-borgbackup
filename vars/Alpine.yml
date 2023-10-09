@@ -1,0 +1,6 @@
+---
+borg_docker_packages:
+  - py3-docker-py
+
+python_bin: python3
+pip_bin: pip3

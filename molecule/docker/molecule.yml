@@ -1,0 +1,21 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: docker-dind # Based on Alpine
+    image: docker:dind
+    privileged: True    # required to have access to the dind
+    command: /usr/local/bin/dockerd-entrypoint.sh # Starts docker daemon
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      vault_password_file: "${MOLECULE_SCENARIO_DIRECTORY}/vault.pw"
+verifier:
+  name: ansible
+lint: |
+  set -e
+  yamllint .
+  ansible-lint .

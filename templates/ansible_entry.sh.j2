@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# We need to copy ssh keys at runtime because of the built-in volumes in the upstream Docker image definition
+if [ -f "/{{ borg_ssh_key_name }}.pub" ]; then mv /{{ borg_ssh_key_name }}.pub /root/.ssh; fi
+if [ -f "/{{ borg_ssh_key_name }}" ]; then mv /{{ borg_ssh_key_name }} /root/.ssh; fi
+
+echo "$BACKUP_CRON" > /etc/borgmatic.d/crontab.txt
+
+exec env SUPERCRONIC_EXTRA_FLAGS=-debug /entry.sh "$@"

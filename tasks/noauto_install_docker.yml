@@ -1,0 +1,172 @@
+---
+- name: Install borgbackup with Docker
+  block:
+
+  - name: Create temp directory for Docker build
+    ansible.builtin.tempfile:
+      state: directory
+    register: build_dir
+    changed_when: false
+
+  - name: Install build dependencies
+    ansible.builtin.package:
+      name: "{{ borg_docker_packages }}"
+      state: present
+
+  - name: Define Docker image tag based on borgmatic --version
+    ansible.builtin.set_fact:
+      borgmatic_docker_tag: "{{ borgmatic_version | regex_search('\\d+\\.\\d+(\\.\\d+){0,1}') }}"
+
+  - name: Debug borgmatic_docker_tag
+    debug:
+      var: borgmatic_docker_tag
+
+  - name: Assert source path exists
+    ansible.builtin.stat:
+      path: "{{ item }}"
+    register: source_path
+    failed_when: not source_path.stat.exists or (source_path.stat.exists and not source_path.stat.isdir)
+    with_items: "{{ borg_source_directories }}"
+
+  - name: Assert local repository path exists
+    ansible.builtin.stat:
+      path: "{{ item }}"
+    register: source_path
+    failed_when: not source_path.stat.exists or (source_path.stat.exists and not source_path.stat.isdir)
+    when: item[0] == "/"
+    with_items: "{{ borg_repository }}"
+
+  - name: Assert user and group are repositories
+    ansible.builtin.assert:
+      that:
+        - borg_user == "root"
+        - borg_group == "root"
+      fail_msg: For docker deployment, only "root" is supported for borg_user and borg_group
+
+  - name: Build volume list from borg_source_directories and borg_repository
+    ansible.builtin.set_fact:
+      volumes: >-
+        {%- set volumes = [] -%}
+        {%- for dir in borg_source_directories -%}
+        {%-   set _ = volumes.append(dir + ":/sources" + dir + ":ro") -%}
+        {%- endfor -%}
+        {%- for dir in borg_repository -%}
+        {%-   if dir[0] == "/" -%}
+        {%-     set _ = volumes.append(dir + ":/repositories" + dir) -%}
+        {%-   endif -%}
+        {%- endfor -%}
+        {{ volumes }}
+
+  - name: Debug volume list
+    ansible.builtin.debug:
+      var: volumes
+      verbosity: 1
+
+  - name: Modify borg_source_directories to reflect path in container
+    ansible.builtin.set_fact:
+      borg_source_directories: >-
+        {%- set sources = [] -%}
+        {%- for source in borg_source_directories -%}
+        {%-   set _ = sources.append("/sources" + source) -%}
+        {%- endfor -%}
+        {{ sources }}
+
+  - name: Debug borg_source_directories
+    ansible.builtin.debug:
+      var: borg_source_directories
+      verbosity: 1
+
+  - name: Modify borg_repository to reflect path in container
+    ansible.builtin.set_fact:
+      borg_repository: >-
+        {%- set repositories = [] -%}
+        {%- for repo in borg_repository -%}
+        {%-   if repo[0] == "/" -%}
+        {%-     set _ = repositories.append("/repositories" + repo) -%}
+        {%-   else -%}
+        {%-     set _ = repositories.append(repo) -%}
+        {%-   endif -%}
+        {%- endfor -%}
+        {{ repositories }}
+      borg_repository_flat: "{{ borg_repository | join('|') }}"
+
+  - name: Debug borg_repository
+    ansible.builtin.debug:
+      var: borg_repository
+      verbosity: 1
+
+  - name: Check if ssh repo in the list
+    when:
+      - not borg_ssh_private_key
+      - borg_repository_flat is match('|[^/]')
+    ansible.builtin.set_fact:
+      has_ssh_repo: true
+
+  - name: Test if private key was provided
+    when:
+      - not borg_ssh_private_key
+      - has_ssh_repo
+    ansible.builtin.fail:
+      msg: "Private key content must be provided when using docker"
+
+  - name: Copy private key
+    when: borg_ssh_private_key
+    changed_when: false
+    ansible.builtin.copy:
+      dest: "{{ build_dir.path }}/{{ borg_ssh_key_name }}"
+      mode: 0600
+      content: "{{ borg_ssh_private_key }}"
+      validate: ssh-keygen -yf %s   # Also ensure priv key content is sound
+
+  - name: Generate public key from private key
+    when: borg_ssh_private_key
+    changed_when: false
+    failed_when: not public_key.stdout.startswith("ssh")
+    register: public_key
+    ansible.builtin.command: "ssh-keygen -yf {{ build_dir.path }}/{{ borg_ssh_key_name }}"
+
+  - name: Copy other files to build folder for docker build
+    changed_when: false
+    ansible.builtin.template:
+      dest: "{{ build_dir.path }}/{{ item | basename | regex_replace('\\.j2$', '') }}"
+      src: "{{ item }}"
+      mode: 0600
+    with_items:
+      - Dockerfile.j2
+      - config.yaml.j2
+      - ansible_entry.sh.j2
+
+  - name: Build docker image
+    changed_when: false  # will make the idempotency test fail otherwise
+    community.docker.docker_image:
+      name: "{{ borgmatic_docker_image_name }}:{{ borgmatic_docker_tag }}"
+      source: build
+      state: present
+      force_source: true
+      build:
+        path: "{{ build_dir.path }}"
+        pull: true
+        rm: false
+        args:
+          PUBLIC_KEY: "{{ public_key }}"
+          PRIVATE_KEY: "{{ borg_ssh_private_key }}"
+
+  - name: Start container
+    changed_when: false  # will make the idempotency test fail otherwise
+    community.docker.docker_container:
+      name: "{{ borgmatic_docker_container_name }}"
+      image: "{{ borgmatic_docker_image_name }}:{{ borgmatic_docker_tag }}"
+      volumes: "{{ volumes }}"
+      restart_policy: unless-stopped
+      labels:
+        ansible_borgmatic_managed: "1"
+      env:
+        BACKUP_CRON: "{{ borgmatic_timer_minute }} {{ borgmatic_timer_hour }} * * * borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
+        TZ: "{{ borgmatic_docker_timezone }}"
+
+  always:
+    - name: Delete build folder
+      ansible.builtin.file:
+        path: "{{ build_dir.path }}"
+        state: absent
+      changed_when: false

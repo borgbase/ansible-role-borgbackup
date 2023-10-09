@@ -46,4 +46,8 @@ borgmatic_version: ">=1.7.11"
 borg_venv_path: "/opt/borgmatic"
 borg_user: "root"
 borg_group: "root"
+
+borgmatic_docker_image_name: "ansible_borgmatic"
+borgmatic_docker_container_name: "ansible_borgmatic"
+borgmatic_docker_timezone: "UTC"
 ...

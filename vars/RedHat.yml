@@ -15,6 +15,9 @@ borg_pip_packages:
   - python36-devel
   - python-setuptools
 
+borg_docker_packages:
+  - python36-docker
+
 borg_distro_packages:
   - borgbackup
   - borgmatic
