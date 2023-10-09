@@ -14,7 +14,7 @@
           group: "{{ borg_group }}"
 
       - name: Generate an OpenSSH keypair
-        when: not borg_ssh_private_key
+        when: borg_ssh_private_key is undefined
         community.crypto.openssh_keypair:
           path: "{{ borg_ssh_key_file_path }}"
           mode: "0600"
@@ -22,20 +22,28 @@
           owner: "{{ borg_user }}"
           group: "{{ borg_group }}"
 
-      - name: Generate public key from private key content  # Also ensure priv key content is sound
-        when: borg_ssh_private_key
-        delegate_to: localhost
-        community.crypto.openssl_publickey:
-          path: "{{ borg_ssh_key_file_path }}.pub"
-          privatekey_content: "{{ borg_ssh_private_key }}"
-        register: public_key
-
       - name: Copy provided OpenSSH private key
-        when: public_key.succeeded
+        when: borg_ssh_private_key is defined
         ansible.builtin.copy:
           content: "{{ borg_ssh_private_key }}"
           dest: "{{ borg_ssh_key_file_path }}"
           mode: "0600"
+          owner: "{{ borg_user }}"
+          group: "{{ borg_group }}"
+
+      - name: Generate public key from private key
+        when: borg_ssh_private_key is defined
+        changed_when: false
+        failed_when: not public_key.stdout.startswith("ssh")
+        register: public_key
+        ansible.builtin.command: "ssh-keygen -yf {{ borg_ssh_key_file_path }}"
+
+      - name: Copy provided OpenSSH public key
+        when: borg_ssh_private_key is defined
+        ansible.builtin.copy:
+          content: "{{ public_key.stdout }}"
+          dest: "{{ borg_ssh_key_file_path }}.pub"
+          mode: "0666"
           owner: "{{ borg_user }}"
           group: "{{ borg_group }}"
 
