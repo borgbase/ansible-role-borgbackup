@@ -19,6 +19,7 @@
         - "{{ ansible_lsb.id }}.yml"
 
     - name: Install general dependencies (openssh)
+      when: borg_install_method != "docker"
       ansible.builtin.package:
         name: "{{ borg_dep_packages }}"
         state: present
