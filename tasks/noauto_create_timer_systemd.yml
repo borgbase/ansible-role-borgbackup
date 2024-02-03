@@ -24,8 +24,8 @@
         backup: true
         mode: "{{ item.mode }}"
       with_items:
-        - { src: "borgmatic.timer.j2", dest: "/usr/lib/systemd/system/borgmatic.timer", mode: "0644" }
-        - { src: "borgmatic.service.j2", dest: "/usr/lib/systemd/system/borgmatic.service", mode: "0644" }
+        - { src: "borgmatic.timer.j2", dest: "/lib/systemd/system/borgmatic.timer", mode: "0644" }
+        - { src: "borgmatic.service.j2", dest: "/lib/systemd/system/borgmatic.service", mode: "0644" }
 
     - name: Populate service facts
       ansible.builtin.service_facts:
