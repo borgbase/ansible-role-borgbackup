@@ -6,11 +6,13 @@
     state: absent
   check_mode: true
   register: cron_file_exists
+  ignore_errors: true
 
 - name: Ensure no Borgmatic Cron file exists.
   ansible.builtin.assert:
     that:
       - not cron_file_exists.changed
+      - not cron_file_exists.failed or "Failed to find" in cron_file_exists.msg
     fail_msg: Found an existing Borgmatic Cron job. Please remove before using Systemd timer.
 
 - name: Create borgbackup timer
