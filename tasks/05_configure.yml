@@ -1,5 +1,7 @@
 ---
 - name: Add Borgmatic config file
+  when:
+    - borg_install_method != "docker"
   block:
     - name: Ensure /etc/borgmatic exists
       ansible.builtin.file:

@@ -1,0 +1,33 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+  - name: Set docker_cmd
+    ansible.builtin.set_fact:
+      docker_cmd: docker exec -i ansible_borgmatic
+
+  - name: Ensure Borgmatic is installed correctly
+    command: "{{ docker_cmd }} borgmatic --version"
+    changed_when: false
+
+  - name: Ensure Borg is installed correctly
+    command: "{{ docker_cmd }} borgmatic borg --version"
+    changed_when: false
+
+  - name: Ensure produced YAML is valid
+    ansible.builtin.shell: |
+      {{ docker_cmd }} pip3 install yamllint && \
+      {{ docker_cmd }} yamllint --list-files -d "{extends: relaxed, rules: {line-length: {max: 120}}}" /etc/borgmatic/config.yaml
+    changed_when: false
+
+  - name: Ensure modified source path name is present in the config instead of the original
+    command: "{{ docker_cmd }} grep /sources/var/lib/automysqlbackup /etc/borgmatic/config.yaml"
+    changed_when: false
+
+  - name: Ensure modified local repo path name is present in the config instead of the original
+    command: "{{ docker_cmd }} grep /repositories/local_borg_repo /etc/borgmatic/config.yaml"
+    changed_when: false
+
+  - name: Ensure supercronic is running
+    command: "{{ docker_cmd }} pgrep supercronic"
+    changed_when: false

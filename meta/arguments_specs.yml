@@ -30,12 +30,14 @@ argument_specs:
         type: str
         required: false
         default: pip
+        choices: [pip, package, docker]
         description: |
           By default pip is used to install borgmatic.
           To install via your distributions package manager set this to package and (if needed)
           overwrite the borg_distro_packages variable to contain your distributions package names
           required to install borgmatic.
           Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk.
+          To install via a Docker container, set this to "docker". Docker must be installed on target host
       borgmatic_config_name:
         type: str
         required: false
@@ -44,11 +46,11 @@ argument_specs:
       borg_user:
         type: str
         default: root
-        description: Name of the User to create Backups (Service Account)
+        description: Name of the User to create Backups (Service Account). When using Docker, must be root.
       borg_group:
         type: str
         default: root
-        description: Name of the Group to create Backups (Service Account)
+        description: Name of the Group to create Backups (Service Account). When using Docker, must be root.
       borg_source_directories:
         type: List
         default: "/etc/hostname"
@@ -105,6 +107,10 @@ argument_specs:
         type: str
         required: false
         description: Path to ssh-key
+      borg_ssh_private_key:
+        type: str
+        required: false
+        description: Content of the ssh private key, may you want to provide it. Only keys without passphrase is supported. Most useful for Docker deployments. IMPORTANT! Be sure to provide the content of this variable via an Ansible Vault.
       borg_ssh_command:
         type: str
         description: Command to use instead of just ssh. This can be used to specify ssh options.
@@ -180,3 +186,18 @@ argument_specs:
         type: str
         required: false
         description: Name of the SSH public and private key
+      borgmatic_docker_image_name:
+        type: str
+        required: false
+        default: ansible_borgmatic
+        description: When using borg_install_method=docker, name docker image to build
+      borgmatic_docker_container_name:
+        type: str
+        required: false
+        default: ansible_borgmatic
+        description: When using borg_install_method=docker, name of the docker container
+      borgmatic_docker_timezone:
+        type: str
+        required: false
+        default: UTC
+        description: Timezone to use when using borg_install_method=docker

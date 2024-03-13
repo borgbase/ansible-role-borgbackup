@@ -16,6 +16,9 @@ borg_pip_packages:
   - python3-setuptools
   - python3-virtualenv
 
+borg_docker_packages:
+  - python3-docker
+
 borg_distro_packages:
   - borgbackup
   - borgmatic

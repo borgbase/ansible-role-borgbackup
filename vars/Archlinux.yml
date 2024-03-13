@@ -10,6 +10,9 @@ borg_pip_packages:
   - python-pip
   - python-setuptools
 
+borg_docker_packages:
+  - python-docker
+
 borg_distro_packages:
   - borg
   - borgmatic

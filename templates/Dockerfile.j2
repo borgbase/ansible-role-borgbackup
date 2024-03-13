@@ -1,0 +1,15 @@
+FROM ghcr.io/borgmatic-collective/borgmatic:{{ borgmatic_docker_tag }}
+
+LABEL "ansible_borgmatic_managed"="1"
+
+COPY config.yaml /etc/borgmatic/{{ borgmatic_config_name }}
+
+# Those keys will be copied at /root/.ssh at runtime. This is required because of the anom volumes defined in the upstream image
+ARG PUBLIC_KEY=""
+ARG PRIVATE_KEY=""
+RUN if [ ! -z "$PUBLIC_KEY" ]; then echo "$PUBLIC_KEY" > /{{ borg_ssh_key_name}}.pub; fi
+RUN if [ ! -z "$PRIVATE_KEY" ]; then echo "$PRIVATE_KEY" > /{{ borg_ssh_key_name}}; fi
+COPY ansible_entry.sh /
+RUN chmod 700 /ansible_entry.sh
+
+ENTRYPOINT [ "/ansible_entry.sh" ]

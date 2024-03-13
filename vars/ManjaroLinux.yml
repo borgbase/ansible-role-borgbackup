@@ -16,6 +16,9 @@ borg_pip_packages:  # untested
   - python3-msgpack
   - python3-venv
 
+borg_docker_packages:
+  - python3-docker
+
 borg_distro_packages:
   - borg
   - borgmatic
