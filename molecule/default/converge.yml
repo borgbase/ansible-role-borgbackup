@@ -5,11 +5,13 @@
     - name: Set ssh server package name for non-Archlinux ansible_os_family
       set_fact:
         openssh_package: "openssh-server"
+        pip3_extra_args: ""
       when: ansible_os_family != "Archlinux"
 
-    - name: Set ssh server package name for Archlinux ansible_os_family
+    - name: Set ssh server package name and pip3 argument for Archlinux ansible_os_family
       set_fact:
         openssh_package: "openssh"
+        pip3_extra_args: "--break-system-packages"
       when: ansible_os_family == "Archlinux"
 
     - name: Install openssh
@@ -46,3 +48,5 @@
     pip:
       name: yamllint
       executable: pip3
+      extra_args: "{{ pip3_extra_args }}"
+
