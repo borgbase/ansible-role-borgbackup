@@ -8,6 +8,9 @@ borg_pip_packages:
   - libssl-dev
   - libacl1-dev
   - libacl1
+  - liblz4-dev
+  - libzstd-dev
+  - libxxhash-dev
   - build-essential
   - python3-setuptools
   - python3-dev
