@@ -172,6 +172,14 @@ argument_specs:
         type: str
         required: false
         description: If the variable is set, a timer is installed. A choice must be made between "cron" and "systemd".
+      borgmatic_timer_hour:
+        type: str
+        required: false
+        description: Hour when regular create and prune cron/systemd-timer job will run.
+      borgmatic_timer_minute:
+        type: str
+        required: false
+        description: Minute when regular create and prune cron/systemd-timer job will run.
       borg_ssh_key_type:
         type: str
         required: false
