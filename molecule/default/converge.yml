@@ -19,6 +19,17 @@
         name: "{{ openssh_package }}"
         state: present
 
+    - name: Enable EPEL for yamllint
+      package:
+        name: epel-release
+        state: present
+      when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'
+
+    - name: Install yamllint
+      package:
+        name: yamllint
+        state: present
+
   roles:
     - role: borgbase.ansible_role_borgbackup
       borg_install_method: pip
@@ -42,11 +53,3 @@
         - name: users
           hostname: database1.example.org
           port: 5433
-
-  post_tasks:
-  - name: Install yamllint for checking config file
-    pip:
-      name: yamllint
-      executable: pip3
-      extra_args: "{{ pip3_extra_args }}"
-

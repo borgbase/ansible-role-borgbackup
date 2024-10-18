@@ -5,16 +5,20 @@ borg_dep_packages:
 borg_cron_package: cronie
 
 borg_pip_packages:
-  - libacl-devel
-  - libacl
   - gcc
   - gcc-c++
+  - libacl
+  - libacl-devel
+  - libzstd-devel
+  - lz4-devel
   - openssl-devel
-  - python3-pip
-  # - python3-wheel
   - python3-devel
+  - python3-pip
   - python3-setuptools
+  - xxhash
+  - xxhash-devel
   # - python3-virtualenv
+  # - python3-wheel
 
 borg_distro_packages:
   - borgbackup

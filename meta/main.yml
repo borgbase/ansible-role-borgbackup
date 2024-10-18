@@ -15,9 +15,7 @@ galaxy_info:
         - all
     - name: Ubuntu
       versions:
-        - trusty
-        - xenial
-        - bionic
+        - all
     - name: ArchLinux
       versions:
         - all

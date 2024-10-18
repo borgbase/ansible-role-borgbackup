@@ -1,6 +1,12 @@
 ---
 - name: Install Borg and Borgmatic via pip
   block:
+    - name: Ensure the crb repository is enabled for RedHat (needed for xxhash)
+      community.general.dnf_config_manager:
+        name: crb
+        state: enabled
+      when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'
+
     - name: Install build dependencies
       ansible.builtin.package:
         name: "{{ borg_pip_packages }}"

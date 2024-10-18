@@ -1,6 +1,6 @@
 # Ansible Role: BorgBackup Client
 
-[![Test](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml/badge.svg)](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml) [![Ansible Galaxy](https://img.shields.io/ansible/role/48519)](https://galaxy.ansible.com/borgbase/ansible_role_borgbackup)
+[![Test](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml/badge.svg)](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml) [![Ansible Galaxy](https://img.shields.io/ansible/role/d/borgbase/ansible_role_borgbackup?logo=ansible&color=5cbec1&label=Ansible%20Galaxy)](https://galaxy.ansible.com/ui/standalone/roles/borgbase/ansible_role_borgbackup/)
 
 Set up encrypted, compressed and deduplicated backups using [BorgBackup](https://borgbackup.readthedocs.io/en/stable/) and [Borgmatic](https://github.com/witten/borgmatic). Currently supports Debian/Ubuntu, CentOS/Red Hat/Fedora, Archlinux and Manjaro.
 
@@ -19,12 +19,13 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
   Systemd timers, be sure to remove the Cron job in `/etc/cron.d/borgmatic` first.
   The role will also alert you when trying to use both timers.
 
-## Example playbook with root as backup user and Cron timer
+## Example playbook with root as backup user, using the distro package and Cron timer
 
 ```
 - hosts: all
   roles:
   - role: borgbase.ansible_role_borgbackup
+    borg_install_method: package
     borg_encryption_passphrase: CHANGEME
     borg_repository:
       - ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
