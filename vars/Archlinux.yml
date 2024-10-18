@@ -5,10 +5,16 @@ borg_dep_packages:
 borg_cron_package: cronie
 
 borg_pip_packages:
+  - acl
   - gcc
+  - lz4
+  - openssl
   - pkgconfig
   - python-pip
   - python-setuptools
+  - xxhash
+  - xz
+  - zstd
 
 borg_distro_packages:
   - borg

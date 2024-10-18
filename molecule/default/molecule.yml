@@ -10,8 +10,8 @@ platforms:
     image: almalinux:9
   - name: fedora-latest
     image: fedora:latest
-  - name: debian-bullseye
-    image: debian:bullseye
+  - name: debian-bookworm
+    image: debian:bookworm
   - name: ubuntu-latest
     image: ubuntu:latest
 provisioner:
