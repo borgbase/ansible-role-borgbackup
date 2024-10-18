@@ -23,6 +23,7 @@ borgmatic_timer_hour: "{{ range(0, 5) | random(seed=inventory_hostname) }}"
 borgmatic_timer_minute: "{{ range(0, 59) | random(seed=inventory_hostname) }}"
 borg_install_method: "pip"
 borg_require_epel: "{{ ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora' }}"
+borg_require_backports: "{{ ansible_distribution == 'Debian' and ansible_distribution_major_version == '11' }}"
 
 borgmatic_config_name: config.yaml
 borgmatic_hooks:
