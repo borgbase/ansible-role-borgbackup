@@ -180,6 +180,10 @@ argument_specs:
         type: str
         required: false
         description: Minute when regular create and prune cron/systemd-timer job will run.
+      borgmatic_version:
+        type: str
+        required: false
+        description: Borgmatic version to install. Defaults to 'latest'
       borg_ssh_key_type:
         type: str
         required: false
