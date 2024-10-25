@@ -12,7 +12,7 @@ borg_pip_packages:
   - libzstd-devel
   - lz4-devel
   - openssl-devel
-  - python3-devel
+  # - python3-devel
   - python3-pip
   - python3-setuptools
   - xxhash
