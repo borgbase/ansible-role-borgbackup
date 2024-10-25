@@ -14,13 +14,13 @@ borg_pip_packages:
   - openssl-devel
   - openssl-devel
   - python3-cython
-  - python3-devel
+  # - python3-devel
   - python3-pip
   - python3-setuptools
   - python3-wheel
   - xxhash
   - xxhash-devel
-  
+
 borg_distro_packages:
   - borgbackup
   - borgmatic
