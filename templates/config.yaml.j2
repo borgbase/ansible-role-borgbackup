@@ -177,6 +177,6 @@ consistency:
 # prevent potential shell injection or privilege escalation.
 hooks:
 {% for hook in borgmatic_hooks %}
-{{ hook }}:
+    {{ hook }}:
 {{ borgmatic_hooks[hook] | to_nice_yaml(indent=4) | indent(4, first=true) }}
 {% endfor %}
