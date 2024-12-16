@@ -178,5 +178,5 @@ consistency:
 hooks:
 {% for hook in borgmatic_hooks %}
     {{ hook }}:
-{{ borgmatic_hooks[hook] | to_nice_yaml(indent=4) | indent(4, first=true) }}
+{{ borgmatic_hooks[hook] | to_nice_yaml(indent=4) | indent(8, first=true) }}
 {% endfor %}
