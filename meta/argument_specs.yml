@@ -114,6 +114,9 @@ argument_specs:
       borgmatic_relocated_repo_access_is_ok:
         type: bool
         description: Bypass Borg error about a repository that has been moved.
+      borgmatic_unknown_unencrypted_repo_access_is_ok:
+        type: bool
+        description: Bypass Borg error about a previously unknown unencrypted repository.
       borg_retention_policy:
         keep_secondly:
           type: int
