@@ -1,5 +1,6 @@
 ---
 - name: Install borgbackup
+  when: borg_install_method != "none"
   block:
     - name: Include OS-specific variables
       include_vars: "{{ item }}"
