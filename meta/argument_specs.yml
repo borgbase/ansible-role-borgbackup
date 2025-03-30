@@ -36,6 +36,7 @@ argument_specs:
           overwrite the borg_distro_packages variable to contain your distributions package names
           required to install borgmatic.
           Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk.
+          Set to none to disable installation management.
       borgmatic_config_name:
         type: str
         required: false
