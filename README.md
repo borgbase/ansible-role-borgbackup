@@ -112,6 +112,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_hooks`: Hooks to monitor your backups e.g. with [Healthchecks](https://healthchecks.io/). See [official documentation](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/) for more.
 - `borgmatic_timer`: If the variable is set, a timer is installed. A choice must be made between `cron` and `systemd`.
 - `borgmatic_relocated_repo_access_is_ok`: Bypass Borg error about a repository that has been moved. Defaults to `false`
+- `borgmatic_unknown_unencrypted_repo_access_is_ok`: Bypass Borg error about a previously unknown unencrypted repository. Defaults to `false`
 - `borgmatic_store_atime`: Store atime into archive. Defaults to `true`
 - `borgmatic_store_ctime`: Store ctime into archive. Defaults to `true`
 - `borgmatic_version`: Force a specific borgmatic version to be installed
