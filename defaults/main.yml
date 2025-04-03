@@ -7,6 +7,7 @@ borg_encryption_passcommand: false
 borg_lock_wait_time: 5
 borg_ssh_key_type: "ed25519"
 borg_ssh_key_name: "id_{{ borg_ssh_key_type }}"
+borg_ssh_key_comment: ''
 borg_ssh_key_file_path: "{{ backup_user_info.home }}/.ssh/{{ borg_ssh_key_name }}"
 borg_ssh_command: false
 borg_remote_path: false

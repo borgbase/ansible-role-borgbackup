@@ -192,3 +192,7 @@ argument_specs:
         type: str
         required: false
         description: Name of the SSH public and private key
+      borg_ssh_key_comment:
+        type: str
+        required: false
+        description: Comment added to the SSH public key.

@@ -10,6 +10,7 @@
     borg_repository: ssh://m5vz9gp4@m5vz9gp4.repo.borgbase.com/./repo
     borgmatic_timer: systemd
     borg_ssh_key_name: id_backup
+    borg_ssh_key_comment: backup key
     borg_ssh_command: "ssh -i {{ borg_ssh_key_file_path }} -o StrictHostKeyChecking=accept-new"
     borg_user: backupuser
     borg_group: backupuser
