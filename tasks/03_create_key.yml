@@ -16,6 +16,7 @@
         type: "{{ borg_ssh_key_type }}"
         owner: "{{ borg_user }}"
         group: "{{ borg_group }}"
+        comment: "{{ borg_ssh_key_comment }}"
 
     - name: Read SSH key
       ansible.builtin.slurp:
