@@ -180,6 +180,10 @@ argument_specs:
         type: str
         required: false
         description: Minute when regular create and prune cron/systemd-timer job will run.
+      borgmatic_timer_flags:
+        type: str
+        required: false
+        description: Flags to pass to borgmatic cron/systemd-timer job, like "--log-file /path/to/file.log --log-file-verbosity 2"
       borgmatic_version:
         type: str
         required: false
