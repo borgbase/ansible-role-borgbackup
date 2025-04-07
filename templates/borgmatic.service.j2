@@ -12,7 +12,7 @@ ConditionACPower=true
 [Service]
 Type=oneshot
 User={{ borg_user }}
-ExecStart=borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}
+ExecStart=borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }} {{ borgmatic_timer_flags }}
 
 # Source: https://projects.torsion.org/borgmatic-collective/borgmatic/raw/branch/master/sample/systemd/borgmatic.service
 # Security settings for systemd running as root, optional but recommended to improve security. You
