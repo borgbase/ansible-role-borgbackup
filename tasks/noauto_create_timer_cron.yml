@@ -26,6 +26,6 @@
     user: "{{ borg_user }}"
     cron_file: "{{ borgmatic_timer_cron_name }}"
     name: PATH
-    env: yes
+    env: true
     value: /usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 ...
