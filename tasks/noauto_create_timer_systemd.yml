@@ -61,5 +61,7 @@
         - name: Show hints
           when: "'backup_init_repo' not in ansible_run_tags"
           ansible.builtin.debug:
-            msg: "Attention: Since the repo was not initialized automatically, the systemd service (borgmatic.service) and the timer (borgmatic.timer) are not activated."
+            msg: >-
+              Attention: Since the repo was not initialized automatically,
+              the systemd service (borgmatic.service) and the timer (borgmatic.timer) are not activated.
 ...
