@@ -25,7 +25,7 @@ argument_specs:
       borg_venv_path:
         type: str
         required: false
-        description:  Path to store the venv for borg(backup) and borgmatic.
+        description: Path to store the venv for borg(backup) and borgmatic.
       borg_install_method:
         type: str
         required: false
@@ -115,34 +115,37 @@ argument_specs:
         type: bool
         description: Bypass Borg error about a repository that has been moved.
       borg_retention_policy:
-        keep_secondly:
-          type: int
-          required: false
-          description: Number of secondly archives to keep.
-        keep_minutely:
-          type: int
-          required: false
-          description: Number of minutely archives to keep.
-        keep_hourly:
-          type: int
-          required: false
-          description: Number of hourly archives to keep.
-        keep_daily:
-          type: int
-          required: false
-          description: Number of daily archives to keep.
-        keep_weekly:
-          type: int
-          required: false
-          description: Number of weekly archives to keep.
-        keep_monthly:
-          type: int
-          required: false
-          description: Number of monthly archives to keep.
-        keep_yearly:
-          type: int
-          required: false
-          description: Number of yearly archives to keep.
+        type: dict
+        description: Define the pruning policy
+        options:
+          keep_secondly:
+            type: int
+            required: false
+            description: Number of secondly archives to keep.
+          keep_minutely:
+            type: int
+            required: false
+            description: Number of minutely archives to keep.
+          keep_hourly:
+            type: int
+            required: false
+            description: Number of hourly archives to keep.
+          keep_daily:
+            type: int
+            required: false
+            description: Number of daily archives to keep.
+          keep_weekly:
+            type: int
+            required: false
+            description: Number of weekly archives to keep.
+          keep_monthly:
+            type: int
+            required: false
+            description: Number of monthly archives to keep.
+          keep_yearly:
+            type: int
+            required: false
+            description: Number of yearly archives to keep.
       borgmatic_checks:
         type: list
         required: false
