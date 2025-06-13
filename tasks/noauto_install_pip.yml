@@ -10,6 +10,12 @@
         - ansible_distribution != 'Fedora'
         - ansible_distribution != 'Rocky' or ansible_distribution_major_version == "9"
 
+    - name: Ensure that devel repository in enabled for Rocky 8 (need xxxhash-devel)
+      community.general.dnf_config_manager:
+        name: devel
+        state: enabled
+      when: ansible_distribution == 'Rocky' and ansible_distribution_major_version == "8"
+
     - name: Install build dependencies
       ansible.builtin.package:
         name: "{{ borg_pip_packages }}"
