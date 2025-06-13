@@ -5,7 +5,10 @@
       community.general.dnf_config_manager:
         name: crb
         state: enabled
-      when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora' and ansible_distribution != 'Rocky'
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution != 'Fedora'
+        - ansible_distribution != 'Rocky' or ansible_distribution_major_version == "9"
 
     - name: Install build dependencies
       ansible.builtin.package:
