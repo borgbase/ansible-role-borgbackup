@@ -1,0 +1,13 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+  - name: Ensure Borgmatic is installed correctly
+    command: borgmatic --version
+
+  - name: Ensure Borg is installed correctly
+    command: borgmatic borg --version
+
+  - name: Ensure produced YAML is valid
+    command: |
+      yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" /etc/borgmatic/config.yaml

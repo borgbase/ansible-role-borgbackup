@@ -1,0 +1,55 @@
+---
+- name: Converge
+  hosts: all
+  pre_tasks:
+    - name: Set ssh server package name for non-Archlinux ansible_os_family
+      set_fact:
+        openssh_package: "openssh-server"
+        pip3_extra_args: ""
+      when: ansible_os_family != "Archlinux"
+
+    - name: Set ssh server package name and pip3 argument for Archlinux ansible_os_family
+      set_fact:
+        openssh_package: "openssh"
+        pip3_extra_args: "--break-system-packages"
+      when: ansible_os_family == "Archlinux"
+
+    - name: Install openssh
+      package:
+        name: "{{ openssh_package }}"
+        state: present
+
+    - name: Enable EPEL for yamllint
+      package:
+        name: epel-release
+        state: present
+      when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'
+
+    - name: Install yamllint
+      package:
+        name: yamllint
+        state: present
+
+  roles:
+    - role: borgbase.ansible_role_borgbackup
+      borg_install_method: pip
+      borgmatic_timer: cron
+      borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+      borg_encryption_passphrase: CHANGEME
+      borg_source_directories:
+        - /srv/www
+        - /var/lib/automysqlbackup
+      borg_exclude_patterns:
+        - /srv/www/old-sites
+      borg_retention_policy:
+        keep_hourly: 3
+        keep_daily: 7
+        keep_weekly: 4
+        keep_monthly: 6
+      borgmatic_hooks:
+        before_backup:
+        - echo "`date` - Starting backup."
+        postgresql_databases:
+        - name: users
+          hostname: database1.example.org
+          port: 5433

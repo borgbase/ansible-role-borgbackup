@@ -19,3 +19,19 @@ jobs:
     #   uses: mxschmitt/action-tmate@v3.5
     - name: Test using Molecule
       run: molecule test
+  test-rocky8:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - name: Install Molecule
+      run: |
+        pip install -U pip setuptools wheel
+        pip install -r requirements-dev-rocky8.txt
+    # - name: Debugging with tmate
+    #   uses: mxschmitt/action-tmate@v3.5
+    - name: Test using Molecule
+      run: molecule test -s rocky8
