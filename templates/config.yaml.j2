@@ -174,5 +174,5 @@ check_last: {{ borgmatic_check_last }}
 # prevent potential shell injection or privilege escalation.
 {% for hook in borgmatic_hooks %}
 {{ hook }}:
-{{ borgmatic_hooks[hook] | to_nice_yaml(indent=4) }}
+{{ borgmatic_hooks[hook] | to_nice_yaml(indent=4) | indent(4, first=true) }}
 {% endfor %}
