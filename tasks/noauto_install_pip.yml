@@ -63,4 +63,9 @@
           borg "$@"
         dest: /usr/local/bin/borg
         mode: "0755"
+
+    - name: Set absolute path to /usr/bin
+      ansible.builtin.set_fact:
+        borg_abs_path: "/usr/local/bin"
+
 ...

@@ -18,4 +18,8 @@
         name: "{{ item }}"
         state: present
       loop: "{{ borg_distro_packages }}"
+
+    - name: Set absolute path to /usr/bin
+      ansible.builtin.set_fact:
+        borg_abs_path: "/usr/bin"
 ...
