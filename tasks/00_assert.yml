@@ -5,5 +5,5 @@
       - borgmatic_failure_command is undefined
       - borgmatic_before_backup_command is undefined
       - borgmatic_after_backup_command is undefined
-    msg: Please use the new borgmatic_hooks variable instead of individual before/after/failure hooks.
+    msg: Please use the new borgmatic_commands variable instead of individual before/after/failure hooks.
 ...

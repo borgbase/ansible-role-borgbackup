@@ -46,10 +46,13 @@
         keep_daily: 7
         keep_weekly: 4
         keep_monthly: 6
-      borgmatic_hooks:
-        before_backup:
-        - echo "`date` - Starting backup."
-        postgresql_databases:
-        - name: users
-          hostname: database1.example.org
-          port: 5433
+      borgmatic_commands:
+        - before: action
+          when: [create]
+          run:
+            - echo "Before create!"
+      borgmatic_databases:
+        postgresql:
+          - name: users
+            hostname: database1.example.org
+            port: 5433
