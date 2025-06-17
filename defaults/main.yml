@@ -42,7 +42,7 @@ borgmatic_commands:
     run:
       - echo "Something went wrong!"
 
-borgmatic_databases: []
+borgmatic_databases: {}
 
 borgmatic_checks:
   - name: repository
