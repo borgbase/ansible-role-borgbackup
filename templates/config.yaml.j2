@@ -181,7 +181,9 @@ commands:
 {% endif %}
 
 # Databases specific backup
+{% if borgmatic_databases is defined %}
 {% for database in borgmatic_databases %}
 {{ database }}_databases:
 {{ borgmatic_databases[database] | to_nice_yaml(indent=4) | indent(4, first=true) }}
 {% endfor %}
+{% endif %}
