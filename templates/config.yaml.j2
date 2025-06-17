@@ -177,13 +177,13 @@ check_last: {{ borgmatic_check_last }}
 # Do not forget to set secure permissions on this file as well as on any script listed (chmod 0700) to
 # prevent potential shell injection or privilege escalation.
 commands:
-{{ borgmatic_commands | to_nice_yaml(indent=4) | indent(4, first=False) }}
+{{ borgmatic_commands | to_nice_yaml(indent=4) }}
 {% endif %}
 
 {% if borgmatic_databases is defined %}
 # Databases specific backup
 {% for database in borgmatic_databases %}
 {{ database }}_databases:
-{{ borgmatic_databases[database] | to_nice_yaml(indent=4) | indent(4, first=true) }}
+{{ borgmatic_databases[database] | to_nice_yaml(indent=4) }}
 {% endfor %}
 {% endif %}
