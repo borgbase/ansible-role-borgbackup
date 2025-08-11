@@ -19,9 +19,15 @@ repositories:
 {% if borg_repository is iterable and (borg_repository is not string and borg_repository is not mapping) %}
   {% for repo in borg_repository %}
     - path: {{ repo }}
+    {% if borg_repository_label is defined and borg_repository_label is string %}
+      label: {{ borg_repository_label }}
+    {% endif %}
   {% endfor %}
 {% elif borg_repository is defined and borg_repository is string %}
     - path: {{ borg_repository }}
+{% if borg_repository_label is defined and borg_repository_label is string %}
+      label: {{ borg_repository_label }}
+{% endif %}
 {% endif %}
 
 # Store atime into archive.

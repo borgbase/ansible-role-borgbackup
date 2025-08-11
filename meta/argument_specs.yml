@@ -67,6 +67,10 @@ argument_specs:
           Your own server or [BorgBase.com](https://www.borgbase.com) repo.
           Not required when using auto creation of repositories.
           Can be a list if you want to backup to multiple repositories.
+      borg_repository_label:
+        type: str
+        required: false
+        description: Label for the repository.
       borgmatic_store_atime:
         type: bool
         required: false
