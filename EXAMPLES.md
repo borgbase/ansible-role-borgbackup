@@ -55,9 +55,11 @@ remote backup server. (not tested)
       keep_daily: 7
       keep_weekly: 4
       keep_monthly: 6
-    borgmatic_hooks:
-      before_backup:
-      - echo "`date` - Starting backup."
+    borgmatic_commands:
+      - before: action
+        when: [create]
+        run:
+          - echo "`date` - Before backup"
   tasks:
     - name: Configure Borg Backup and Backupmatic
       tags:

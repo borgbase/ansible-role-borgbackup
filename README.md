@@ -19,6 +19,11 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
   Systemd timers, be sure to remove the Cron job in `/etc/cron.d/borgmatic` first.
   The role will also alert you when trying to use both timers.
 
+## TODO
+
+- [ ] Support database backup (https://torsion.org/borgmatic/docs/how-to/backup-your-databases/)
+- [ ] Support healthchecks (https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/)
+
 ## Example playbook with root as backup user, using the distro package and Cron timer
 
 ```
@@ -31,13 +36,16 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
       - ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
     borg_source_directories:
       - /var/www
-    borgmatic_hooks:
-      before_backup:
-      - echo "`date` - Starting backup."
-      postgresql_databases:
-      - name: users
-        hostname: database1.example.org
-        port: 5433
+    borgmatic_commands:
+      - before: action
+        when: [create]
+        run:
+          - echo "Before create!"
+    borgmatic_databases:
+      postgresql:
+        - name: users
+          hostname: database1.example.org
+          port: 5433
 ```
 
 ## Example playbook with service user and Systemd timer
@@ -111,7 +119,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_timer_hour`: Hour when regular create and prune cron/systemd-timer job will run. Defaults to `{{ 6 | random }}`
 - `borgmatic_timer_minute`: Minute when regular create and prune cron/systemd-timer job will run. Defaults to  `{{ 59 | random }}`
 - `borgmatic_timer_flags`: Flags to pass to borgmatic cron/systemd-timer job, like "--log-file /path/to/file.log --log-file-verbosity 2"
-- `borgmatic_hooks`: Hooks to monitor your backups e.g. with [Healthchecks](https://healthchecks.io/). See [official documentation](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/) for more.
+- `borgmatic_commands`: Invoke script before/after actions. See [How to add preparation and cleanup steps to backups](https://torsion.org/borgmatic/docs/how-to/add-preparation-and-cleanup-steps-to-backups/) for more.
 - `borgmatic_timer`: If the variable is set, a timer is installed. A choice must be made between `cron` and `systemd`.
 - `borgmatic_relocated_repo_access_is_ok`: Bypass Borg error about a repository that has been moved. Defaults to `false`
 - `borgmatic_unknown_unencrypted_repo_access_is_ok`: Bypass Borg error about a previously unknown unencrypted repository. Defaults to `false`

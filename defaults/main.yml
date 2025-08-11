@@ -27,13 +27,23 @@ borg_install_method: "pip"
 borg_require_epel: "{{ ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora' }}"
 
 borgmatic_config_name: config.yaml
-borgmatic_hooks:
-  on_error:
-    - echo "`date` - Error while creating a backup."
-  before_backup:
-    - echo "`date` - Starting backup."
-  after_backup:
-    - echo "`date` - Finished backup."
+borgmatic_commands:
+  - before: action
+    when: [create]
+    run:
+      - echo "Before create!"
+  - after: action
+    when:
+      - create
+      - prune
+    run:
+      - echo "After create or prune!"
+  - after: error
+    run:
+      - echo "Something went wrong!"
+
+borgmatic_databases: {}
+
 borgmatic_checks:
   - name: repository
     frequency: "4 weeks"

@@ -1,0 +1,4 @@
+ansible<10
+ansible-lint
+molecule
+molecule-plugins[docker]
