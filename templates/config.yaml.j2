@@ -1,6 +1,6 @@
 #jinja2: lstrip_blocks: True, trim_blocks: True
 ---
-# Managed by Ansible, please don't edit manually
+# {{ ansible_managed }}
 
 # Full config: https://torsion.org/borgmatic/docs/reference/config.yaml
 {% if borg_source_directories is not defined or borg_source_directories | length == 0 %}
