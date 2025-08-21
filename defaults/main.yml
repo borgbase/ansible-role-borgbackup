@@ -51,4 +51,5 @@ borg_user: "root"
 borg_group: "root"
 backup_user_info:
   home: "/home/{{ borg_user }}"
+borgmatic_run_as_root: false
 ...
