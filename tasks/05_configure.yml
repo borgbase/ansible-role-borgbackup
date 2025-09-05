@@ -8,6 +8,15 @@
         mode: "0700"
         owner: "{{ borg_user }}"
         group: "{{ borg_group }}"
+    
+    - name: Ensure /etc/borgmatic.d exists
+      ansible.builtin.file:
+        path: /etc/borgmatic.d
+        state: directory
+        mode: "0700"
+        owner: "{{ borg_user }}"
+        group: "{{ borg_group }}"
+      when: borg_app_name is defined and borg_app_name | length > 0
 
     - name: Add Borgmatic configuration
       ansible.builtin.template:
@@ -16,4 +25,15 @@
         mode: "0600"
         owner: "{{ borg_user }}"
         group: "{{ borg_group }}"
+      when: borg_app_name is not defined or borg_app_name | length == 0
+    
+    - name: Add Borgmatic app configuration
+      ansible.builtin.template:
+        src: config.yaml.j2
+        dest: "/etc/borgmatic.d/{{ borg_app_name }}-{{ borgmatic_config_name }}"
+        mode: "0600"
+        owner: "{{ borg_user }}"
+        group: "{{ borg_group }}"
+      when: borg_app_name is defined and borg_app_name | length > 0
+
 ...
