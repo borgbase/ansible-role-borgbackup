@@ -8,6 +8,10 @@ argument_specs:
       - 2018-2020 Manuel Riel and contributors.
       - Frank Dornheim
     options:
+      borg_app_name:
+        type: str
+        required: false
+        description: Name of the application (borgbackup or borgmatic).
       borg_dep_packages:
         type: str
         required: false

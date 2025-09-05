@@ -31,4 +31,5 @@
         commands:
           - "/opt/borgmatic/bin/borg"
           - "/usr/local/bin/borgmatic -c /etc/borgmatic/{{ borgmatic_config_name }}"
+          - "/usr/local/bin/borgmatic -c /etc/borgmatic.d/{{ borg_app_name }}-{{ borgmatic_config_name }}"
 ...
