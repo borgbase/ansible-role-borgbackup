@@ -20,6 +20,9 @@ borg_pip_packages:
   # - python3-virtualenv
   # - python3-wheel
 
+borg_mount_dependent_packages:
+  - fuse3-devel
+
 borg_distro_packages:
   - borgbackup
   - borgmatic

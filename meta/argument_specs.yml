@@ -16,6 +16,10 @@ argument_specs:
         type: str
         required: false
         description: Dependancy Packages to install borg(backup) and borgmatic.
+      borg_mount_support:
+        type: bool
+        required: false
+        description: Enable support for mounting Borg repositories.
       borg_distro_packages:
         type: str
         required: false

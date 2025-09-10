@@ -1,4 +1,5 @@
 ---
+borg_mount_support: false
 borg_encryption_passphrase: ''
 borg_exclude_patterns: []
 borg_one_file_system: true
