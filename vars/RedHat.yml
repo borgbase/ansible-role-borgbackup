@@ -19,5 +19,11 @@ borg_distro_packages:
   - borgbackup
   - borgmatic
 
+borg_mount_dependent_packages:
+  - fuse3-devel
+
+borg_mount_dependent_python_packages:
+  - pyfuse3
+
 python_bin: python3
 pip_bin: pip3
