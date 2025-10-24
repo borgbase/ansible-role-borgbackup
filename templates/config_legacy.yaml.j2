@@ -1,0 +1,190 @@
+#jinja2: lstrip_blocks: True, trim_blocks: True
+---
+# Managed by Ansible, please don't edit manually
+
+# Full config: https://torsion.org/borgmatic/docs/reference/config.yaml
+location:
+{% if borg_source_directories is not defined or borg_source_directories | length == 0 %}
+    source_directories:
+        - /etc/hostname # prevent empty backupconfig
+{% else %}
+    source_directories:
+    {% for dir in borg_source_directories %}
+        - {{ dir }}
+    {% endfor %}
+{% endif %}
+
+    # Stay in same file system (do not cross mount points).
+    one_file_system: {{ borg_one_file_system }}
+    repositories:
+{% if borg_repository is iterable and (borg_repository is not string and borg_repository is not mapping) %}
+  {% for repo in borg_repository %}
+        - path: {{ repo }}
+  {% endfor %}
+{% elif borg_repository is defined and borg_repository is string %}
+        - path: {{ borg_repository }}
+{% endif %}
+
+    # Store atime into archive.
+    atime: {{ borgmatic_store_atime }}
+
+    # Store ctime into archive.
+    ctime: {{ borgmatic_store_ctime }}
+
+{% if borg_exclude_patterns %}
+    # Any paths matching these patterns are excluded from backups. Globs and tildes
+    # are expanded. See the output of "borg help patterns" for more details.
+    exclude_patterns:
+{% for dir in borg_exclude_patterns %}
+        - '{{ dir }}'
+{% endfor %}
+{% endif %}
+{% if borg_exclude_from %}
+    # Read exclude patterns from one or more separate named files, one pattern per
+    # line. See the output of "borg help patterns" for more details.
+    exclude_from:
+{% for dir in borg_exclude_from %}
+        - {{ dir }}
+{% endfor %}
+{% endif %}
+
+    # Exclude directories that contain a CACHEDIR.TAG file. See
+    # http://www.brynosaurus.com/cachedir/spec.html for details.
+    exclude_caches: true
+
+    # Exclude directories that contain a file with the given filename.
+    exclude_if_present: .nobackup
+
+    # Alternate Borg remote executable. Defaults to "borg".
+    # remote_path: borg1
+{% if borg_remote_path %}
+    remote_path: {{ borg_remote_path }}
+{% endif %}
+
+# Repository storage options. See
+# https://borgbackup.readthedocs.io/en/stable/usage.html#borg-create and
+# https://borgbackup.readthedocs.io/en/stable/usage/general.html#environment-variables for
+# details.
+storage:
+{% if borg_encryption_passphrase %}
+    encryption_passphrase: {{ borg_encryption_passphrase }}
+
+{% endif %}
+    # The standard output of this command is used to unlock the encryption key. Only
+    # use on repositories that were initialized with passcommand/repokey encryption.
+    # Note that if both encryption_passcommand and encryption_passphrase are set,
+    # then encryption_passphrase takes precedence.
+    # encryption_passcommand: secret-tool lookup borg-repository repo-name
+{% if borg_encryption_passcommand %}
+    encryption_passcommand: {{ borg_encryption_passcommand }}
+{% endif %}
+
+    # Type of compression to use when creating archives. See
+    # https://borgbackup.readthedocs.org/en/stable/usage.html#borg-create for details.
+    # Defaults to no compression.
+    compression: {{ borg_compression|default('auto,zstd') }}
+
+    # Remote network upload rate limit in kiBytes/second.
+{% if borg_remote_rate_limit %}
+    remote_rate_limit: {{ borg_remote_rate_limit }}
+{% endif %}
+
+    # Command to use instead of just "ssh". This can be used to specify ssh options.
+    # ssh_command: ssh -i ~/.ssh/id_ed25519
+{% if borg_ssh_command %}
+    ssh_command: {{ borg_ssh_command }}
+{% endif %}
+
+    # Umask to be used for borg create.
+    umask: 0077
+
+    # Maximum seconds to wait for acquiring a repository/cache lock.
+    lock_wait: {{ borg_lock_wait_time }}
+
+    # Name of the archive. Borg placeholders can be used. See the output of
+    # "borg help placeholders" for details. Default is
+    # "{hostname}-{now:%Y-%m-%dT%H:%M:%S.%f}". If you specify this option, you must
+    # also specify a prefix in the retention section to avoid accidental pruning of
+    # archives with a different archive name format. And you should also specify a
+    # prefix in the consistency section as well.
+    archive_name_format: '{hostname}-{now:%Y-%m-%d-%H%M%S}'
+
+    # Bypass Borg error about a repository that has been moved.
+    relocated_repo_access_is_ok: {{ borgmatic_relocated_repo_access_is_ok }}
+
+    # Bypass Borg error about a previously unknown unencrypted repository.
+    unknown_unencrypted_repo_access_is_ok: {{ borgmatic_unknown_unencrypted_repo_access_is_ok }}
+
+# Retention policy for how many backups to keep in each category. See
+# https://borgbackup.readthedocs.org/en/stable/usage.html#borg-prune for details.
+# At least one of the "keep" options is required for pruning to work.
+retention:
+{% if borg_retention_policy.keep_within is defined %}
+    # Keep all archives within this time interval.
+    keep_within: {{ borg_retention_policy.keep_within }}
+{% endif %}
+
+{% if borg_retention_policy.keep_secondly is defined %}
+    # Number of secondly archives to keep.
+    keep_secondly: {{ borg_retention_policy.keep_secondly }}
+{% endif %}
+
+{% if borg_retention_policy.keep_minutely is defined %}
+    # Number of minutely archives to keep.
+    keep_minutely: {{ borg_retention_policy.keep_minutely }}
+{% endif %}
+
+{% if borg_retention_policy.keep_hourly is defined %}
+    # Number of hourly archives to keep.
+    keep_hourly: {{ borg_retention_policy.keep_hourly }}
+{% endif %}
+
+{% if borg_retention_policy.keep_daily is defined %}
+    # Number of daily archives to keep.
+    keep_daily: {{ borg_retention_policy.keep_daily }}
+{% endif %}
+
+{% if borg_retention_policy.keep_weekly is defined %}
+    # Number of weekly archives to keep.
+    keep_weekly: {{ borg_retention_policy.keep_weekly }}
+{% endif %}
+
+{% if borg_retention_policy.keep_monthly is defined %}
+    # Number of monthly archives to keep.
+    keep_monthly: {{ borg_retention_policy.keep_monthly }}
+{% endif %}
+
+{% if borg_retention_policy.keep_yearly is defined %}
+    # Number of yearly archives to keep.
+    keep_yearly: {{ borg_retention_policy.keep_yearly }}
+{% endif %}
+
+# Consistency checks to run after backups. See
+# https://borgbackup.readthedocs.org/en/stable/usage.html#borg-check and
+# https://borgbackup.readthedocs.org/en/stable/usage.html#borg-extract for details.
+consistency:
+    # List of one or more consistency checks to run: "repository",
+    # "archives", "data", and/or "extract". Defaults to
+    # "repository" and "archives". Set to "disabled" to disable
+    # all consistency checks. "repository" checks the consistency
+    # of the repository, "archives" checks all of the archives,
+    # "data" verifies the integrity of the data within the
+    # archives, and "extract" does an extraction dry-run of the
+    # most recent archive. Note that "data" implies "archives".
+    checks:
+    {% for checks in borgmatic_checks %}
+        - {{ checks }}
+    {% endfor %}
+
+    # Restrict the number of checked archives to the last n. Applies only to the "archives" check.
+    check_last: {{ borgmatic_check_last }}
+
+# Shell commands or scripts to execute before and after a backup or if an error has occurred.
+# IMPORTANT: All provided commands and scripts are executed with user permissions of borgmatic.
+# Do not forget to set secure permissions on this file as well as on any script listed (chmod 0700) to
+# prevent potential shell injection or privilege escalation.
+hooks:
+{% for hook in borgmatic_hooks %}
+    {{ hook }}:
+{{ borgmatic_hooks[hook] | to_nice_yaml(indent=4) | indent(8, first=true) }}
+{% endfor %}
