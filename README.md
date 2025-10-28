@@ -88,7 +88,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borg_encryption_passphrase`: Password to use for repokey or keyfile. Empty if repo is unencrypted.
 - `borg_exclude_from`: Read exclude patterns from one or more separate named files, one pattern per line.
 - `borg_exclude_patterns`: Paths or patterns to exclude from backup. See [official documentation](https://borgbackup.readthedocs.io/en/stable/usage/help.html#borg-help-patterns) for more.
-- `borg_install_method`: By default `pip` is used to install borgmatic. To install via your distributions package manager set this to `package` and (if needed) overwrite the `borg_distro_packages` variable to contain your distributions package names required to install borgmatic. Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk.
+- `borg_install_method`: By default `pip` is used to install borgmatic. To install via your distributions package manager set this to `package` and (if needed) overwrite the `borg_distro_packages` variable to contain your distributions package names required to install borgmatic. Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk. `none` completely disables installation management.
 - `borg_require_epel`: When using `borg_install_method: package` on RHEL-based distributions, the EPEL repo is required. To disable the check (e.g. when using a custom mirror instead of the `epel-release` package), set this to `false`. Defaults to `{{ ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora' }}` (i.e. `true` on Enterprise Linux-based distros).
 - `borg_lock_wait_time`: Config maximum seconds to wait for acquiring a repository/cache lock. Defaults to 5 seconds.
 - `borg_one_file_system`: Don't cross file-system boundaries. Defaults to `true`
@@ -114,6 +114,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_hooks`: Hooks to monitor your backups e.g. with [Healthchecks](https://healthchecks.io/). See [official documentation](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/) for more.
 - `borgmatic_timer`: If the variable is set, a timer is installed. A choice must be made between `cron` and `systemd`.
 - `borgmatic_relocated_repo_access_is_ok`: Bypass Borg error about a repository that has been moved. Defaults to `false`
+- `borgmatic_unknown_unencrypted_repo_access_is_ok`: Bypass Borg error about a previously unknown unencrypted repository. Defaults to `false`
 - `borgmatic_store_atime`: Store atime into archive. Defaults to `true`
 - `borgmatic_store_ctime`: Store ctime into archive. Defaults to `true`
 - `borgmatic_version`: Force a specific borgmatic version to be installed

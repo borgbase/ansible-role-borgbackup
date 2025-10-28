@@ -36,6 +36,7 @@ argument_specs:
           overwrite the borg_distro_packages variable to contain your distributions package names
           required to install borgmatic.
           Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk.
+          Set to none to disable installation management.
       borgmatic_config_name:
         type: str
         required: false
@@ -114,6 +115,9 @@ argument_specs:
       borgmatic_relocated_repo_access_is_ok:
         type: bool
         description: Bypass Borg error about a repository that has been moved.
+      borgmatic_unknown_unencrypted_repo_access_is_ok:
+        type: bool
+        description: Bypass Borg error about a previously unknown unencrypted repository.
       borg_retention_policy:
         type: dict
         description: Define the pruning policy
