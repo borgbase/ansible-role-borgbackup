@@ -6,8 +6,9 @@
       register: borgmatic_version
       changed_when: False
 
-    - set_fact:
-        borgmatic_version="{{ borgmatic_version.stdout }}"
+    - name: Store Borgmatic version as a fact
+      ansible.builtin.set_fact:
+        borgmatic_version: "{{ borgmatic_version.stdout }}"
 
     - name: Ensure /etc/borgmatic exists
       ansible.builtin.file:
