@@ -102,6 +102,18 @@ argument_specs:
         type: int
         required: false
         description: Remote network upload rate limit in kiBytes/second.
+      borgmatic_retries:
+        type: int
+        required: false
+        description: |
+          Number of times to retry a failing backup before giving up.
+          Defaults to 0 (i.e., does not attempt retry).
+      borgmatic_retry_wait:
+        type: int
+        required: false
+        description: |
+          Wait time between retries (in seconds) to allow transient issues to pass.
+          Increases after each retry as a form of backoff. Defaults to 0 (no wait).
       borg_ssh_key_file_path:
         type: str
         required: false
