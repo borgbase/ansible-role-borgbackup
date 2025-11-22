@@ -219,3 +219,7 @@ argument_specs:
         type: str
         required: false
         description: Comment added to the SSH public key.
+      borgmatic_run_as_root:
+        type: bool
+        required: false
+        description: If the variable is set, systemd will run borgmatic using sudo.
