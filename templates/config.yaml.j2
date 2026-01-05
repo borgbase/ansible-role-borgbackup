@@ -85,7 +85,7 @@ compression: {{ borg_compression|default('auto,zstd') }}
 
 # Remote network upload rate limit in kiBytes/second.
 {% if borg_remote_rate_limit %}
-remote_rate_limit: {{ borg_remote_rate_limit }}
+upload_rate_limit: {{ borg_remote_rate_limit }}
 {% endif %}
 
 # Command to use instead of just "ssh". This can be used to specify ssh options.
