@@ -111,6 +111,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borg_require_epel`: When using `borg_install_method: package` on RHEL-based distributions, the EPEL repo is required. To disable the check (e.g. when using a custom mirror instead of the `epel-release` package), set this to `false`. Defaults to `{{ ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora' }}` (i.e. `true` on Enterprise Linux-based distros).
 - `borg_lock_wait_time`: Config maximum seconds to wait for acquiring a repository/cache lock. Defaults to 5 seconds.
 - `borg_one_file_system`: Don't cross file-system boundaries. Defaults to `true`
+- `borg_compression`: Compression algorithm to use. Defaults to `auto,zstd`
 - `borg_pip_packages`: Dependancy Packages (pip) to install `borg(backup)` and `borgmatic`.
 - `borg_remote_path`: Path to the borg executable on the remote. It will default to `borg`.
 - `borg_remote_rate_limit`: Remote network upload rate limit in kiBytes/second.
@@ -118,7 +119,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_retry_wait`: Wait time between retries (in seconds) to allow transient issues to pass. Increases after each retry as a form of backoff. Defaults to 0 (no wait).
 - `borg_retention_policy`: Retention policy for how many backups to keep in each category (daily, weekly, monthly, etc).
 - `borg_source_directories`: List of local folders to back up. Default is `/etc/hostname` to prevent an empty backup.
-- `borg_ssh_key_name`: Name of the SSH public and pivate key. Default `id_ed25519`
+- `borg_ssh_key_name`: Name of the SSH public and private key. Default `id_ed25519`
 - `borg_ssh_key_file_path`: SSH-key to be used. Default `~/.ssh/{{ borg_ssh_key_name }}`
 - `borg_ssh_key_type`: The algorithm used to generate the SSH private key. Choose: `rsa`, `dsa`, `rsa1`, `ecdsa`, `ed25519`. Default: `ed25519`
 - `borg_ssh_key_comment`: Comment added to the SSH public key.
@@ -129,9 +130,10 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_check_last`: Number of archives to check. Defaults to `3`
 - `borgmatic_checks`: List of consistency checks. Defaults to monthly checks. See [docs](https://torsion.org/borgmatic/docs/how-to/deal-with-very-large-backups/#check-frequency) for all options.
 - `borgmatic_config_name`: Name to use for the Borgmatic config file. Defaults to `config.yaml`
-- `borgmatic_timer_hour`: Hour when regular create and prune cron/systemd-timer job will run. Defaults to `{{ 6 | random }}`
-- `borgmatic_timer_minute`: Minute when regular create and prune cron/systemd-timer job will run. Defaults to  `{{ 59 | random }}`
+- `borgmatic_timer_hour`: Hour when regular create and prune cron/systemd-timer job will run. Defaults to `{{ range(0, 5) | random(seed=inventory_hostname) }}`
+- `borgmatic_timer_minute`: Minute when regular create and prune cron/systemd-timer job will run. Defaults to `{{ range(0, 59) | random(seed=inventory_hostname) }}`
 - `borgmatic_timer_flags`: Flags to pass to borgmatic cron/systemd-timer job, like "--log-file /path/to/file.log --log-file-verbosity 2"
+- `borgmatic_timer_cron_name`: Name to use for the cron job or systemd timer. Defaults to `borgmatic`
 - `borgmatic_systemd_nonewprivileges`: NoNewPrivileges Systemd unit setting to allow running commands with "sudo" in config.yaml. Default is to prevent.
 - `borgmatic_hooks`: Hooks to monitor your backups e.g. with [Healthchecks](https://healthchecks.io/). See [official documentation](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/) for more.
 - `borgmatic_timer`: If the variable is set, a timer is installed. A choice must be made between `cron` and `systemd`.
