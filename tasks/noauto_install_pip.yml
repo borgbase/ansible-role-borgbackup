@@ -12,6 +12,25 @@
         name: "{{ borg_pip_packages }}"
         state: present
 
+    - name: Get system Python version
+      ansible.builtin.command: "{{ python_bin }} --version"
+      register: borg_system_python_version
+      changed_when: false
+
+    - name: Check Python version in existing borgmatic venv
+      ansible.builtin.command: "{{ borg_venv_path }}/bin/python --version"
+      register: borg_venv_python_version
+      failed_when: false
+      changed_when: false
+
+    - name: Remove borgmatic venv if Python version doesn't match
+      ansible.builtin.file:
+        path: "{{ borg_venv_path }}"
+        state: absent
+      when:
+        - borg_venv_python_version.rc == 0
+        - borg_venv_python_version.stdout != borg_system_python_version.stdout
+
     - name: Create virtualenv for borg  # noqa package-latest
       ansible.builtin.pip:
         name:
