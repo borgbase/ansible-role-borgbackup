@@ -203,6 +203,10 @@ argument_specs:
         type: str
         required: false
         description: Flags to pass to borgmatic cron/systemd-timer job, like "--log-file /path/to/file.log --log-file-verbosity 2"
+      borgmatic_systemd_nonewprivileges:
+        type: str
+        required: false
+        description: NoNewPrivileges Systemd unit setting to allow running commands with "sudo" in config.yaml. Default is to prevent.
       borgmatic_version:
         type: str
         required: false
