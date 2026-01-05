@@ -203,6 +203,11 @@ argument_specs:
         type: str
         required: false
         description: Flags to pass to borgmatic cron/systemd-timer job, like "--log-file /path/to/file.log --log-file-verbosity 2"
+      borgmatic_timer_enabled:
+        type: bool
+        required: false
+        default: true
+        description: Whether to enable and start the systemd timer after installation. Set to false to start the timer manually.
       borgmatic_systemd_nonewprivileges:
         type: str
         required: false
