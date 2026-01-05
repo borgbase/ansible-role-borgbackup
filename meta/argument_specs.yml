@@ -223,3 +223,21 @@ argument_specs:
         type: str
         required: false
         description: Comment added to the SSH public key.
+      borgmatic_uptime_kuma_push_url:
+        type: str
+        required: false
+        description: |
+          Uptime Kuma push URL for monitoring (without query string).
+          Example: https://example.uptime.kuma/api/push/abcd1234
+      borgmatic_uptime_kuma_states:
+        type: list
+        required: false
+        default: ['start', 'finish', 'fail']
+        description: |
+          List of one or more monitoring states to push for: "start", "finish", and/or "fail".
+          Defaults to pushing for all states.
+      borgmatic_uptime_kuma_verify_tls:
+        type: bool
+        required: false
+        default: true
+        description: Verify the TLS certificate of the push URL host. Defaults to true.

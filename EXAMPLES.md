@@ -16,6 +16,25 @@
     borg_group: backupuser
 ```
 
+## Using Uptime Kuma for Backup Monitoring
+
+```
+- hosts: webservers
+  roles:
+  - role: borgbase.ansible_role_borgbackup
+    borg_encryption_passphrase: CHANGEME
+    borg_repository: ssh://m5vz9gp4@m5vz9gp4.repo.borgbase.com/./repo
+    borgmatic_timer: systemd
+    borg_source_directories:
+      - /var/www
+    borgmatic_uptime_kuma_push_url: "https://example.uptime.kuma/api/push/abcd1234"
+    borgmatic_uptime_kuma_states:
+      - start
+      - finish
+      - fail
+    borgmatic_uptime_kuma_verify_tls: true
+```
+
 ## Use service user and copy SSH key to target server
 
 Installs and configures the Borgmatic client and also initializes the repo on the

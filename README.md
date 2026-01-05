@@ -121,6 +121,9 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_store_atime`: Store atime into archive. Defaults to `true`
 - `borgmatic_store_ctime`: Store ctime into archive. Defaults to `true`
 - `borgmatic_version`: Force a specific borgmatic version to be installed
+- `borgmatic_uptime_kuma_push_url`: Uptime Kuma push URL for monitoring (without query string). See [Uptime Kuma documentation](https://torsion.org/borgmatic/reference/configuration/monitoring/uptime-kuma/) for more. Example: `https://example.uptime.kuma/api/push/abcd1234`
+- `borgmatic_uptime_kuma_states`: List of monitoring states to push for. Defaults to `['start', 'finish', 'fail']`. Valid values are: `start`, `finish`, and `fail`.
+- `borgmatic_uptime_kuma_verify_tls`: Verify the TLS certificate of the push URL host. Defaults to `true`
 
 - `borg_user`: Name of the User to create Backups (service account)
 - `borg_group`: Name of the Group to create Backups (service account)
