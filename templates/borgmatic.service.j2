@@ -2,7 +2,7 @@
 
 [Unit]
 Description=borgmatic backup
-Wants=backup_normal_repo.timer
+Wants=borgmatic.timer
 Wants=network-online.target
 After=network-online.target
 # Prevent borgmatic from running unless the machine is plugged into power. Remove this line if you
