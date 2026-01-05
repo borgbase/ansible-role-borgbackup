@@ -88,6 +88,19 @@ compression: {{ borg_compression|default('auto,zstd') }}
 upload_rate_limit: {{ borg_remote_rate_limit }}
 {% endif %}
 
+# Number of times to retry a failing backup before giving up.
+# Defaults to 0 (i.e., does not attempt retry).
+{% if borgmatic_retries is defined %}
+retries: {{ borgmatic_retries }}
+{% endif %}
+
+# Wait time between retries (in seconds) to allow transient
+# issues to pass. Increases after each retry as a form of
+# backoff. Defaults to 0 (no wait).
+{% if borgmatic_retry_wait is defined %}
+retry_wait: {{ borgmatic_retry_wait }}
+{% endif %}
+
 # Command to use instead of just "ssh". This can be used to specify ssh options.
 # ssh_command: ssh -i ~/.ssh/id_ed25519
 {% if borg_ssh_command %}

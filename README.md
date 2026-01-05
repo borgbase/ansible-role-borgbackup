@@ -95,6 +95,8 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borg_pip_packages`: Dependancy Packages (pip) to install `borg(backup)` and `borgmatic`.
 - `borg_remote_path`: Path to the borg executable on the remote. It will default to `borg`.
 - `borg_remote_rate_limit`: Remote network upload rate limit in kiBytes/second.
+- `borgmatic_retries`: Number of times to retry a failing backup before giving up. Defaults to 0 (i.e., does not attempt retry).
+- `borgmatic_retry_wait`: Wait time between retries (in seconds) to allow transient issues to pass. Increases after each retry as a form of backoff. Defaults to 0 (no wait).
 - `borg_retention_policy`: Retention policy for how many backups to keep in each category (daily, weekly, monthly, etc).
 - `borg_source_directories`: List of local folders to back up. Default is `/etc/hostname` to prevent an empty backup.
 - `borg_ssh_key_name`: Name of the SSH public and pivate key. Default `id_ed25519`
