@@ -1,6 +1,16 @@
 ---
 - name: Add Borgmatic config file
   block:
+    - name: Get Borgmatic version
+      ansible.builtin.command: borgmatic --version
+      register: borgmatic_version_output
+      changed_when: false
+      check_mode: false
+
+    - name: Store Borgmatic version as a fact
+      ansible.builtin.set_fact:
+        borgmatic_version: "{{ borgmatic_version_output.stdout.split()[0] }}"
+
     - name: Ensure /etc/borgmatic exists
       ansible.builtin.file:
         path: /etc/borgmatic
@@ -9,11 +19,21 @@
         owner: "{{ borg_user }}"
         group: "{{ borg_group }}"
 
-    - name: Add Borgmatic configuration
+    - name: Add Borgmatic configuration for versions prior to 1.8.0
+      ansible.builtin.template:
+        src: config_1.7.yaml.j2
+        dest: "/etc/borgmatic/{{ borgmatic_config_name }}"
+        mode: "0600"
+        owner: "{{ borg_user }}"
+        group: "{{ borg_group }}"
+      when: borgmatic_version is version('1.8.0', '<')
+
+    - name: Add Borgmatic configuration for versions 1.8.0 and newer
       ansible.builtin.template:
         src: config.yaml.j2
         dest: "/etc/borgmatic/{{ borgmatic_config_name }}"
         mode: "0600"
         owner: "{{ borg_user }}"
         group: "{{ borg_group }}"
+      when: borgmatic_version is version('1.8.0', '>=')
 ...
