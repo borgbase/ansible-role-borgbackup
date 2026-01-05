@@ -1,5 +1,6 @@
 ---
 - name: Add Borgmatic config file
+  when: borgmatic_config_name is defined and borgmatic_config_name | length > 0
   block:
     - name: Get Borgmatic version
       ansible.builtin.command: borgmatic --version

@@ -17,13 +17,16 @@
         owner: "{{ borg_user }}"
         group: "{{ borg_group }}"
         comment: "{{ borg_ssh_key_comment }}"
+      when: borg_ssh_key_file_path is defined and borg_ssh_key_file_path | length > 0
 
     - name: Read SSH key
       ansible.builtin.slurp:
         src: "{{ borg_ssh_key_file_path }}.pub"
       register: backup_local_ssh_key
+      when: borg_ssh_key_file_path is defined and borg_ssh_key_file_path | length > 0
 
     - name: Print key
       ansible.builtin.debug:
         msg: "The generated key is: {{ backup_local_ssh_key['content'] | b64decode }}"
+      when: borg_ssh_key_file_path is defined and borg_ssh_key_file_path | length > 0
 ...
