@@ -60,7 +60,26 @@ Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Ho
       keep_monthly: 6
 ```
 
+## Example playbook with custom configuration options (borgmatic 1.8+)
 
+**Note:** `borgmatic_custom_config` requires borgmatic 1.8.0 or later.
+
+```
+- hosts: all
+  roles:
+  - role: borgbase.ansible_role_borgbackup
+    borg_encryption_passphrase: CHANGEME
+    borg_repository: ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
+    borg_source_directories:
+      - /var/www
+    borgmatic_custom_config:
+      uptime_kuma:
+        push_url: https://uptime.kuma.example.com/abcd1234
+      ntfy:
+        topic: backups
+        server: https://ntfy.sh
+      output_verbosity: 1
+```
 
 ## Installation
 
@@ -121,6 +140,7 @@ $ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansibl
 - `borgmatic_store_atime`: Store atime into archive. Defaults to `true`
 - `borgmatic_store_ctime`: Store ctime into archive. Defaults to `true`
 - `borgmatic_version`: Force a specific borgmatic version to be installed
+- `borgmatic_custom_config`: Custom YAML configuration (as a dictionary) to add to the borgmatic config file. Allows adding any additional borgmatic options not covered by other variables. **Requires borgmatic 1.8.0 or later.** See example above.
 
 - `borg_user`: Name of the User to create Backups (service account)
 - `borg_group`: Name of the Group to create Backups (service account)

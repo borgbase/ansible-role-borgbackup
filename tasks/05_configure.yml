@@ -12,6 +12,12 @@
       ansible.builtin.set_fact:
         borgmatic_version: "{{ borgmatic_version_output.stdout.split()[0] }}"
 
+    - name: Ensure custom config is only used with borgmatic 1.8+
+      ansible.builtin.assert:
+        that:
+          - borgmatic_custom_config is not defined or borgmatic_custom_config | length == 0 or borgmatic_version is version('1.8.0', '>=')
+        msg: "borgmatic_custom_config requires borgmatic 1.8.0 or later. Detected version: {{ borgmatic_version }}"
+
     - name: Ensure /etc/borgmatic exists
       ansible.builtin.file:
         path: /etc/borgmatic
