@@ -7,6 +7,8 @@
       register: borgmatic_version_output
       changed_when: false
       check_mode: false
+      environment:
+        PATH: "{{ borg_venv_path }}/bin:/usr/local/bin:/usr/bin:/bin"
 
     - name: Store Borgmatic version as a fact
       ansible.builtin.set_fact:
