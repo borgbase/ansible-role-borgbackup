@@ -27,6 +27,7 @@ borgmatic_timer_enabled: true
 borgmatic_systemd_nonewprivileges: "yes"
 borg_install_method: "pip"
 borg_require_epel: "{{ ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora' }}"
+borg_require_backports: "{{ ansible_distribution == 'Debian' and ansible_distribution_major_version == '11' }}"
 
 borgmatic_config_name: config.yaml
 borgmatic_hooks:
