@@ -46,6 +46,7 @@ borgmatic_store_ctime: true
 borgmatic_relocated_repo_access_is_ok: false
 borgmatic_unknown_unencrypted_repo_access_is_ok: false
 borgmatic_version: ">=1.7.11"
+borgmatic_custom_config: {}
 
 borg_venv_path: "/opt/borgmatic"
 borg_user: "root"

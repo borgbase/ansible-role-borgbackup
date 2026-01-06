@@ -211,6 +211,10 @@ argument_specs:
         type: str
         required: false
         description: Borgmatic version to install. Defaults to 'latest'
+      borgmatic_custom_config:
+        type: dict
+        required: false
+        description: Custom YAML configuration to add to the borgmatic config file. Allows adding any additional borgmatic options not covered by other variables.
       borg_ssh_key_type:
         type: str
         required: false

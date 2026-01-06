@@ -201,3 +201,8 @@ hooks:
     {{ hook }}:
 {{ borgmatic_hooks[hook] | to_nice_yaml(indent=4) | indent(8, first=true) }}
 {% endfor %}
+
+{% if borgmatic_custom_config is defined and borgmatic_custom_config %}
+# Custom configuration
+{{ borgmatic_custom_config | to_nice_yaml(indent=4) }}
+{% endif %}
