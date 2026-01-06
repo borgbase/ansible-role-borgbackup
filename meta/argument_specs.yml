@@ -214,7 +214,7 @@ argument_specs:
       borgmatic_custom_config:
         type: dict
         required: false
-        description: Custom YAML configuration to add to the borgmatic config file. Allows adding any additional borgmatic options not covered by other variables.
+        description: Custom YAML configuration to add to the borgmatic config file. Allows adding any additional borgmatic options not covered by other variables. Requires borgmatic 1.8.0 or later.
       borg_ssh_key_type:
         type: str
         required: false
