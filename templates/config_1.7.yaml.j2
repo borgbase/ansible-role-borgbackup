@@ -106,6 +106,9 @@ storage:
     # ssh_command: ssh -i ~/.ssh/id_ed25519
 {% if borg_ssh_command %}
     ssh_command: {{ borg_ssh_command }}
+{% elif borg_ssh_key_name != 'id_' ~ borg_ssh_key_type %}
+    # Auto-configured for non-default SSH key
+    ssh_command: ssh -i {{ borg_ssh_key_file_path }}
 {% endif %}
 
     # Umask to be used for borg create.
