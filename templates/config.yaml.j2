@@ -3,10 +3,7 @@
 # Managed by Ansible, please don't edit manually
 
 # Full config: https://torsion.org/borgmatic/docs/reference/config.yaml
-{% if borg_source_directories is not defined or borg_source_directories | length == 0 %}
-source_directories:
-    - /etc/hostname # prevent empty backupconfig
-{% else %}
+{% if borg_source_directories is defined and borg_source_directories | length > 0 %}
 source_directories:
     {% for dir in borg_source_directories %}
     - {{ dir }}
