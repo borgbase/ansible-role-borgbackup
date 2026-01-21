@@ -13,9 +13,17 @@
               - "'epel-release' in ansible_facts.packages"
             fail_msg: Need EPEL repo to install via distro package.
 
+    - name: Check if backports repo is enabled, if installation from distro is requested
+      when: borg_require_backports
+      ansible.builtin.apt_repository:
+        repo: "deb http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main"
+        state: present
+      register: __borg_require_backports
+
     - name: Install borgmatic and borg via distribution package manager
       ansible.builtin.package:
         name: "{{ item }}"
-        state: present
+        state: "{{ __borg_require_backports.changed | ternary('latest', 'present') }}"
+        default_release: "{{ borg_require_backports | ternary(ansible_distribution_release + '-backports', omit) }}"
       loop: "{{ borg_distro_packages }}"
 ...
