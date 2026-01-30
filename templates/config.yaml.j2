@@ -178,7 +178,7 @@ checks:
 # Restrict the number of checked archives to the last n. Applies only to the "archives" check.
 check_last: {{ borgmatic_check_last }}
 
-{% if borgmatic_commands is defined %}
+{% if borgmatic_commands is defined and borgmatic_commands | length > 0 %}
 # Shell commands or scripts to execute before and after a backup or if an error has occurred.
 # IMPORTANT: All provided commands and scripts are executed with user permissions of borgmatic.
 # Do not forget to set secure permissions on this file as well as on any script listed (chmod 0700) to
