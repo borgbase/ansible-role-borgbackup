@@ -11,3 +11,20 @@
   - name: Ensure produced YAML is valid
     command: |
       yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" /etc/borgmatic/config.yaml
+
+  - name: Read borgmatic config
+    ansible.builtin.slurp:
+      src: /etc/borgmatic/config.yaml
+    register: borgmatic_config
+
+  - name: Parse borgmatic config as YAML
+    ansible.builtin.set_fact:
+      borgmatic_config_parsed: "{{ borgmatic_config.content | b64decode | from_yaml }}"
+
+  - name: Verify healthchecks URL is not corrupted by to_nice_yaml scalar bug
+    ansible.builtin.assert:
+      that:
+        - >-
+          '...' not in (borgmatic_config_parsed.healthchecks |
+          default(borgmatic_config_parsed.hooks.healthchecks | default('')))
+      fail_msg: "healthchecks URL corrupted by to_nice_yaml scalar bug (contains '...')"
