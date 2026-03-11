@@ -49,6 +49,7 @@
       borgmatic_hooks:
         before_backup:
         - echo "`date` - Starting backup."
+        healthchecks: https://hc-ping.com/12345678-1234-1234-1234-123456789012
         postgresql_databases:
         - name: users
           hostname: database1.example.org
