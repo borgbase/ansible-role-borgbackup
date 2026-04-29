@@ -8,6 +8,7 @@
       when:
         - ansible_os_family == 'RedHat'
         - ansible_distribution != 'Fedora'
+        - ansible_distribution_major_version | int >= 8
         - ansible_distribution != 'Rocky' or ansible_distribution_major_version == "9"
 
     - name: Ensure that devel repository in enabled for Rocky 8 (need xxxhash-devel)
@@ -22,16 +23,133 @@
         state: present
       when: borg_mount_dependent_packages is defined and borg_mount_support
 
+    - name: Install repository packages
+      ansible.builtin.package:
+        name: "{{ borg_repo_packages }}"
+        state: present
+      when: borg_repo_packages is defined
+
     - name: Install build dependencies
       ansible.builtin.package:
         name: "{{ borg_pip_packages }}"
         state: present
 
+    - name: Create pkg-config compatibility directory
+      ansible.builtin.file:
+        path: "{{ borg_pkgconfig_compat_dir }}"
+        state: directory
+        mode: "0755"
+      when: borg_pkgconfig_compat_links is defined
+
+    - name: Create pkg-config compatibility links
+      ansible.builtin.file:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        state: link
+        force: true
+      loop: "{{ borg_pkgconfig_compat_links }}"
+      when: borg_pkgconfig_compat_links is defined
+
+    - name: Check borg Python source install
+      ansible.builtin.stat:
+        path: "{{ python_bin }}"
+      register: borg_python_source_bin
+      when: borg_python_source_install | default(false)
+
+    - name: Create Python source build directory
+      ansible.builtin.file:
+        path: "{{ borg_python_source_build_parent }}"
+        state: directory
+        mode: "0755"
+      when:
+        - borg_python_source_install | default(false)
+        - not (borg_python_source_bin.stat.exists | default(false))
+
+    - name: Download Python source
+      ansible.builtin.get_url:
+        url: "{{ borg_python_source_url }}"
+        dest: "{{ borg_python_source_build_parent }}/{{ borg_python_source_archive }}"
+        checksum: "{{ borg_python_source_checksum | default(omit) }}"
+        mode: "0644"
+      when:
+        - borg_python_source_install | default(false)
+        - not (borg_python_source_bin.stat.exists | default(false))
+
+    - name: Unpack Python source
+      ansible.builtin.unarchive:
+        src: "{{ borg_python_source_build_parent }}/{{ borg_python_source_archive }}"
+        dest: "{{ borg_python_source_build_parent }}"
+        remote_src: true
+        creates: "{{ borg_python_source_build_dir }}"
+      when:
+        - borg_python_source_install | default(false)
+        - not (borg_python_source_bin.stat.exists | default(false))
+
+    - name: Configure Python source build
+      ansible.builtin.command:
+        cmd: "{{ borg_python_source_configure_command }}"
+        chdir: "{{ borg_python_source_build_dir }}"
+        creates: "{{ borg_python_source_build_dir }}/Makefile"
+      when:
+        - borg_python_source_install | default(false)
+        - not (borg_python_source_bin.stat.exists | default(false))
+
+    - name: Build Python from source
+      ansible.builtin.command:
+        cmd: "make -j{{ borg_python_source_make_jobs }}"
+        chdir: "{{ borg_python_source_build_dir }}"
+      changed_when: true
+      when:
+        - borg_python_source_install | default(false)
+        - not (borg_python_source_bin.stat.exists | default(false))
+
+    - name: Install Python from source
+      ansible.builtin.command:
+        cmd: make altinstall
+        chdir: "{{ borg_python_source_build_dir }}"
+        creates: "{{ python_bin }}"
+      when:
+        - borg_python_source_install | default(false)
+        - not (borg_python_source_bin.stat.exists | default(false))
+
+    - name: Check configured borg Python version
+      ansible.builtin.command:
+        cmd: "{{ python_bin }} -c 'import sys; print(\"{}.{}\".format(sys.version_info[0], sys.version_info[1]))'"
+      register: borg_configured_python_version
+      changed_when: false
+
+    - name: Check existing borg virtualenv Python version
+      ansible.builtin.command:
+        cmd: "{{ borg_venv_path }}/bin/python -c 'import sys; print(\"{}.{}\".format(sys.version_info[0], sys.version_info[1]))'"
+      register: borg_existing_venv_python
+      changed_when: false
+      failed_when: false
+
+    - name: Remove borg virtualenv with mismatched Python
+      ansible.builtin.file:
+        path: "{{ borg_venv_path }}"
+        state: absent
+      when:
+        - borg_existing_venv_python.rc == 0
+        - borg_existing_venv_python.stdout != borg_configured_python_version.stdout
+        - borg_recreate_venv_on_python_mismatch | default(false)
+
+    - name: Fail if existing borg virtualenv uses different Python
+      ansible.builtin.fail:
+        msg: >-
+          Existing {{ borg_venv_path }} virtualenv uses Python
+          {{ borg_existing_venv_python.stdout }}, but this host is configured to
+          use Python {{ borg_configured_python_version.stdout }} via {{ python_bin }}.
+          Remove {{ borg_venv_path }} once and rerun the playbook so the
+          virtualenv can be recreated.
+      when:
+        - borg_existing_venv_python.rc == 0
+        - borg_existing_venv_python.stdout != borg_configured_python_version.stdout
+        - not (borg_recreate_venv_on_python_mismatch | default(false))
+
     - name: Create virtualenv for borg  # noqa package-latest
       ansible.builtin.pip:
-        name:
-          - pip
-          - setuptools
+        name: "{{ borg_pip_bootstrap_packages | default(['pip', 'setuptools']) }}"
         state: latest
         virtualenv: "{{ borg_venv_path }}"
         virtualenv_command: "{{ python_bin }} -m venv"
@@ -40,12 +158,14 @@
       ansible.builtin.pip:
         name: "{{ borg_mount_dependent_python_packages }}"
         virtualenv: "{{ borg_venv_path }}"
+      environment: "{{ borg_pip_environment | default({}) }}"
       when: borg_mount_dependent_python_packages is defined and borg_mount_support
 
     - name: Install dependent Python packages
       ansible.builtin.pip:
         name: "{{ borg_dependent_python_packages }}"
         virtualenv: "{{ borg_venv_path }}"
+      environment: "{{ borg_pip_environment | default({}) }}"
       when: borg_dependent_python_packages is defined
 
     - name: Install main Python packages
@@ -53,6 +173,7 @@
         name: "{{ item.name }}"
         version: "{{ item.version | default(omit, true) }}"
         virtualenv: "{{ borg_venv_path }}"
+      environment: "{{ borg_pip_environment | default({}) }}"
       when: borg_python_packages is defined
       loop: "{{ borg_python_packages }}"
 

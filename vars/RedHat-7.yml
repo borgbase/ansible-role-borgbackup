@@ -1,0 +1,72 @@
+---
+borg_dep_packages:
+  - openssh-clients
+
+borg_cron_package: cronie
+
+borg_python_source_install: true
+borg_python_source_version: "3.9.25"
+borg_python_source_prefix: "/opt/python-{{ borg_python_source_version }}"
+borg_python_source_build_parent: /usr/local/src
+borg_python_source_archive: "Python-{{ borg_python_source_version }}.tgz"
+borg_python_source_url: "https://www.python.org/ftp/python/{{ borg_python_source_version }}/{{ borg_python_source_archive }}"
+borg_python_source_checksum: "md5:530c60aacc0d4ad8a683b6c5f0691fc8"
+borg_python_source_build_dir: "{{ borg_python_source_build_parent }}/Python-{{ borg_python_source_version }}"
+borg_python_source_configure_command: "./configure --prefix={{ borg_python_source_prefix }} --with-ensurepip=install"
+borg_python_source_make_jobs: "{{ ansible_processor_vcpus | default(2) }}"
+borg_recreate_venv_on_python_mismatch: true
+borg_pip_bootstrap_packages:
+  - "pip<23.1"
+  - "setuptools<70"
+  - wheel
+borg_dependent_python_packages:
+  - cython
+  - pkgconfig
+  - "urllib3<2"
+borg_pkgconfig_compat_dir: /usr/local/lib/pkgconfig
+borg_pkgconfig_compat_links:
+  - src: /usr/lib64/pkgconfig/libcrypto11.pc
+    dest: "{{ borg_pkgconfig_compat_dir }}/libcrypto.pc"
+borg_pip_environment:
+  CFLAGS: "-std=gnu99"
+  PKG_CONFIG_PATH: "{{ borg_pkgconfig_compat_dir }}:/usr/lib64/pkgconfig"
+  BORG_LIBACL_PREFIX: /usr
+borg_repo_packages:
+  - epel-release
+
+borg_pip_packages:
+  - libacl-devel
+  - libacl
+  - gcc
+  - gcc-c++
+  - make
+  - openssl-devel
+  - openssl11-devel
+  - pkgconfig
+  - lz4-devel
+  - libzstd-devel
+  - xxhash-devel
+  - bzip2-devel
+  - libffi-devel
+  - zlib-devel
+  - xz-devel
+  - sqlite-devel
+  - readline-devel
+  - ncurses-devel
+  - gdbm-devel
+  - libuuid-devel
+
+borg_distro_packages:
+  - borgbackup
+  - borgmatic
+
+borg_mount_dependent_packages:
+  - fuse-devel
+
+borg_mount_dependent_python_packages:
+  - llfuse
+
+borg_version: ">=1.4.1,<1.5"
+borgmatic_version: ">=2.0.7,<3"
+python_bin: "{{ borg_python_source_prefix }}/bin/python3.9"
+pip_bin: "{{ borg_python_source_prefix }}/bin/pip3.9"
