@@ -9,6 +9,7 @@ _borgbackup_install_defaults:
   pip_packages: []
   distro_packages: []
   python_bin: ""
+  uv_bin: uv
   dependent_python_packages:
     - cython
     - pkgconfig

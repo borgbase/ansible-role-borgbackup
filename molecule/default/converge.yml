@@ -30,6 +30,15 @@
         name: yamllint
         state: present
 
+    - name: Install uv for uv install method
+      ansible.builtin.shell: >-
+        set -o pipefail &&
+        curl -LsSf https://astral.sh/uv/install.sh
+        | env UV_UNMANAGED_INSTALL=/usr/local/bin sh
+      args:
+        creates: /usr/local/bin/uv
+        executable: /bin/bash
+
     - name: Create local backup source directory
       ansible.builtin.file:
         path: /tmp/borgbackup-source
@@ -46,7 +55,7 @@
   roles:
     - role: borgbase.ansible_role_borgbackup
       borgbackup_install:
-        method: pip
+        method: uv
       borgbackup_timer:
         type: cron
       borgbackup_config:

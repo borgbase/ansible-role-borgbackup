@@ -101,11 +101,12 @@ The role accepts partial dictionaries. For example, setting only `borgbackup_tim
 
 ### `borgbackup_install`
 
-- `method`: `pip`, `package`, or `none`. Defaults to `pip`.
-- `venv_path`: virtualenv path for pip installs. Defaults to `/opt/borgmatic`.
-- `borg_version`: optional borgbackup version constraint for pip installs.
-- `borgmatic_version`: borgmatic version constraint for pip installs. Defaults to `>=1.8.0`.
+- `method`: `pip`, `uv`, `package`, or `none`. Defaults to `pip`.
+- `venv_path`: virtualenv path for pip installs, or uv tool directory for uv installs. Defaults to `/opt/borgmatic`.
+- `borg_version`: optional borgbackup version constraint for pip and uv installs.
+- `borgmatic_version`: borgmatic version constraint for pip and uv installs. Defaults to `>=1.8.0`.
 - `require_epel`: require `epel-release` before package installs on Enterprise Linux.
+- `uv_bin`: uv executable for uv installs. Defaults to `uv`. The role does not install uv itself.
 - `dep_packages`, `pip_packages`, `distro_packages`, `python_bin`: platform override hooks.
 
 ### `borgbackup_user`

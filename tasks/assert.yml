@@ -40,10 +40,10 @@
 - name: Ensure v2 input is valid
   ansible.builtin.assert:
     that:
-      - _borgbackup_install.method in ['pip', 'package', 'none']
+      - _borgbackup_install.method in ['pip', 'uv', 'package', 'none']
       - _borgbackup_timer.type in ['cron', 'systemd', 'none', '']
       - _borgbackup_config.repositories | length > 0
     fail_msg: >-
-      Invalid borgbackup_* configuration. Required: install.method is pip, package,
-      or none; timer.type is cron, systemd, none, or empty; config.repositories is set.
+      Invalid borgbackup_* configuration. Required: install.method is pip, uv,
+      package, or none; timer.type is cron, systemd, none, or empty; config.repositories is set.
 ...

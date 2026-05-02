@@ -83,6 +83,41 @@
         that:
           - "borgbackup_archive_list.stdout | length > 0"
 
+    - name: Apply role with uv install and non-root sudoers
+      ansible.builtin.include_role:
+        name: borgbase.ansible_role_borgbackup
+      vars:
+        borgbackup_install:
+          method: uv
+        borgbackup_user:
+          name: borgbackup-uv-test
+          group: borgbackup-uv-test
+          sudo: true
+        borgbackup_timer:
+          type: none
+        borgbackup_config:
+          name: uv-sudoers.yaml
+          repositories:
+            - /tmp/borgbackup-molecule-repo
+          source_directories:
+            - /etc/hostname
+
+    - name: Read generated uv sudoers rule
+      ansible.builtin.slurp:
+        src: /etc/sudoers.d/backup
+      register: borgbackup_uv_sudoers_rule
+
+    - name: Decode uv sudoers rule
+      ansible.builtin.set_fact:
+        borgbackup_uv_sudoers_rule_text: "{{ borgbackup_uv_sudoers_rule.content | b64decode }}"
+
+    - name: Ensure uv sudoers paths are rendered
+      ansible.builtin.assert:
+        that:
+          - "'/usr/local/bin/borg' in borgbackup_uv_sudoers_rule_text"
+          - "'/usr/local/bin/borgmatic -c /etc/borgmatic/uv-sudoers.yaml' in borgbackup_uv_sudoers_rule_text"
+          - "'/usr/bin/borg' not in borgbackup_uv_sudoers_rule_text"
+
     - name: Apply role with custom exclude_if_present and non-pip sudoers
       ansible.builtin.include_role:
         name: borgbase.ansible_role_borgbackup

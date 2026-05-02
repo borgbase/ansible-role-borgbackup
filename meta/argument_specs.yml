@@ -18,23 +18,24 @@ argument_specs:
             default: pip
             choices:
               - pip
+              - uv
               - package
               - none
-            description: Install from PyPI, distribution packages, or skip installation.
+            description: Install from PyPI with pip, PyPI with uv, distribution packages, or skip installation.
           venv_path:
             type: str
             required: false
             default: /opt/borgmatic
-            description: Virtual environment path for pip installs.
+            description: Virtual environment path for pip installs, or uv tool directory for uv installs.
           borg_version:
             type: str
             required: false
-            description: Borgbackup version constraint for pip installs.
+            description: Borgbackup version constraint for pip and uv installs.
           borgmatic_version:
             type: str
             required: false
             default: ">=1.8.0"
-            description: Borgmatic version constraint for pip installs. Version 1.8.0 or newer is required.
+            description: Borgmatic version constraint for pip and uv installs. Version 1.8.0 or newer is required.
           require_epel:
             type: bool
             required: false
@@ -48,7 +49,7 @@ argument_specs:
             type: list
             elements: str
             required: false
-            description: Override platform build packages for pip installs.
+            description: Override platform build packages for pip and uv installs.
           distro_packages:
             type: list
             elements: str
@@ -58,6 +59,11 @@ argument_specs:
             type: str
             required: false
             description: Override the Python executable used to create the virtual environment.
+          uv_bin:
+            type: str
+            required: false
+            default: uv
+            description: Override the uv executable used for uv installs.
       borgbackup_user:
         type: dict
         required: false

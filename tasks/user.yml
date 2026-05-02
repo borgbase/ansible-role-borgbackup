@@ -32,11 +32,11 @@
   ansible.builtin.set_fact:
     _borgbackup_borg_command: >-
       {{ '/usr/local/bin/borg'
-      if _borgbackup_install.method == 'pip'
+      if _borgbackup_install.method in ['pip', 'uv']
       else '/usr/bin/borg' }}
     _borgbackup_borgmatic_command: >-
       {{ '/usr/local/bin/borgmatic'
-      if _borgbackup_install.method == 'pip'
+      if _borgbackup_install.method in ['pip', 'uv']
       else '/usr/bin/borgmatic' }}
 
 - name: Add backup sudo rules

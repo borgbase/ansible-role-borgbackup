@@ -1,0 +1,131 @@
+---
+- name: Ensure uv is available
+  ansible.builtin.command: "{{ _borgbackup_install.uv_bin }} --version"
+  register: _borgbackup_uv_version
+  changed_when: false
+  failed_when: false
+
+- name: Require uv for uv installs
+  ansible.builtin.assert:
+    that:
+      - _borgbackup_uv_version.rc | default(1) == 0
+    fail_msg: >-
+      The uv install method requires uv to be installed on the target.
+      Set borgbackup_install.uv_bin if uv is not available as "uv".
+
+- name: Ensure the crb repository is enabled for RedHat
+  community.general.dnf_config_manager:
+    name: crb
+    state: enabled
+  when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'
+
+- name: Install build dependencies
+  ansible.builtin.package:
+    name: "{{ _borgbackup_effective_pip_packages }}"
+    state: present
+
+- name: Resolve uv package requirements
+  ansible.builtin.set_fact:
+    _borgbackup_uv_borg_requirement: "borgbackup{{ _borgbackup_install.borg_version }}"
+    _borgbackup_uv_borgmatic_requirement: "borgmatic{{ _borgbackup_install.borgmatic_version }}"
+
+- name: Check existing borg command
+  ansible.builtin.stat:
+    path: /usr/local/bin/borg
+  register: _borgbackup_uv_borg_command
+
+- name: Check existing borgmatic command
+  ansible.builtin.stat:
+    path: /usr/local/bin/borgmatic
+  register: _borgbackup_uv_borgmatic_command
+
+- name: Read existing borg command
+  ansible.builtin.slurp:
+    src: /usr/local/bin/borg
+  register: _borgbackup_uv_borg_command_content
+  when:
+    - _borgbackup_uv_borg_command.stat.exists | bool
+    - _borgbackup_uv_borg_command.stat.isreg | bool
+
+- name: Read existing borgmatic command
+  ansible.builtin.slurp:
+    src: /usr/local/bin/borgmatic
+  register: _borgbackup_uv_borgmatic_command_content
+  when:
+    - _borgbackup_uv_borgmatic_command.stat.exists | bool
+    - _borgbackup_uv_borgmatic_command.stat.isreg | bool
+
+- name: Remove existing role-created pip borg command wrapper
+  ansible.builtin.file:
+    path: /usr/local/bin/borg
+    state: absent
+  when:
+    - _borgbackup_uv_borg_command_content.content is defined
+    - _borgbackup_uv_borg_command_content.content | b64decode is search(_borgbackup_install.venv_path ~ '/bin/activate')
+    - _borgbackup_uv_borg_command_content.content | b64decode is search('borg "\\$@"')
+
+- name: Remove existing role-created pip borgmatic command wrapper
+  ansible.builtin.file:
+    path: /usr/local/bin/borgmatic
+    state: absent
+  when:
+    - _borgbackup_uv_borgmatic_command_content.content is defined
+    - _borgbackup_uv_borgmatic_command_content.content | b64decode is search(_borgbackup_install.venv_path ~ '/bin/activate')
+    - _borgbackup_uv_borgmatic_command_content.content | b64decode is search('borgmatic "\\$@"')
+
+- name: Check borg command after wrapper cleanup
+  ansible.builtin.stat:
+    path: /usr/local/bin/borg
+  register: _borgbackup_uv_borg_command_after_cleanup
+
+- name: Check borgmatic command after wrapper cleanup
+  ansible.builtin.stat:
+    path: /usr/local/bin/borgmatic
+  register: _borgbackup_uv_borgmatic_command_after_cleanup
+
+- name: Ensure no unmanaged global borg commands block uv install
+  ansible.builtin.assert:
+    that:
+      - >-
+        not _borgbackup_uv_borg_command_after_cleanup.stat.exists
+        or (
+          _borgbackup_uv_borg_command_after_cleanup.stat.islnk | default(false)
+          and _borgbackup_uv_borg_command_after_cleanup.stat.lnk_source | default('')
+          is search(_borgbackup_install.venv_path)
+        )
+      - >-
+        not _borgbackup_uv_borgmatic_command_after_cleanup.stat.exists
+        or (
+          _borgbackup_uv_borgmatic_command_after_cleanup.stat.islnk | default(false)
+          and _borgbackup_uv_borgmatic_command_after_cleanup.stat.lnk_source | default('')
+          is search(_borgbackup_install.venv_path)
+        )
+    fail_msg: >-
+      Found existing unmanaged borg or borgmatic commands in /usr/local/bin.
+      Remove them before using borgbackup_install.method=uv.
+
+- name: Install borgbackup and borgmatic via uv
+  ansible.builtin.command:
+    argv:
+      - "{{ _borgbackup_install.uv_bin }}"
+      - tool
+      - install
+      - --python
+      - "{{ _borgbackup_effective_python_bin }}"
+      - --no-managed-python
+      - --no-python-downloads
+      - --with
+      - "{{ _borgbackup_uv_borg_requirement }}"
+      - --with-executables-from
+      - borgbackup
+      - "{{ _borgbackup_uv_borgmatic_requirement }}"
+  register: _borgbackup_uv_install_output
+  changed_when: >-
+    _borgbackup_uv_install_output.stdout is search('Installed')
+    or _borgbackup_uv_install_output.stderr is search('Installed')
+    or _borgbackup_uv_install_output.stdout is search('Uninstalled')
+    or _borgbackup_uv_install_output.stderr is search('Uninstalled')
+  environment:
+    UV_TOOL_DIR: "{{ _borgbackup_install.venv_path }}"
+    UV_TOOL_BIN_DIR: /usr/local/bin
+...
