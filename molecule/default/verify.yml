@@ -38,7 +38,7 @@
           - "borgbackup_rendered_config_data.encryption_passphrase == 'CHANGEME'"
           - "borgbackup_rendered_config_data.exclude_caches | bool"
           - "borgbackup_rendered_config_data.exclude_if_present == ['.nobackup']"
-          - "borgbackup_rendered_config_data.umask == '0077'"
+          - "borgbackup_rendered_config_data.umask == 63"
           - "borgbackup_rendered_config_data.keep_hourly == 3"
           - "borgbackup_rendered_config_data.keep_daily == 7"
           - "borgbackup_rendered_config_data.keep_weekly == 4"

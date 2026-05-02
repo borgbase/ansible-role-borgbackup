@@ -48,13 +48,19 @@
       exclude_caches: "{{ _borgbackup_config.exclude_caches }}"
       exclude_if_present: "{{ _borgbackup_config.exclude_if_present }}"
       compression: "{{ _borgbackup_config.compression }}"
-      umask: "{{ _borgbackup_config.umask }}"
-      lock_wait: "{{ _borgbackup_config.lock_wait }}"
       archive_name_format: "{{ _borgbackup_config.archive_name_format }}"
       relocated_repo_access_is_ok: "{{ _borgbackup_config.relocated_repo_access_is_ok }}"
       unknown_unencrypted_repo_access_is_ok: "{{ _borgbackup_config.unknown_unencrypted_repo_access_is_ok }}"
       checks: "{{ _borgbackup_config.checks }}"
-      check_last: "{{ _borgbackup_config.check_last }}"
+
+- name: Add typed numeric borgmatic configuration
+  ansible.builtin.set_fact:
+    _borgbackup_borgmatic_config: >-
+      {{ _borgbackup_borgmatic_config | combine({
+        'umask': _borgbackup_config.umask | int(base=8),
+        'lock_wait': _borgbackup_config.lock_wait | int,
+        'check_last': _borgbackup_config.check_last | int,
+      }) }}
 
 - name: Add optional borgmatic configuration
   ansible.builtin.set_fact:
