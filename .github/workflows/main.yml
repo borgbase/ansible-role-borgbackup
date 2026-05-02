@@ -3,8 +3,46 @@ name: Test
 on: [push, pull_request]
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - name: Install lint dependencies
+      run: |
+        pip install -U pip setuptools wheel
+        pip install -r requirements-dev.txt
+    - name: Lint
+      run: |
+        yamllint .
+        ansible-lint .
+
+  test:
+    name: Molecule (${{ matrix.os }})
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: archlinux
+            molecule_commands: |
+              molecule test -s default --platform-name archlinux-latest
+              molecule test -s package --platform-name archlinux-package
+          - os: almalinux
+            molecule_commands: |
+              molecule test -s default --platform-name almalinux-10
+          - os: debian
+            molecule_commands: |
+              molecule test -s default --platform-name debian-trixie
+              molecule test -s package --platform-name debian-trixie-package
+              molecule test -s nonroot --platform-name debian-trixie-nonroot
+          - os: ubuntu
+            molecule_commands: |
+              molecule test -s default --platform-name ubuntu-resolute
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -18,7 +56,4 @@ jobs:
     # - name: Debugging with tmate
     #   uses: mxschmitt/action-tmate@v3.5
     - name: Test using Molecule
-      run: |
-        molecule test -s default
-        molecule test -s package
-        molecule test -s nonroot
+      run: ${{ matrix.molecule_commands }}
