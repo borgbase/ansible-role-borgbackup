@@ -1,0 +1,40 @@
+---
+- name: Converge
+  hosts: all
+  pre_tasks:
+    - name: Create non-root scenario backup source directory
+      ansible.builtin.file:
+        path: /tmp/borgbackup-nonroot-source
+        state: directory
+        mode: "0755"
+
+    - name: Create non-root scenario backup source file
+      ansible.builtin.copy:
+        dest: /tmp/borgbackup-nonroot-source/example.txt
+        content: |
+          molecule non-root backup content
+        mode: "0644"
+
+  roles:
+    - role: borgbase.ansible_role_borgbackup
+      borgbackup_install:
+        method: pip
+      borgbackup_user:
+        name: borgbackup-test
+        group: borgbackup-test
+        sudo: true
+      borgbackup_ssh:
+        key_name: id_backup
+        key_comment: molecule backup key
+      borgbackup_timer:
+        type: none
+      borgbackup_config:
+        repositories:
+          - /home/borgbackup-test/repo
+        encryption_passphrase: CHANGEME
+        source_directories:
+          - /tmp/borgbackup-nonroot-source
+        retention:
+          keep_daily: 2
+        extra:
+          verbosity: 1

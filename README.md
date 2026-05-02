@@ -78,7 +78,7 @@ Works well with [BorgBase.com](https://www.borgbase.com). To manage BorgBase rep
           ntfy:
             topic: backups
             server: https://ntfy.sh
-          output_verbosity: 1
+          verbosity: 1
 ```
 
 ## Installation

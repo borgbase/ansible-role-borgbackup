@@ -30,6 +30,19 @@
         name: yamllint
         state: present
 
+    - name: Create local backup source directory
+      ansible.builtin.file:
+        path: /tmp/borgbackup-source
+        state: directory
+        mode: "0755"
+
+    - name: Create local backup source file
+      ansible.builtin.copy:
+        dest: /tmp/borgbackup-source/example.txt
+        content: |
+          molecule backup content
+        mode: "0644"
+
   roles:
     - role: borgbase.ansible_role_borgbackup
       borgbackup_install:
@@ -38,22 +51,16 @@
         type: cron
       borgbackup_config:
         repositories:
-          - m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+          - /tmp/borgbackup-molecule-repo
         encryption_passphrase: CHANGEME
         source_directories:
-          - /srv/www
-          - /var/lib/automysqlbackup
+          - /tmp/borgbackup-source
         exclude_patterns:
-          - /srv/www/old-sites
+          - /tmp/borgbackup-source/excluded
         retention:
           keep_hourly: 3
           keep_daily: 7
           keep_weekly: 4
           keep_monthly: 6
-        hooks:
-          postgresql_databases:
-            - name: users
-              hostname: database1.example.org
-              port: 5433
         extra:
-          output_verbosity: 1
+          verbosity: 1

@@ -1,0 +1,33 @@
+---
+- name: Converge
+  hosts: all
+  pre_tasks:
+    - name: Create package scenario backup source directory
+      ansible.builtin.file:
+        path: /tmp/borgbackup-package-source
+        state: directory
+        mode: "0755"
+
+    - name: Create package scenario backup source file
+      ansible.builtin.copy:
+        dest: /tmp/borgbackup-package-source/example.txt
+        content: |
+          molecule package backup content
+        mode: "0644"
+
+  roles:
+    - role: borgbase.ansible_role_borgbackup
+      borgbackup_install:
+        method: package
+      borgbackup_timer:
+        type: none
+      borgbackup_config:
+        repositories:
+          - /tmp/borgbackup-package-repo
+        encryption_passphrase: CHANGEME
+        source_directories:
+          - /tmp/borgbackup-package-source
+        retention:
+          keep_daily: 2
+        extra:
+          verbosity: 1

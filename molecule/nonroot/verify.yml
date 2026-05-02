@@ -1,0 +1,65 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Read generated non-root SSH public key
+      ansible.builtin.slurp:
+        src: /home/borgbackup-test/.ssh/id_backup.pub
+      register: borgbackup_nonroot_public_key
+
+    - name: Inspect generated non-root SSH private key
+      ansible.builtin.stat:
+        path: /home/borgbackup-test/.ssh/id_backup
+      register: borgbackup_nonroot_private_key
+
+    - name: Inspect generated non-root config
+      ansible.builtin.stat:
+        path: /etc/borgmatic/config.yaml
+      register: borgbackup_nonroot_config_stat
+
+    - name: Decode generated non-root SSH public key
+      ansible.builtin.set_fact:
+        borgbackup_nonroot_public_key_text: "{{ borgbackup_nonroot_public_key.content | b64decode }}"
+
+    - name: Ensure non-root files are owned and rendered correctly
+      ansible.builtin.assert:
+        that:
+          - "'molecule backup key' in borgbackup_nonroot_public_key_text"
+          - "borgbackup_nonroot_private_key.stat.pw_name == 'borgbackup-test'"
+          - "borgbackup_nonroot_private_key.stat.gr_name == 'borgbackup-test'"
+          - "borgbackup_nonroot_private_key.stat.mode == '0600'"
+          - "borgbackup_nonroot_config_stat.stat.pw_name == 'borgbackup-test'"
+          - "borgbackup_nonroot_config_stat.stat.gr_name == 'borgbackup-test'"
+          - "borgbackup_nonroot_config_stat.stat.mode == '0600'"
+
+    - name: Ensure borgmatic accepts the non-root scenario config
+      ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml config validate
+      become: true
+      become_user: borgbackup-test
+      changed_when: false
+
+    - name: Create non-root scenario local borg repository
+      ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml repo-create --encryption repokey
+      args:
+        creates: /home/borgbackup-test/repo/config
+      become: true
+      become_user: borgbackup-test
+      changed_when: true
+
+    - name: Create non-root scenario local borg archive
+      ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml create
+      become: true
+      become_user: borgbackup-test
+      changed_when: true
+
+    - name: List non-root scenario local borg archives
+      ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml repo-list
+      become: true
+      become_user: borgbackup-test
+      changed_when: false
+      register: borgbackup_nonroot_archive_list
+
+    - name: Ensure non-root scenario local backup archive was created
+      ansible.builtin.assert:
+        that:
+          - "borgbackup_nonroot_archive_list.stdout | length > 0"

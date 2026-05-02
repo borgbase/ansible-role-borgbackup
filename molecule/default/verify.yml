@@ -7,12 +7,16 @@
       changed_when: false
 
     - name: Ensure Borg is installed correctly
-      ansible.builtin.command: borgmatic borg --version
+      ansible.builtin.command: borg --version
       changed_when: false
 
     - name: Ensure produced YAML is valid
       ansible.builtin.command: |
         yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" /etc/borgmatic/config.yaml
+      changed_when: false
+
+    - name: Ensure borgmatic accepts the rendered config
+      ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml config validate
       changed_when: false
 
     - name: Read produced borgmatic config
@@ -23,20 +27,61 @@
     - name: Decode produced borgmatic config
       ansible.builtin.set_fact:
         borgbackup_rendered_config_yaml: "{{ borgbackup_rendered_config.content | b64decode }}"
+        borgbackup_rendered_config_data: "{{ borgbackup_rendered_config.content | b64decode | from_yaml }}"
 
     - name: Ensure default borgmatic config is rendered
       ansible.builtin.assert:
         that:
-          - "'exclude_caches: true' in borgbackup_rendered_config_yaml"
-          - "'.nobackup' in borgbackup_rendered_config_yaml"
-          - >-
-            'umask: 0077' in borgbackup_rendered_config_yaml
-            or "umask: '0077'" in borgbackup_rendered_config_yaml
-            or 'umask: "0077"' in borgbackup_rendered_config_yaml
-          - "'output_verbosity: 1' in borgbackup_rendered_config_yaml"
+          - "borgbackup_rendered_config_data.repositories[0].path == '/tmp/borgbackup-molecule-repo'"
+          - "borgbackup_rendered_config_data.source_directories == ['/tmp/borgbackup-source']"
+          - "borgbackup_rendered_config_data.exclude_patterns == ['/tmp/borgbackup-source/excluded']"
+          - "borgbackup_rendered_config_data.encryption_passphrase == 'CHANGEME'"
+          - "borgbackup_rendered_config_data.exclude_caches | bool"
+          - "borgbackup_rendered_config_data.exclude_if_present == ['.nobackup']"
+          - "borgbackup_rendered_config_data.umask == '0077'"
+          - "borgbackup_rendered_config_data.keep_hourly == 3"
+          - "borgbackup_rendered_config_data.keep_daily == 7"
+          - "borgbackup_rendered_config_data.keep_weekly == 4"
+          - "borgbackup_rendered_config_data.keep_monthly == 6"
+          - "borgbackup_rendered_config_data.verbosity == 1"
           - "'Error while creating a backup.' not in borgbackup_rendered_config_yaml"
           - "'Starting backup.' not in borgbackup_rendered_config_yaml"
           - "'Finished backup.' not in borgbackup_rendered_config_yaml"
+
+    - name: Read borgmatic cron file
+      ansible.builtin.slurp:
+        src: /etc/cron.d/borgmatic
+      register: borgbackup_cron_file
+
+    - name: Decode borgmatic cron file
+      ansible.builtin.set_fact:
+        borgbackup_cron_file_text: "{{ borgbackup_cron_file.content | b64decode }}"
+
+    - name: Ensure cron invokes the rendered config
+      ansible.builtin.assert:
+        that:
+          - "'borgmatic -c /etc/borgmatic/config.yaml' in borgbackup_cron_file_text"
+          - "'PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin' in borgbackup_cron_file_text"
+
+    - name: Create local borg repository
+      ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml repo-create --encryption repokey
+      args:
+        creates: /tmp/borgbackup-molecule-repo/config
+      changed_when: true
+
+    - name: Create a local borg archive
+      ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml create
+      changed_when: true
+
+    - name: List local borg archives
+      ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml repo-list
+      changed_when: false
+      register: borgbackup_archive_list
+
+    - name: Ensure local backup archive was created
+      ansible.builtin.assert:
+        that:
+          - "borgbackup_archive_list.stdout | length > 0"
 
     - name: Apply role with custom exclude_if_present and non-pip sudoers
       ansible.builtin.include_role:
@@ -53,7 +98,7 @@
         borgbackup_config:
           name: sudoers.yaml
           repositories:
-            - m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+            - /tmp/borgbackup-molecule-repo
           source_directories:
             - /etc/hostname
           exclude_if_present:
@@ -97,7 +142,7 @@
               type: none
             borgbackup_config:
               repositories:
-                - m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+                - /tmp/borgbackup-molecule-repo
       rescue:
         - name: Store legacy hook rejection message
           ansible.builtin.set_fact:

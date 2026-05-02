@@ -18,4 +18,7 @@ jobs:
     # - name: Debugging with tmate
     #   uses: mxschmitt/action-tmate@v3.5
     - name: Test using Molecule
-      run: molecule test
+      run: |
+        molecule test -s default
+        molecule test -s package
+        molecule test -s nonroot

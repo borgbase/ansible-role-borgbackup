@@ -1,0 +1,35 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Ensure packaged Borgmatic is installed correctly
+      ansible.builtin.command: borgmatic --version
+      changed_when: false
+
+    - name: Ensure packaged Borg is installed correctly
+      ansible.builtin.command: borg --version
+      changed_when: false
+
+    - name: Ensure borgmatic accepts the packaged scenario config
+      ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml config validate
+      changed_when: false
+
+    - name: Create package scenario local borg repository
+      ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml repo-create --encryption repokey
+      args:
+        creates: /tmp/borgbackup-package-repo/config
+      changed_when: true
+
+    - name: Create package scenario local borg archive
+      ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml create
+      changed_when: true
+
+    - name: List package scenario local borg archives
+      ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml repo-list
+      changed_when: false
+      register: borgbackup_package_archive_list
+
+    - name: Ensure package scenario local backup archive was created
+      ansible.builtin.assert:
+        that:
+          - "borgbackup_package_archive_list.stdout | length > 0"

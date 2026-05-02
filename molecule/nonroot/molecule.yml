@@ -1,0 +1,12 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: debian-trixie-nonroot
+    image: debian:trixie
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

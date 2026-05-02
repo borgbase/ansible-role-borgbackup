@@ -4,20 +4,12 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: archlinux-latest
+  - name: archlinux-package
     image: archlinux:latest
     platform: linux/amd64
-  - name: almalinux-10
-    image: almalinux:10
-  - name: debian-trixie
+  - name: debian-trixie-package
     image: debian:trixie
-  - name: ubuntu-resolute
-    image: ubuntu:resolute
 provisioner:
   name: ansible
 verifier:
   name: ansible
-lint: |
-  set -e
-  yamllint .
-  ansible-lint .
