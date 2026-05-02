@@ -1,3 +1,8 @@
 ---
+exclude_paths:
+  - .ansible
+  - .cache
+  - .direnv
+
 skip_list:
   - fqcn-builtins

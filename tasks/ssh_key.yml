@@ -1,0 +1,41 @@
+---
+- name: Resolve backup SSH key settings
+  ansible.builtin.set_fact:
+    _borgbackup_ssh_key_name: >-
+      {{ _borgbackup_ssh.key_name
+      if _borgbackup_ssh.key_name | length > 0
+      else 'id_' ~ _borgbackup_ssh.key_type }}
+
+- name: Resolve backup SSH key path
+  ansible.builtin.set_fact:
+    _borgbackup_ssh_key_path: >-
+      {{ _borgbackup_ssh.key_path
+      if _borgbackup_ssh.key_path | length > 0
+      else _borgbackup_user_info.home ~ '/.ssh/' ~ _borgbackup_ssh_key_name }}
+
+- name: Ensure SSH directory exists
+  ansible.builtin.file:
+    path: "{{ _borgbackup_user_info.home }}/.ssh/"
+    state: directory
+    mode: "0700"
+    owner: "{{ _borgbackup_user.name }}"
+    group: "{{ _borgbackup_user.group }}"
+
+- name: Generate an OpenSSH keypair
+  community.crypto.openssh_keypair:
+    path: "{{ _borgbackup_ssh_key_path }}"
+    mode: "0600"
+    type: "{{ _borgbackup_ssh.key_type }}"
+    owner: "{{ _borgbackup_user.name }}"
+    group: "{{ _borgbackup_user.group }}"
+    comment: "{{ _borgbackup_ssh.key_comment }}"
+
+- name: Read SSH public key
+  ansible.builtin.slurp:
+    src: "{{ _borgbackup_ssh_key_path }}.pub"
+  register: _borgbackup_local_ssh_key
+
+- name: Print SSH public key
+  ansible.builtin.debug:
+    msg: "The generated key is: {{ _borgbackup_local_ssh_key.content | b64decode }}"
+...

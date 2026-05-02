@@ -1,0 +1,6 @@
+---
+- name: Install timer to run borgmatic
+  ansible.builtin.include_tasks:
+    file: "timer_{{ _borgbackup_timer.type }}.yml"
+  when: _borgbackup_timer.type not in ["none", ""]
+...

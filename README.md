@@ -2,159 +2,191 @@
 
 [![Test](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml/badge.svg)](https://github.com/borgbase/ansible-role-borgbackup/actions/workflows/main.yml) [![Ansible Galaxy](https://img.shields.io/ansible/role/d/borgbase/ansible_role_borgbackup?logo=ansible&color=5cbec1&label=Ansible%20Galaxy)](https://galaxy.ansible.com/ui/standalone/roles/borgbase/ansible_role_borgbackup/)
 
-Set up encrypted, compressed and deduplicated backups using [BorgBackup](https://borgbackup.readthedocs.io/en/stable/) and [Borgmatic](https://github.com/witten/borgmatic). Currently supports Debian/Ubuntu, CentOS/Red Hat/Fedora, Archlinux and Manjaro.
+Set up encrypted, compressed, deduplicated backups using [BorgBackup](https://borgbackup.readthedocs.io/en/stable/) and [Borgmatic](https://github.com/witten/borgmatic). The role supports Debian/Ubuntu, CentOS/Red Hat/Fedora, Archlinux, and Manjaro.
 
-Works great with [BorgBase.com](https://www.borgbase.com) - Simple and Secure Hosting for your Borg Repositories. To manage BorgBase repos via Ansible, also see Andy Hawkins' [BorgBase Collection](https://galaxy.ansible.com/adhawkins/borgbase).
+Works well with [BorgBase.com](https://www.borgbase.com). To manage BorgBase repos via Ansible, also see Andy Hawkins' [BorgBase Collection](https://galaxy.ansible.com/adhawkins/borgbase).
 
-**Main features**
-- Install Borg and Borgmatic from PyPi or distro packages
-- Set up Borgmatic config
-- Schedule regular backups using Cron or Systemd timer
+## Breaking changes in v2
 
-## Breaking changes
-- Older versions of this role set up a separate Cron job for creating and checking
-  backups. With recent Borgmatic version, this feature is now managed in Borgmatic.
-  As a result the extra Cron job will be removed by this role.
-- Older versions of this role only supported Cron for scheduling. If you use
-  Systemd timers, be sure to remove the Cron job in `/etc/cron.d/borgmatic` first.
-  The role will also alert you when trying to use both timers.
+- Public variables now use grouped `borgbackup_*` dictionaries.
+- Legacy flat variables such as `borg_repository`, `borg_user`, and `borgmatic_timer` are rejected.
+- Borgmatic 1.8.0 or newer is required.
+- The role uses one modern borgmatic config template and no longer supports borgmatic 1.7 config rendering.
 
-## Example playbook with root as backup user, using the distro package and Cron timer
+## Example playbook with root as backup user, distro package install, and cron
 
-```
+```yaml
 - hosts: all
   roles:
-  - role: borgbase.ansible_role_borgbackup
-    borg_install_method: package
-    borg_encryption_passphrase: CHANGEME
-    borg_repository:
-      - ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
-    borg_source_directories:
-      - /var/www
-    borgmatic_hooks:
-      before_backup:
-      - echo "`date` - Starting backup."
-      postgresql_databases:
-      - name: users
-        hostname: database1.example.org
-        port: 5433
+    - role: borgbase.ansible_role_borgbackup
+      borgbackup_install:
+        method: package
+      borgbackup_config:
+        encryption_passphrase: CHANGEME
+        repositories:
+          - ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
+        source_directories:
+          - /var/www
+        hooks:
+          before_backup:
+            - echo "`date` - Starting backup."
+          postgresql_databases:
+            - name: users
+              hostname: database1.example.org
+              port: 5433
 ```
 
-## Example playbook with service user and Systemd timer
+## Example playbook with service user and systemd timer
 
-```
+```yaml
 - hosts: all
   roles:
-  - role: borgbase.ansible_role_borgbackup
-    borg_encryption_passphrase: CHANGEME
-    borg_repository: ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
-    borgmatic_timer: systemd
-    borg_user: "backupuser"
-    borg_group: "backupuser"
-    borg_source_directories:
-      - /var/www
-    borg_retention_policy:
-      keep_hourly: 3
-      keep_daily: 7
-      keep_weekly: 4
-      keep_monthly: 6
+    - role: borgbase.ansible_role_borgbackup
+      borgbackup_user:
+        name: backupuser
+        group: backupuser
+      borgbackup_timer:
+        type: systemd
+      borgbackup_config:
+        encryption_passphrase: CHANGEME
+        repositories:
+          - ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
+        source_directories:
+          - /var/www
+        retention:
+          keep_hourly: 3
+          keep_daily: 7
+          keep_weekly: 4
+          keep_monthly: 6
 ```
 
-## Example playbook with custom configuration options (borgmatic 1.8+)
+## Example playbook with additional borgmatic options
 
-**Note:** `borgmatic_custom_config` requires borgmatic 1.8.0 or later.
-
-```
+```yaml
 - hosts: all
   roles:
-  - role: borgbase.ansible_role_borgbackup
-    borg_encryption_passphrase: CHANGEME
-    borg_repository: ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
-    borg_source_directories:
-      - /var/www
-    borgmatic_custom_config:
-      uptime_kuma:
-        push_url: https://uptime.kuma.example.com/abcd1234
-      ntfy:
-        topic: backups
-        server: https://ntfy.sh
-      output_verbosity: 1
+    - role: borgbase.ansible_role_borgbackup
+      borgbackup_config:
+        encryption_passphrase: CHANGEME
+        repositories:
+          - ssh://xxxxxx@xxxxxx.repo.borgbase.com/./repo
+        source_directories:
+          - /var/www
+        extra:
+          uptime_kuma:
+            push_url: https://uptime.kuma.example.com/abcd1234
+          ntfy:
+            topic: backups
+            server: https://ntfy.sh
+          output_verbosity: 1
 ```
 
 ## Installation
 
-Download from Ansible Galaxy
-```
-$ ansible-galaxy install borgbase.ansible_role_borgbackup
+Download from Ansible Galaxy:
+
+```bash
+ansible-galaxy install borgbase.ansible_role_borgbackup
 ```
 
-Clone latest version from Github
-```
-$ git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansible_role_borgbackup
-```
+Clone the latest version from GitHub:
 
+```bash
+git clone https://github.com/borgbase/ansible-role-borgbackup.git roles/ansible_role_borgbackup
+```
 
 ## Role Variables
 
-### Required Variables
-- `borg_repository`: Full path to repository. Your own server or [BorgBase.com](https://www.borgbase.com) repo.
-  Can be a list if you want to backup to multiple repositories.
+The role accepts partial dictionaries. For example, setting only `borgbackup_timer.type` keeps all other timer defaults.
 
-### Optional Variables
-- `borg_dep_packages`: Dependency Packages to install `borg(backup)` and `borgmatic`.
-- `borg_distro_packages`: contains the names of distributions packages for `borg(backup)` and `borgmatic`, only used if `borg_install_method` is set to `package`.
-- `borg_encryption_passcommand`: The standard output of this command is used to unlock the encryption key.
-- `borg_encryption_passphrase`: Password to use for repokey or keyfile. Empty if repo is unencrypted.
-- `borg_exclude_from`: Read exclude patterns from one or more separate named files, one pattern per line.
-- `borg_exclude_patterns`: Paths or patterns to exclude from backup. See [official documentation](https://borgbackup.readthedocs.io/en/stable/usage/help.html#borg-help-patterns) for more.
-- `borg_install_method`: By default `pip` is used to install borgmatic. To install via your distributions package manager set this to `package` and (if needed) overwrite the `borg_distro_packages` variable to contain your distributions package names required to install borgmatic. Note that many distributions ship outdated versions of borgbackup and borgmatic; use at your own risk. `none` completely disables installation management.
-- `borg_require_epel`: When using `borg_install_method: package` on RHEL-based distributions, the EPEL repo is required. To disable the check (e.g. when using a custom mirror instead of the `epel-release` package), set this to `false`. Defaults to `{{ ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora' }}` (i.e. `true` on Enterprise Linux-based distros).
-- `borg_lock_wait_time`: Config maximum seconds to wait for acquiring a repository/cache lock. Defaults to 5 seconds.
-- `borg_one_file_system`: Don't cross file-system boundaries. Defaults to `true`
-- `borg_compression`: Compression algorithm to use. Defaults to `auto,zstd`
-- `borg_pip_packages`: Dependancy Packages (pip) to install `borg(backup)` and `borgmatic`.
-- `borg_remote_path`: Path to the borg executable on the remote. It will default to `borg`.
-- `borg_remote_rate_limit`: Remote network upload rate limit in kiBytes/second.
-- `borgmatic_retries`: Number of times to retry a failing backup before giving up. Defaults to 0 (i.e., does not attempt retry).
-- `borgmatic_retry_wait`: Wait time between retries (in seconds) to allow transient issues to pass. Increases after each retry as a form of backoff. Defaults to 0 (no wait).
-- `borg_retention_policy`: Retention policy for how many backups to keep in each category (daily, weekly, monthly, etc).
-- `borg_source_directories`: List of local folders to back up. Default is `/etc/hostname` to prevent an empty backup.
-- `borg_ssh_key_name`: Name of the SSH public and private key. Default `id_ed25519`
-- `borg_ssh_key_file_path`: SSH-key to be used. Default `~/.ssh/{{ borg_ssh_key_name }}`
-- `borg_ssh_key_type`: The algorithm used to generate the SSH private key. Choose: `rsa`, `dsa`, `rsa1`, `ecdsa`, `ed25519`. Default: `ed25519`
-- `borg_ssh_key_comment`: Comment added to the SSH public key.
-- `borg_ssh_command`: Command to use instead of just "ssh". This can be used to specify SSH options.
-- `borg_version`: Force a specific borg version to be installed
-- `borg_venv_path`: Path to store the venv for `borg(backup)` and `borgmatic`
+### `borgbackup_install`
 
-- `borgmatic_check_last`: Number of archives to check. Defaults to `3`
-- `borgmatic_checks`: List of consistency checks. Defaults to monthly checks. See [docs](https://torsion.org/borgmatic/docs/how-to/deal-with-very-large-backups/#check-frequency) for all options.
-- `borgmatic_config_name`: Name to use for the Borgmatic config file. Defaults to `config.yaml`
-- `borgmatic_timer_hour`: Hour when regular create and prune cron/systemd-timer job will run. Defaults to `{{ range(0, 5) | random(seed=inventory_hostname) }}`
-- `borgmatic_timer_minute`: Minute when regular create and prune cron/systemd-timer job will run. Defaults to `{{ range(0, 59) | random(seed=inventory_hostname) }}`
-- `borgmatic_timer_flags`: Flags to pass to borgmatic cron/systemd-timer job, like "--log-file /path/to/file.log --log-file-verbosity 2"
-- `borgmatic_timer_cron_name`: Name to use for the cron job or systemd timer. Defaults to `borgmatic`
-- `borgmatic_systemd_nonewprivileges`: NoNewPrivileges Systemd unit setting to allow running commands with "sudo" in config.yaml. Default is to prevent.
-- `borgmatic_hooks`: Hooks to monitor your backups e.g. with [Healthchecks](https://healthchecks.io/). See [official documentation](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/) for more.
-- `borgmatic_timer`: If the variable is set, a timer is installed. A choice must be made between `cron` and `systemd`.
-- `borgmatic_relocated_repo_access_is_ok`: Bypass Borg error about a repository that has been moved. Defaults to `false`
-- `borgmatic_unknown_unencrypted_repo_access_is_ok`: Bypass Borg error about a previously unknown unencrypted repository. Defaults to `false`
-- `borgmatic_store_atime`: Store atime into archive. Defaults to `true`
-- `borgmatic_store_ctime`: Store ctime into archive. Defaults to `true`
-- `borgmatic_version`: Force a specific borgmatic version to be installed
-- `borgmatic_custom_config`: Custom YAML configuration (as a dictionary) to add to the borgmatic config file. Allows adding any additional borgmatic options not covered by other variables. **Requires borgmatic 1.8.0 or later.** See example above.
+- `method`: `pip`, `package`, or `none`. Defaults to `pip`.
+- `venv_path`: virtualenv path for pip installs. Defaults to `/opt/borgmatic`.
+- `borg_version`: optional borgbackup version constraint for pip installs.
+- `borgmatic_version`: borgmatic version constraint for pip installs. Defaults to `>=1.8.0`.
+- `require_epel`: require `epel-release` before package installs on Enterprise Linux.
+- `dep_packages`, `pip_packages`, `distro_packages`, `python_bin`: platform override hooks.
 
-- `borg_user`: Name of the User to create Backups (service account)
-- `borg_group`: Name of the Group to create Backups (service account)
+### `borgbackup_user`
 
+- `name`: backup user. Defaults to `root`.
+- `group`: backup group. Defaults to `root`.
+- `create`: create the local user and group when `name` is not `root`. Defaults to `true`.
+- `shell`: shell for a created user. Defaults to `/bin/bash`.
+- `sudo`: manage sudoers rules for a non-root user. Defaults to `true`.
+
+### `borgbackup_ssh`
+
+- `key_type`: SSH key type. Defaults to `ed25519`.
+- `key_name`: SSH key filename. Defaults to `id_<key_type>`.
+- `key_path`: private key path. Defaults to the backup user's `.ssh` directory.
+- `key_comment`: public key comment.
+- `command`: explicit borgmatic `ssh_command`.
+
+### `borgbackup_config`
+
+- `repositories`: required repository path, list of paths, or list of borgmatic repository dictionaries.
+- `name`: config filename under `/etc/borgmatic`. Defaults to `config.yaml`.
+- `source_directories`: local paths to back up. Defaults to `/etc/hostname`.
+- `one_file_system`, `exclude_patterns`, `exclude_from`, `exclude_caches`, `exclude_if_present`, `compression`, `lock_wait`: borgmatic source and storage settings.
+- `encryption_passphrase`, `encryption_passcommand`, `remote_path`, `upload_rate_limit`: repository access settings.
+- `store_atime`, `store_ctime`, `umask`, `relocated_repo_access_is_ok`, `unknown_unencrypted_repo_access_is_ok`: borgmatic storage flags.
+- `retention`: borgmatic `keep_*` retention settings.
+- `checks`, `check_last`: borgmatic consistency checks.
+- `hooks`: borgmatic hooks and database backup configuration.
+- `extra`: additional borgmatic config merged into the generated config.
+
+### `borgbackup_timer`
+
+- `type`: `cron`, `systemd`, `none`, or empty. Defaults to `cron`.
+- `name`: cron file and job name. Defaults to `borgmatic`.
+- `hour`, `minute`: schedule. Defaults to a deterministic per-host random time between 00:00 and 04:58.
+- `flags`: extra scheduler flags passed to borgmatic.
+- `enabled`: enable and start the systemd timer. Defaults to `true`.
+- `systemd_no_new_privileges`: systemd `NoNewPrivileges` value. Defaults to `yes`.
+
+## v1 to v2 migration map
+
+| v1 variable | v2 location |
+| --- | --- |
+| `borg_install_method` | `borgbackup_install.method` |
+| `borg_venv_path` | `borgbackup_install.venv_path` |
+| `borg_version` | `borgbackup_install.borg_version` |
+| `borgmatic_version` | `borgbackup_install.borgmatic_version` |
+| `borg_user` | `borgbackup_user.name` |
+| `borg_group` | `borgbackup_user.group` |
+| `backup_create_local_user` | `borgbackup_user.create` |
+| `borg_ssh_key_type` | `borgbackup_ssh.key_type` |
+| `borg_ssh_key_name` | `borgbackup_ssh.key_name` |
+| `borg_ssh_key_file_path` | `borgbackup_ssh.key_path` |
+| `borg_ssh_key_comment` | `borgbackup_ssh.key_comment` |
+| `borg_ssh_command` | `borgbackup_ssh.command` |
+| `borg_repository` | `borgbackup_config.repositories` |
+| `borg_source_directories` | `borgbackup_config.source_directories` |
+| `borg_encryption_passphrase` | `borgbackup_config.encryption_passphrase` |
+| `borg_encryption_passcommand` | `borgbackup_config.encryption_passcommand` |
+| `borg_exclude_patterns` | `borgbackup_config.exclude_patterns` |
+| `borg_exclude_from` | `borgbackup_config.exclude_from` |
+| `borg_retention_policy` | `borgbackup_config.retention` |
+| `borgmatic_checks` | `borgbackup_config.checks` |
+| `borgmatic_hooks` | `borgbackup_config.hooks` |
+| `borgmatic_custom_config` | `borgbackup_config.extra` |
+| `borgmatic_timer` | `borgbackup_timer.type` |
+| `borgmatic_timer_cron_name` | `borgbackup_timer.name` |
+| `borgmatic_timer_hour` | `borgbackup_timer.hour` |
+| `borgmatic_timer_minute` | `borgbackup_timer.minute` |
+| `borgmatic_timer_flags` | `borgbackup_timer.flags` |
+| `borgmatic_timer_enabled` | `borgbackup_timer.enabled` |
+| `borgmatic_systemd_nonewprivileges` | `borgbackup_timer.systemd_no_new_privileges` |
 
 ## Contributing
 
-Pull requests (PR) are welcome, as long as they add features that are relevant for a meaningful number of users. All PRs are tested for style and functionality. To run tests locally (needs Docker):
+Pull requests are welcome when they add features that are relevant for a meaningful number of users. To run tests locally, install Docker and run:
 
-```
-$ pip install -r requirements-dev.txt
-$ molecule test
+```bash
+pip install -r requirements-dev.txt
+molecule test
 ```
 
 ## License
@@ -163,4 +195,4 @@ MIT/BSD
 
 ## Author
 
-© 2018-2023 Manuel Riel and contributors.
+© 2018-2026 Manuel Riel and contributors.

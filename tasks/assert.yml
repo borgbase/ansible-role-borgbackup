@@ -1,0 +1,49 @@
+---
+- name: Find legacy role variables
+  ansible.builtin.set_fact:
+    _borgbackup_legacy_variables_found: >-
+      {{ query('ansible.builtin.varnames',
+      '^(' ~ (_borgbackup_legacy_variables | join('|')) ~ ')$') }}
+
+- name: Ensure legacy role variables are not used
+  ansible.builtin.assert:
+    that:
+      - _borgbackup_legacy_variables_found | length == 0
+    fail_msg: >-
+      This role uses the breaking v2 borgbackup_* API. Replace legacy variables:
+      {{ _borgbackup_legacy_variables_found | join(', ') }}.
+
+- name: Normalize borgbackup input
+  ansible.builtin.set_fact:
+    _borgbackup_install: "{{ _borgbackup_install_defaults | combine(borgbackup_install | default({}), recursive=true) }}"
+    _borgbackup_user: "{{ _borgbackup_user_defaults | combine(borgbackup_user | default({}), recursive=true) }}"
+    _borgbackup_ssh: "{{ _borgbackup_ssh_defaults | combine(borgbackup_ssh | default({}), recursive=true) }}"
+    _borgbackup_config: "{{ _borgbackup_config_defaults | combine(borgbackup_config | default({}), recursive=true) }}"
+    _borgbackup_timer: "{{ _borgbackup_timer_defaults | combine(borgbackup_timer | default({}), recursive=true) }}"
+
+- name: Normalize borgbackup install package versions
+  ansible.builtin.set_fact:
+    _borgbackup_install: >-
+      {{ _borgbackup_install | combine({
+        'python_packages': [
+          {
+            'name': 'borgbackup',
+            'version': _borgbackup_install.borg_version,
+          },
+          {
+            'name': 'borgmatic',
+            'version': _borgbackup_install.borgmatic_version,
+          },
+        ],
+      }, recursive=true) }}
+
+- name: Ensure v2 input is valid
+  ansible.builtin.assert:
+    that:
+      - _borgbackup_install.method in ['pip', 'package', 'none']
+      - _borgbackup_timer.type in ['cron', 'systemd', 'none', '']
+      - _borgbackup_config.repositories | length > 0
+    fail_msg: >-
+      Invalid borgbackup_* configuration. Required: install.method is pip, package,
+      or none; timer.type is cron, systemd, none, or empty; config.repositories is set.
+...

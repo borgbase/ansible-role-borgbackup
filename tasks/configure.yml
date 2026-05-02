@@ -1,0 +1,118 @@
+---
+- name: Get borgmatic version
+  ansible.builtin.command: borgmatic --version
+  register: _borgbackup_borgmatic_version_output
+  changed_when: false
+  check_mode: false
+  environment:
+    PATH: "{{ _borgbackup_install.venv_path }}/bin:/usr/local/bin:/usr/bin:/bin"
+
+- name: Store installed borgmatic version
+  ansible.builtin.set_fact:
+    _borgbackup_borgmatic_version: "{{ _borgbackup_borgmatic_version_output.stdout.split()[0] }}"
+
+- name: Ensure borgmatic 1.8 or newer is installed
+  ansible.builtin.assert:
+    that:
+      - _borgbackup_borgmatic_version is version('1.8.0', '>=')
+    fail_msg: "borgbackup v2 requires borgmatic 1.8.0 or newer. Detected version: {{ _borgbackup_borgmatic_version }}"
+
+- name: Normalize borgmatic repositories
+  ansible.builtin.set_fact:
+    _borgbackup_repository_items: >-
+      {{ _borgbackup_config.repositories
+      if _borgbackup_config.repositories is iterable
+      and _borgbackup_config.repositories is not string
+      and _borgbackup_config.repositories is not mapping
+      else [_borgbackup_config.repositories] }}
+    _borgbackup_repository_entries: []
+
+- name: Build borgmatic repository entries
+  ansible.builtin.set_fact:
+    _borgbackup_repository_entries: >-
+      {{ _borgbackup_repository_entries
+      + [item if item is mapping else {'path': item}] }}
+  loop: "{{ _borgbackup_repository_items }}"
+
+- name: Build base borgmatic configuration
+  ansible.builtin.set_fact:
+    _borgbackup_borgmatic_config:
+      source_directories: "{{ _borgbackup_config.source_directories }}"
+      one_file_system: "{{ _borgbackup_config.one_file_system }}"
+      repositories: "{{ _borgbackup_repository_entries }}"
+      atime: "{{ _borgbackup_config.store_atime }}"
+      ctime: "{{ _borgbackup_config.store_ctime }}"
+      exclude_caches: "{{ _borgbackup_config.exclude_caches }}"
+      exclude_if_present: "{{ _borgbackup_config.exclude_if_present }}"
+      compression: "{{ _borgbackup_config.compression }}"
+      umask: "{{ _borgbackup_config.umask }}"
+      lock_wait: "{{ _borgbackup_config.lock_wait }}"
+      archive_name_format: "{{ _borgbackup_config.archive_name_format }}"
+      relocated_repo_access_is_ok: "{{ _borgbackup_config.relocated_repo_access_is_ok }}"
+      unknown_unencrypted_repo_access_is_ok: "{{ _borgbackup_config.unknown_unencrypted_repo_access_is_ok }}"
+      checks: "{{ _borgbackup_config.checks }}"
+      check_last: "{{ _borgbackup_config.check_last }}"
+
+- name: Add optional borgmatic configuration
+  ansible.builtin.set_fact:
+    _borgbackup_borgmatic_config: >-
+      {{ _borgbackup_borgmatic_config | combine(item.value, recursive=true) }}
+  loop:
+    - when: "{{ _borgbackup_config.exclude_patterns | length > 0 }}"
+      value:
+        exclude_patterns: "{{ _borgbackup_config.exclude_patterns }}"
+    - when: "{{ _borgbackup_config.exclude_from | length > 0 }}"
+      value:
+        exclude_from: "{{ _borgbackup_config.exclude_from }}"
+    - when: "{{ _borgbackup_config.remote_path | length > 0 }}"
+      value:
+        remote_path: "{{ _borgbackup_config.remote_path }}"
+    - when: "{{ _borgbackup_config.encryption_passphrase | length > 0 }}"
+      value:
+        encryption_passphrase: "{{ _borgbackup_config.encryption_passphrase }}"
+    - when: "{{ _borgbackup_config.encryption_passcommand | length > 0 }}"
+      value:
+        encryption_passcommand: "{{ _borgbackup_config.encryption_passcommand }}"
+    - when: "{{ _borgbackup_config.upload_rate_limit | int > 0 }}"
+      value:
+        upload_rate_limit: "{{ _borgbackup_config.upload_rate_limit }}"
+    - when: "{{ _borgbackup_config.retries is not none }}"
+      value:
+        retries: "{{ _borgbackup_config.retries }}"
+    - when: "{{ _borgbackup_config.retry_wait is not none }}"
+      value:
+        retry_wait: "{{ _borgbackup_config.retry_wait }}"
+    - when: "{{ _borgbackup_ssh.command | length > 0 }}"
+      value:
+        ssh_command: "{{ _borgbackup_ssh.command }}"
+    - when: "{{ _borgbackup_ssh.command | length == 0 and _borgbackup_ssh_key_name != 'id_' ~ _borgbackup_ssh.key_type }}"
+      value:
+        ssh_command: "ssh -i {{ _borgbackup_ssh_key_path }}"
+  when: item.when | bool
+  loop_control:
+    label: "{{ item.value.keys() | first }}"
+
+- name: Add retention, hooks, and custom borgmatic configuration
+  ansible.builtin.set_fact:
+    _borgbackup_borgmatic_config: >-
+      {{ _borgbackup_borgmatic_config
+      | combine(_borgbackup_config.retention, recursive=true)
+      | combine(_borgbackup_config.hooks, recursive=true)
+      | combine(_borgbackup_config.extra, recursive=true) }}
+
+- name: Ensure /etc/borgmatic exists
+  ansible.builtin.file:
+    path: /etc/borgmatic
+    state: directory
+    mode: "0700"
+    owner: "{{ _borgbackup_user.name }}"
+    group: "{{ _borgbackup_user.group }}"
+
+- name: Add borgmatic configuration
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: "/etc/borgmatic/{{ _borgbackup_config.name }}"
+    mode: "0600"
+    owner: "{{ _borgbackup_user.name }}"
+    group: "{{ _borgbackup_user.group }}"
+...

@@ -1,10 +1,131 @@
 ---
-borg_dependent_python_packages:
-  - cython
-  - pkgconfig
+_borgbackup_install_defaults:
+  method: pip
+  venv_path: /opt/borgmatic
+  borg_version: ""
+  borgmatic_version: ">=1.8.0"
+  require_epel: "{{ ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora' }}"
+  dep_packages: []
+  pip_packages: []
+  distro_packages: []
+  python_bin: ""
+  dependent_python_packages:
+    - cython
+    - pkgconfig
 
-borg_python_packages:
-  - name: borgbackup
-    version: "{{ borg_version }}"
-  - name: borgmatic
-    version: "{{ borgmatic_version }}"
+_borgbackup_user_defaults:
+  name: root
+  group: root
+  create: true
+  shell: /bin/bash
+  sudo: true
+
+_borgbackup_ssh_defaults:
+  key_type: ed25519
+  key_name: ""
+  key_path: ""
+  key_comment: ""
+  command: ""
+
+_borgbackup_config_defaults:
+  name: config.yaml
+  repositories: []
+  source_directories:
+    - /etc/hostname
+  one_file_system: true
+  exclude_patterns: []
+  exclude_from: []
+  exclude_caches: true
+  exclude_if_present:
+    - .nobackup
+  encryption_passphrase: ""
+  encryption_passcommand: ""
+  remote_path: ""
+  upload_rate_limit: 0
+  compression: auto,zstd
+  retries: null
+  retry_wait: null
+  lock_wait: 5
+  store_atime: true
+  store_ctime: true
+  relocated_repo_access_is_ok: false
+  unknown_unencrypted_repo_access_is_ok: false
+  archive_name_format: "{hostname}-{now:%Y-%m-%d-%H%M%S}"
+  retention:
+    keep_hourly: 3
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 6
+  checks:
+    - name: repository
+      frequency: 4 weeks
+    - name: archives
+      frequency: 6 weeks
+  check_last: 3
+  umask: "0077"
+  hooks: {}
+  extra: {}
+
+_borgbackup_timer_defaults:
+  type: cron
+  name: borgmatic
+  hour: "{{ range(0, 5) | random(seed=inventory_hostname) }}"
+  minute: "{{ range(0, 59) | random(seed=inventory_hostname) }}"
+  flags: ""
+  enabled: true
+  systemd_no_new_privileges: "yes"
+
+_borgbackup_legacy_variables:
+  - backup_create_local_user
+  - backup_user_info
+  - borg_compression
+  - borg_dep_packages
+  - borg_distro_packages
+  - borg_encryption_passcommand
+  - borg_encryption_passphrase
+  - borg_exclude_from
+  - borg_exclude_patterns
+  - borg_group
+  - borg_install_method
+  - borg_lock_wait_time
+  - borg_one_file_system
+  - borg_pip_packages
+  - borg_remote_path
+  - borg_remote_rate_limit
+  - borg_repository
+  - borg_require_epel
+  - borg_retention_policy
+  - borg_source_directories
+  - borg_ssh_command
+  - borg_ssh_key_comment
+  - borg_ssh_key_file_path
+  - borg_ssh_key_name
+  - borg_ssh_key_type
+  - borg_user
+  - borg_venv_path
+  - borg_version
+  - borgmatic_check_last
+  - borgmatic_checks
+  - borgmatic_config_name
+  - borgmatic_custom_config
+  - borgmatic_after_backup_command
+  - borgmatic_before_backup_command
+  - borgmatic_failure_command
+  - borgmatic_hooks
+  - borgmatic_relocated_repo_access_is_ok
+  - borgmatic_retries
+  - borgmatic_retry_wait
+  - borgmatic_store_atime
+  - borgmatic_store_ctime
+  - borgmatic_systemd_nonewprivileges
+  - borgmatic_timer
+  - borgmatic_timer_cron_name
+  - borgmatic_timer_enabled
+  - borgmatic_timer_flags
+  - borgmatic_timer_hour
+  - borgmatic_timer_minute
+  - borgmatic_unknown_unencrypted_repo_access_is_ok
+  - borgmatic_version
+  - python_bin
+  - pip_bin
+...

@@ -1,0 +1,71 @@
+---
+- name: Ensure the crb repository is enabled for RedHat
+  community.general.dnf_config_manager:
+    name: crb
+    state: enabled
+  when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'
+
+- name: Install build dependencies
+  ansible.builtin.package:
+    name: "{{ _borgbackup_effective_pip_packages }}"
+    state: present
+
+- name: Get system Python version
+  ansible.builtin.command: "{{ _borgbackup_effective_python_bin }} --version"
+  register: _borgbackup_system_python_version
+  changed_when: false
+
+- name: Check Python version in existing borgmatic venv
+  ansible.builtin.command: "{{ _borgbackup_install.venv_path }}/bin/python --version"
+  register: _borgbackup_venv_python_version
+  failed_when: false
+  changed_when: false
+
+- name: Remove borgmatic venv if Python version does not match
+  ansible.builtin.file:
+    path: "{{ _borgbackup_install.venv_path }}"
+    state: absent
+  when:
+    - _borgbackup_venv_python_version.rc == 0
+    - _borgbackup_venv_python_version.stdout != _borgbackup_system_python_version.stdout
+
+- name: Create virtualenv for borgbackup and borgmatic  # noqa package-latest
+  ansible.builtin.pip:
+    name:
+      - pip
+      - setuptools
+    state: latest
+    virtualenv: "{{ _borgbackup_install.venv_path }}"
+    virtualenv_command: "{{ _borgbackup_effective_python_bin }} -m venv"
+
+- name: Install dependent Python packages
+  ansible.builtin.pip:
+    name: "{{ _borgbackup_install.dependent_python_packages }}"
+    virtualenv: "{{ _borgbackup_install.venv_path }}"
+  when: _borgbackup_install.dependent_python_packages | length > 0
+
+- name: Install main Python packages
+  ansible.builtin.pip:
+    name: "{{ item.name }}"
+    version: "{{ item.version | default(omit, true) }}"
+    virtualenv: "{{ _borgbackup_install.venv_path }}"
+  loop: "{{ _borgbackup_install.python_packages }}"
+
+- name: Create borgmatic command in /usr/local/bin
+  ansible.builtin.copy:
+    content: |
+      #!/bin/bash
+      . "{{ _borgbackup_install.venv_path }}"/bin/activate
+      borgmatic "$@"
+    dest: /usr/local/bin/borgmatic
+    mode: "0755"
+
+- name: Create borg command in /usr/local/bin
+  ansible.builtin.copy:
+    content: |
+      #!/bin/bash
+      . "{{ _borgbackup_install.venv_path }}"/bin/activate
+      borg "$@"
+    dest: /usr/local/bin/borg
+    mode: "0755"
+...

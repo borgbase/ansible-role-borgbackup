@@ -1,7 +1,22 @@
 ---
-- name: Add and run all plays
-  include_tasks: "{{ bak_element }}"
-  with_items: "{{ lookup('ansible.builtin.fileglob', '*.yml').split(',') | reject('search', 'main.yml') | reject('search', 'noauto_*') | sort }}"
-  loop_control:
-    loop_var: bak_element
+- name: Load platform variables
+  ansible.builtin.include_tasks: platform.yml
+
+- name: Validate and normalize input
+  ansible.builtin.include_tasks: assert.yml
+
+- name: Install borgbackup and borgmatic
+  ansible.builtin.include_tasks: install.yml
+
+- name: Manage backup user
+  ansible.builtin.include_tasks: user.yml
+
+- name: Manage backup SSH key
+  ansible.builtin.include_tasks: ssh_key.yml
+
+- name: Configure borgmatic
+  ansible.builtin.include_tasks: configure.yml
+
+- name: Install borgmatic timer
+  ansible.builtin.include_tasks: timer.yml
 ...

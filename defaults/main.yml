@@ -1,57 +1,7 @@
 ---
-borg_encryption_passphrase: ''
-borg_exclude_patterns: []
-borg_one_file_system: true
-borg_exclude_from: []
-borg_encryption_passcommand: false
-borg_lock_wait_time: 5
-borg_ssh_key_type: "ed25519"
-borg_ssh_key_name: "id_{{ borg_ssh_key_type }}"
-borg_ssh_key_comment: ''
-borg_ssh_key_file_path: "{{ backup_user_info.home }}/.ssh/{{ borg_ssh_key_name }}"
-borg_ssh_command: false
-borg_remote_path: false
-borg_remote_rate_limit: 0
-borg_retention_policy:
-  keep_hourly: 3
-  keep_daily: 7
-  keep_weekly: 4
-  keep_monthly: 6
-borg_version: false
-borgmatic_timer_cron_name: "borgmatic"
-borgmatic_timer: cron
-borgmatic_timer_hour: "{{ range(0, 5) | random(seed=inventory_hostname) }}"
-borgmatic_timer_minute: "{{ range(0, 59) | random(seed=inventory_hostname) }}"
-borgmatic_timer_flags: ""
-borgmatic_timer_enabled: true
-borgmatic_systemd_nonewprivileges: "yes"
-borg_install_method: "pip"
-borg_require_epel: "{{ ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora' }}"
-
-borgmatic_config_name: config.yaml
-borgmatic_hooks:
-  on_error:
-    - echo "`date` - Error while creating a backup."
-  before_backup:
-    - echo "`date` - Starting backup."
-  after_backup:
-    - echo "`date` - Finished backup."
-borgmatic_checks:
-  - name: repository
-    frequency: "4 weeks"
-  - name: archives
-    frequency: "6 weeks"
-borgmatic_check_last: 3
-borgmatic_store_atime: true
-borgmatic_store_ctime: true
-borgmatic_relocated_repo_access_is_ok: false
-borgmatic_unknown_unencrypted_repo_access_is_ok: false
-borgmatic_version: ">=1.7.11"
-borgmatic_custom_config: {}
-
-borg_venv_path: "/opt/borgmatic"
-borg_user: "root"
-borg_group: "root"
-backup_user_info:
-  home: "/home/{{ borg_user }}"
+borgbackup_install: {}
+borgbackup_user: {}
+borgbackup_ssh: {}
+borgbackup_config: {}
+borgbackup_timer: {}
 ...

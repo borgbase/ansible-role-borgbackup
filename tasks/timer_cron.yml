@@ -1,0 +1,29 @@
+---
+- name: Ensure cron is installed
+  ansible.builtin.package:
+    name: "{{ _borgbackup_cron_package }}"
+    state: present
+
+- name: Add cron job for borgmatic
+  ansible.builtin.cron:
+    name: "{{ _borgbackup_timer.name }}"
+    hour: "{{ _borgbackup_timer.hour }}"
+    minute: "{{ _borgbackup_timer.minute }}"
+    user: "{{ _borgbackup_user.name }}"
+    cron_file: "{{ _borgbackup_timer.name }}"
+    job: "borgmatic -c /etc/borgmatic/{{ _borgbackup_config.name }} {{ _borgbackup_timer.flags }}"
+
+- name: Ensure separate check cron job is absent
+  ansible.builtin.cron:
+    name: "{{ _borgbackup_timer.name }}-check"
+    cron_file: "{{ _borgbackup_timer.name }}"
+    state: absent
+
+- name: Set PATH for borgmatic cron job
+  ansible.builtin.cron:
+    user: "{{ _borgbackup_user.name }}"
+    cron_file: "{{ _borgbackup_timer.name }}"
+    name: PATH
+    env: true
+    value: /usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+...

@@ -6,14 +6,12 @@ driver:
 platforms:
   - name: archlinux-latest
     image: archlinux:latest
-  - name: almalinux-9
-    image: almalinux:9
-  # - name: fedora-latest
-  #   image: fedora:latest
-  - name: debian-bookworm
-    image: debian:bookworm
-  - name: ubuntu-latest
-    image: ubuntu:latest
+  - name: almalinux-10
+    image: almalinux:10
+  - name: debian-trixie
+    image: debian:trixie
+  - name: ubuntu-resolute
+    image: ubuntu:resolute
 provisioner:
   name: ansible
 verifier:

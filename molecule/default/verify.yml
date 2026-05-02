@@ -2,12 +2,109 @@
 - name: Verify
   hosts: all
   tasks:
-  - name: Ensure Borgmatic is installed correctly
-    command: borgmatic --version
+    - name: Ensure Borgmatic is installed correctly
+      ansible.builtin.command: borgmatic --version
+      changed_when: false
 
-  - name: Ensure Borg is installed correctly
-    command: borgmatic borg --version
+    - name: Ensure Borg is installed correctly
+      ansible.builtin.command: borgmatic borg --version
+      changed_when: false
 
-  - name: Ensure produced YAML is valid
-    command: |
-      yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" /etc/borgmatic/config.yaml
+    - name: Ensure produced YAML is valid
+      ansible.builtin.command: |
+        yamllint -d "{extends: relaxed, rules: {line-length: {max: 120}}}" /etc/borgmatic/config.yaml
+      changed_when: false
+
+    - name: Read produced borgmatic config
+      ansible.builtin.slurp:
+        src: /etc/borgmatic/config.yaml
+      register: borgbackup_rendered_config
+
+    - name: Decode produced borgmatic config
+      ansible.builtin.set_fact:
+        borgbackup_rendered_config_yaml: "{{ borgbackup_rendered_config.content | b64decode }}"
+
+    - name: Ensure default borgmatic config is rendered
+      ansible.builtin.assert:
+        that:
+          - "'exclude_caches: true' in borgbackup_rendered_config_yaml"
+          - "'.nobackup' in borgbackup_rendered_config_yaml"
+          - >-
+            'umask: 0077' in borgbackup_rendered_config_yaml
+            or "umask: '0077'" in borgbackup_rendered_config_yaml
+            or 'umask: "0077"' in borgbackup_rendered_config_yaml
+          - "'output_verbosity: 1' in borgbackup_rendered_config_yaml"
+          - "'Error while creating a backup.' not in borgbackup_rendered_config_yaml"
+          - "'Starting backup.' not in borgbackup_rendered_config_yaml"
+          - "'Finished backup.' not in borgbackup_rendered_config_yaml"
+
+    - name: Apply role with custom exclude_if_present and non-pip sudoers
+      ansible.builtin.include_role:
+        name: borgbase.ansible_role_borgbackup
+      vars:
+        borgbackup_install:
+          method: none
+        borgbackup_user:
+          name: borgbackup-test
+          group: borgbackup-test
+          sudo: true
+        borgbackup_timer:
+          type: none
+        borgbackup_config:
+          name: sudoers.yaml
+          repositories:
+            - m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+          source_directories:
+            - /etc/hostname
+          exclude_if_present:
+            - .skipbackup
+
+    - name: Read custom borgmatic config
+      ansible.builtin.slurp:
+        src: /etc/borgmatic/sudoers.yaml
+      register: borgbackup_custom_config
+
+    - name: Read generated sudoers rule
+      ansible.builtin.slurp:
+        src: /etc/sudoers.d/backup
+      register: borgbackup_sudoers_rule
+
+    - name: Decode custom config and sudoers rule
+      ansible.builtin.set_fact:
+        borgbackup_custom_config_yaml: "{{ borgbackup_custom_config.content | b64decode }}"
+        borgbackup_sudoers_rule_text: "{{ borgbackup_sudoers_rule.content | b64decode }}"
+
+    - name: Ensure custom list and non-pip sudoers paths are rendered
+      ansible.builtin.assert:
+        that:
+          - "'.skipbackup' in borgbackup_custom_config_yaml"
+          - "'.nobackup' not in borgbackup_custom_config_yaml"
+          - "'/usr/bin/borg' in borgbackup_sudoers_rule_text"
+          - "'/usr/bin/borgmatic -c /etc/borgmatic/sudoers.yaml' in borgbackup_sudoers_rule_text"
+          - "'/usr/local/bin/borg' not in borgbackup_sudoers_rule_text"
+          - "'/opt/borgmatic/bin/borg' not in borgbackup_sudoers_rule_text"
+
+    - name: Ensure legacy hook variables are rejected
+      block:
+        - name: Apply role with a legacy hook variable
+          ansible.builtin.include_role:
+            name: borgbase.ansible_role_borgbackup
+          vars:
+            borgmatic_failure_command: echo legacy
+            borgbackup_install:
+              method: none
+            borgbackup_timer:
+              type: none
+            borgbackup_config:
+              repositories:
+                - m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+      rescue:
+        - name: Store legacy hook rejection message
+          ansible.builtin.set_fact:
+            borgbackup_legacy_hook_rejection: "{{ ansible_failed_result.msg | default('') }}"
+
+    - name: Confirm legacy hook rejection
+      ansible.builtin.assert:
+        that:
+          - "'Replace legacy variables' in borgbackup_legacy_hook_rejection | default('')"
+          - "'borgmatic_failure_command' in borgbackup_legacy_hook_rejection | default('')"

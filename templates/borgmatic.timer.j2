@@ -6,7 +6,7 @@ Description=Start creating of Backups - see: https://www.freedesktop.org/softwar
 [Timer]
 # Day-of-the-Week Year-Month-Day Hour:Minutes:Seconds
 # Persistent -> resume backup after shutdown
-OnCalendar= *-*-* {{ borgmatic_timer_hour }}:{{ borgmatic_timer_minute }}:00
+OnCalendar= *-*-* {{ _borgbackup_timer.hour }}:{{ _borgbackup_timer.minute }}:00
 Persistent=true
 
 [Install]

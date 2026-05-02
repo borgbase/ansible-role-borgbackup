@@ -1,10 +1,10 @@
 ---
-borg_dep_packages:
+_borgbackup_dep_packages:
   - openssh-client
 
-borg_cron_package: cron
+_borgbackup_cron_package: cron
 
-borg_pip_packages:
+_borgbackup_pip_packages:
   - libssl-dev
   - libacl1-dev
   - libacl1
@@ -19,9 +19,8 @@ borg_pip_packages:
   - python3-msgpack
   - python3-venv
 
-borg_distro_packages:
+_borgbackup_distro_packages:
   - borgbackup
   - borgmatic
 
-python_bin: python3
-pip_bin: pip3
+_borgbackup_python_bin: python3

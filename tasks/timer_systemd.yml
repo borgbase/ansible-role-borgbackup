@@ -1,0 +1,59 @@
+---
+- name: Register existence of borgmatic cron file
+  ansible.builtin.cron:
+    name: "{{ _borgbackup_timer.name }}"
+    cron_file: "{{ _borgbackup_timer.name }}"
+    state: absent
+  check_mode: true
+  register: _borgbackup_cron_file_exists
+  ignore_errors: true
+
+- name: Ensure no borgmatic cron file exists
+  ansible.builtin.assert:
+    that:
+      - not _borgbackup_cron_file_exists.changed
+      - not _borgbackup_cron_file_exists.failed or "Failed to find" in _borgbackup_cron_file_exists.msg
+    fail_msg: Found an existing borgmatic cron job. Please remove before using a systemd timer.
+
+- name: Copy systemd unit files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    backup: true
+    mode: "{{ item.mode }}"
+  loop:
+    - src: borgmatic.timer.j2
+      dest: /usr/lib/systemd/system/borgmatic.timer
+      mode: "0644"
+    - src: borgmatic.service.j2
+      dest: /usr/lib/systemd/system/borgmatic.service
+      mode: "0644"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable and start borgmatic timer
+  ansible.builtin.systemd:
+    name: borgmatic.timer
+    state: started
+    enabled: true
+  when: _borgbackup_timer.enabled | bool
+
+- name: Stop and disable borgmatic timer
+  ansible.builtin.systemd:
+    name: borgmatic.timer
+    state: stopped
+    enabled: false
+  when: not (_borgbackup_timer.enabled | bool)
+
+- name: Show disabled timer hint
+  ansible.builtin.debug:
+    msg: >-
+      Attention: borgbackup_timer.enabled is set to false.
+      The systemd timer (borgmatic.timer) is not activated.
+      Enable it manually with: systemctl enable --now borgmatic.timer
+  when: not (_borgbackup_timer.enabled | bool)
+...

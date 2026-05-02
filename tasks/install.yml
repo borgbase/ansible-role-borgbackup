@@ -1,0 +1,33 @@
+---
+- name: Resolve installation variables
+  ansible.builtin.set_fact:
+    _borgbackup_effective_dep_packages: >-
+      {{ _borgbackup_install.dep_packages
+      if _borgbackup_install.dep_packages | length > 0
+      else _borgbackup_dep_packages }}
+    _borgbackup_effective_pip_packages: >-
+      {{ _borgbackup_install.pip_packages
+      if _borgbackup_install.pip_packages | length > 0
+      else _borgbackup_pip_packages }}
+    _borgbackup_effective_distro_packages: >-
+      {{ _borgbackup_install.distro_packages
+      if _borgbackup_install.distro_packages | length > 0
+      else _borgbackup_distro_packages }}
+    _borgbackup_effective_python_bin: >-
+      {{ _borgbackup_install.python_bin
+      if _borgbackup_install.python_bin | length > 0
+      else _borgbackup_python_bin }}
+
+- name: Install borgbackup and borgmatic
+  when: _borgbackup_install.method != "none"
+  block:
+    - name: Install general dependencies
+      ansible.builtin.package:
+        name: "{{ _borgbackup_effective_dep_packages }}"
+        state: present
+      when: _borgbackup_effective_dep_packages | length > 0
+
+    - name: Install borgbackup and borgmatic with selected method
+      ansible.builtin.include_tasks:
+        file: "install_{{ _borgbackup_install.method }}.yml"
+...

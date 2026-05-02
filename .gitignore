@@ -1,1 +1,3 @@
 .cache
+.ansible
+.direnv

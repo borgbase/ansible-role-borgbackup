@@ -1,0 +1,54 @@
+---
+- name: Create backup group
+  ansible.builtin.group:
+    name: "{{ _borgbackup_user.group }}"
+    state: present
+  when:
+    - _borgbackup_user.name != "root"
+    - _borgbackup_user.create | bool
+
+- name: Create backup user
+  ansible.builtin.user:
+    name: "{{ _borgbackup_user.name }}"
+    shell: "{{ _borgbackup_user.shell }}"
+    groups: "{{ _borgbackup_user.group }}"
+    comment: Backup User Account
+    append: true
+  when:
+    - _borgbackup_user.name != "root"
+    - _borgbackup_user.create | bool
+
+- name: Get backup user information
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ _borgbackup_user.name }}"
+
+- name: Save backup user information
+  ansible.builtin.set_fact:
+    _borgbackup_user_info:
+      home: "{{ ansible_facts.getent_passwd[_borgbackup_user.name][4] }}"
+
+- name: Resolve borgbackup sudo command paths
+  ansible.builtin.set_fact:
+    _borgbackup_borg_command: >-
+      {{ '/usr/local/bin/borg'
+      if _borgbackup_install.method == 'pip'
+      else '/usr/bin/borg' }}
+    _borgbackup_borgmatic_command: >-
+      {{ '/usr/local/bin/borgmatic'
+      if _borgbackup_install.method == 'pip'
+      else '/usr/bin/borgmatic' }}
+
+- name: Add backup sudo rules
+  community.general.sudoers:
+    name: backup
+    state: present
+    user: "{{ _borgbackup_user.name }}"
+    nopassword: true
+    commands:
+      - "{{ _borgbackup_borg_command }}"
+      - "{{ _borgbackup_borgmatic_command }} -c /etc/borgmatic/{{ _borgbackup_config.name }}"
+  when:
+    - _borgbackup_user.name != "root"
+    - _borgbackup_user.sudo | bool
+...

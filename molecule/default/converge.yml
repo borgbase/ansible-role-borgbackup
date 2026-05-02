@@ -32,24 +32,28 @@
 
   roles:
     - role: borgbase.ansible_role_borgbackup
-      borg_install_method: pip
-      borgmatic_timer: cron
-      borg_repository: m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
-      borg_encryption_passphrase: CHANGEME
-      borg_source_directories:
-        - /srv/www
-        - /var/lib/automysqlbackup
-      borg_exclude_patterns:
-        - /srv/www/old-sites
-      borg_retention_policy:
-        keep_hourly: 3
-        keep_daily: 7
-        keep_weekly: 4
-        keep_monthly: 6
-      borgmatic_hooks:
-        before_backup:
-        - echo "`date` - Starting backup."
-        postgresql_databases:
-        - name: users
-          hostname: database1.example.org
-          port: 5433
+      borgbackup_install:
+        method: pip
+      borgbackup_timer:
+        type: cron
+      borgbackup_config:
+        repositories:
+          - m5vz9gp4@m5vz9gp4.repo.borgbase.com:repo
+        encryption_passphrase: CHANGEME
+        source_directories:
+          - /srv/www
+          - /var/lib/automysqlbackup
+        exclude_patterns:
+          - /srv/www/old-sites
+        retention:
+          keep_hourly: 3
+          keep_daily: 7
+          keep_weekly: 4
+          keep_monthly: 6
+        hooks:
+          postgresql_databases:
+            - name: users
+              hostname: database1.example.org
+              port: 5433
+        extra:
+          output_verbosity: 1

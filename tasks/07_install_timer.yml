@@ -1,8 +1,0 @@
----
-- name: Install timer to run Borgmatic
-  when:
-    - borgmatic_timer is defined and borgmatic_timer | length > 0
-  block:
-    - name: Start timer install script
-      ansible.builtin.include_tasks:
-        file: noauto_create_timer_{{ borgmatic_timer }}.yml
