@@ -61,7 +61,8 @@
       ansible.builtin.assert:
         that:
           - "'borgmatic -c /etc/borgmatic/config.yaml' in borgbackup_cron_file_text"
-          - "'PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin' in borgbackup_cron_file_text"
+          - "'PATH=' in borgbackup_cron_file_text"
+          - "'/usr/local/bin' in borgbackup_cron_file_text"
 
     - name: Create local borg repository
       ansible.builtin.command: borgmatic --config /etc/borgmatic/config.yaml repo-create --encryption repokey

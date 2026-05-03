@@ -29,5 +29,3 @@
           - /tmp/borgbackup-package-source
         retention:
           keep_daily: 2
-        extra:
-          verbosity: 1
