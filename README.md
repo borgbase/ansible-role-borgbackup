@@ -147,6 +147,59 @@ The role accepts partial dictionaries. For example, setting only `borgbackup_tim
 - `enabled`: enable and start the systemd timer. Defaults to `true`.
 - `systemd_no_new_privileges`: systemd `NoNewPrivileges` value. Defaults to `yes`.
 
+## Layering inventory across group_vars and host_vars
+
+The role's variables are dictionaries. Ansible's default variable precedence replaces dict variables wholesale rather than merging them, so setting `borgbackup_user: {group: backup}` in `host_vars` would wipe out the `name` key inherited from `group_vars`. Two patterns avoid this without changing the role.
+
+### Per-host scalars referenced from the role call
+
+The simplest and most common approach: keep the dict structure in the playbook and reference per-host scalars via Jinja. Plain scalars layer correctly across `group_vars` and `host_vars` without any merging.
+
+```yaml
+# playbook.yml
+- hosts: all
+  roles:
+    - role: borgbase.ansible_role_borgbackup
+      borgbackup_install:
+        method: package
+      borgbackup_config:
+        repositories:
+          - "{{ borgbackup_repository }}"
+        encryption_passphrase: "{{ borgbackup_passphrase }}"
+```
+
+```yaml
+# host_vars/host1.example.com.yml
+borgbackup_repository: ssh://abc123@abc123.repo.borgbase.com/./repo
+borgbackup_passphrase: 'PASSPHRASE'
+  ...
+```
+
+Use this pattern for repository URLs, passphrases, and other per-host values. Group-wide defaults can live in `group_vars/all/` and be overridden in `host_vars/` exactly like any plain Ansible scalar.
+
+### Inventory-driven dicts via `combine`
+
+When you want the dict itself to live in inventory (e.g. a fully inventory-driven setup), define the base as a separate variable and rebuild the role's input via the `combine` filter:
+
+```yaml
+# group_vars/all/borgbackup.yml
+borgbackup_user_base:
+  name: backupuser
+  group: backupuser
+  shell: /bin/bash
+
+borgbackup_user: "{{ borgbackup_user_base }}"
+```
+
+```yaml
+# host_vars/foo.yml
+borgbackup_user: "{{ borgbackup_user_base | combine({'group': 'something'}) }}"
+```
+
+The role then receives the merged dict and applies its own defaults on top, so the effective precedence is `role defaults < group base < host overrides`. Use `combine(..., recursive=true)` if your override touches nested keys (e.g. inside `borgbackup_config.retention`).
+
+Avoid setting `DEFAULT_HASH_BEHAVIOUR=merge` in `ansible.cfg` — it has been deprecated since Ansible 2.13, applies controller-globally, and can break unrelated roles.
+
 ## v1 to v2 migration map
 
 | v1 variable | v2 location |
