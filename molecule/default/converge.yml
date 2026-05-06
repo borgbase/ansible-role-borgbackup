@@ -6,13 +6,13 @@
       set_fact:
         openssh_package: "openssh-server"
         pip3_extra_args: ""
-      when: ansible_os_family != "Archlinux"
+      when: ansible_facts['os_family'] != "Archlinux"
 
     - name: Set ssh server package name and pip3 argument for Archlinux ansible_os_family
       set_fact:
         openssh_package: "openssh"
         pip3_extra_args: "--break-system-packages"
-      when: ansible_os_family == "Archlinux"
+      when: ansible_facts['os_family'] == "Archlinux"
 
     - name: Install openssh
       package:
@@ -23,7 +23,7 @@
       package:
         name: epel-release
         state: present
-      when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'
+      when: ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution'] != 'Fedora'
 
     - name: Install yamllint
       package:

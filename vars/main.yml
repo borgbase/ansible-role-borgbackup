@@ -4,7 +4,7 @@ _borgbackup_install_defaults:
   venv_path: /opt/borgmatic
   borg_version: ""
   borgmatic_version: ">=1.8.0"
-  require_epel: "{{ ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora' }}"
+  require_epel: "{{ ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution'] != 'Fedora' }}"
   dep_packages: []
   pip_packages: []
   distro_packages: []

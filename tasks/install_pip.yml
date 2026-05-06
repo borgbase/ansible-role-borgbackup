@@ -3,7 +3,7 @@
   community.general.dnf_config_manager:
     name: crb
     state: enabled
-  when: ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'
+  when: ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution'] != 'Fedora'
 
 - name: Install build dependencies
   ansible.builtin.package:
