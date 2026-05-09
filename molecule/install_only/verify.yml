@@ -1,0 +1,100 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Ensure Borg is installed
+      ansible.builtin.command: borg --version
+      changed_when: false
+
+    - name: Ensure Borgmatic is installed
+      ansible.builtin.command: borgmatic --version
+      changed_when: false
+
+    - name: Inspect borgmatic config path
+      ansible.builtin.stat:
+        path: /etc/borgmatic/config.yaml
+      register: borgbackup_install_only_config_stat
+
+    - name: Inspect default SSH key path
+      ansible.builtin.stat:
+        path: /root/.ssh/id_ed25519
+      register: borgbackup_install_only_ssh_stat
+
+    - name: Inspect borgmatic cron file
+      ansible.builtin.stat:
+        path: /etc/cron.d/borgmatic
+      register: borgbackup_install_only_cron_stat
+
+    - name: Inspect borgmatic systemd timer
+      ansible.builtin.stat:
+        path: /etc/systemd/system/borgmatic.timer
+      register: borgbackup_install_only_timer_stat
+
+    - name: Ensure no config, key, or timer artifacts were created
+      ansible.builtin.assert:
+        that:
+          - not borgbackup_install_only_config_stat.stat.exists
+          - not borgbackup_install_only_ssh_stat.stat.exists
+          - not borgbackup_install_only_cron_stat.stat.exists
+          - not borgbackup_install_only_timer_stat.stat.exists
+
+    - name: Apply role with config.create=false but cron timer kept
+      ansible.builtin.include_role:
+        name: borgbase.ansible_role_borgbackup
+      vars:
+        borgbackup_install:
+          method: none
+        borgbackup_config:
+          create: false
+        borgbackup_ssh:
+          create: false
+        borgbackup_timer:
+          type: cron
+
+    - name: Read borgmatic cron file
+      ansible.builtin.slurp:
+        src: /etc/cron.d/borgmatic
+      register: borgbackup_install_only_cron_file
+
+    - name: Decode borgmatic cron file
+      ansible.builtin.set_fact:
+        borgbackup_install_only_cron_text: "{{ borgbackup_install_only_cron_file.content | b64decode }}"
+
+    - name: Ensure cron job omits the -c flag
+      ansible.builtin.assert:
+        that:
+          - "'borgmatic -c ' not in borgbackup_install_only_cron_text"
+          - "'borgmatic ' in borgbackup_install_only_cron_text"
+
+    - name: Apply role with non-root sudoers and config.create=false
+      ansible.builtin.include_role:
+        name: borgbase.ansible_role_borgbackup
+      vars:
+        borgbackup_install:
+          method: none
+        borgbackup_user:
+          name: borgbackup-install-only
+          group: borgbackup-install-only
+          sudo: true
+        borgbackup_config:
+          create: false
+        borgbackup_ssh:
+          create: false
+        borgbackup_timer:
+          type: none
+
+    - name: Read generated sudoers rule
+      ansible.builtin.slurp:
+        src: /etc/sudoers.d/backup
+      register: borgbackup_install_only_sudoers
+
+    - name: Decode sudoers rule
+      ansible.builtin.set_fact:
+        borgbackup_install_only_sudoers_text: "{{ borgbackup_install_only_sudoers.content | b64decode }}"
+
+    - name: Ensure sudoers entry omits the -c flag
+      ansible.builtin.assert:
+        that:
+          - "'/usr/bin/borgmatic -c ' not in borgbackup_install_only_sudoers_text"
+          - "'/usr/bin/borgmatic' in borgbackup_install_only_sudoers_text"
+          - "'/usr/bin/borg' in borgbackup_install_only_sudoers_text"

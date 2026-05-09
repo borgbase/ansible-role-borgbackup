@@ -13,9 +13,11 @@
 
 - name: Manage backup SSH key
   ansible.builtin.include_tasks: ssh_key.yml
+  when: _borgbackup_ssh.create | bool
 
 - name: Configure borgmatic
   ansible.builtin.include_tasks: configure.yml
+  when: _borgbackup_config.create | bool
 
 - name: Install borgmatic timer
   ansible.builtin.include_tasks: timer.yml

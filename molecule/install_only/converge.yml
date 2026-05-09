@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: borgbase.ansible_role_borgbackup
+      borgbackup_install:
+        method: pip
+      borgbackup_config:
+        create: false
+      borgbackup_ssh:
+        create: false
+      borgbackup_timer:
+        type: none

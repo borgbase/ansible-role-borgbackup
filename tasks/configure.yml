@@ -94,7 +94,7 @@
     - when: "{{ _borgbackup_ssh.command | length > 0 }}"
       value:
         ssh_command: "{{ _borgbackup_ssh.command }}"
-    - when: "{{ _borgbackup_ssh.command | length == 0 and _borgbackup_ssh_key_name != 'id_' ~ _borgbackup_ssh.key_type }}"
+    - when: "{{ _borgbackup_ssh.create | bool and _borgbackup_ssh.command | length == 0 and _borgbackup_ssh_key_name != 'id_' ~ _borgbackup_ssh.key_type }}"
       value:
         ssh_command: "ssh -i {{ _borgbackup_ssh_key_path }}"
   when: item.when | bool

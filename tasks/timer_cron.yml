@@ -11,7 +11,7 @@
     minute: "{{ _borgbackup_timer.minute }}"
     user: "{{ _borgbackup_user.name }}"
     cron_file: "{{ _borgbackup_timer.name }}"
-    job: "borgmatic -c /etc/borgmatic/{{ _borgbackup_config.name }} {{ _borgbackup_timer.flags }}"
+    job: "borgmatic{{ ' -c /etc/borgmatic/' ~ _borgbackup_config.name if _borgbackup_config.create | bool else '' }} {{ _borgbackup_timer.flags }}"
 
 - name: Ensure separate check cron job is absent
   ansible.builtin.cron:

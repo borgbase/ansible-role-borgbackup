@@ -40,6 +40,7 @@ jobs:
               molecule test -s default --platform-name debian-trixie
               molecule test -s package --platform-name debian-trixie-package
               molecule test -s nonroot --platform-name debian-trixie-nonroot
+              molecule test -s install_only --platform-name debian-trixie-install-only
           - os: ubuntu
             molecule_commands: |
               molecule test -s default --platform-name ubuntu-resolute

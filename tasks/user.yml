@@ -47,7 +47,7 @@
     nopassword: true
     commands:
       - "{{ _borgbackup_borg_command }}"
-      - "{{ _borgbackup_borgmatic_command }} -c /etc/borgmatic/{{ _borgbackup_config.name }}"
+      - "{{ _borgbackup_borgmatic_command ~ ' -c /etc/borgmatic/' ~ _borgbackup_config.name if _borgbackup_config.create | bool else _borgbackup_borgmatic_command }}"
   when:
     - _borgbackup_user.name != "root"
     - _borgbackup_user.sudo | bool

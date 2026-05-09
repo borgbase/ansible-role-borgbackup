@@ -27,9 +27,11 @@ _borgbackup_ssh_defaults:
   key_path: ""
   key_comment: ""
   command: ""
+  create: true
 
 _borgbackup_config_defaults:
   name: config.yaml
+  create: true
   repositories: []
   source_directories:
     - /etc/hostname

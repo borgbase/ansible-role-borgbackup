@@ -81,6 +81,20 @@ Works well with [BorgBase.com](https://www.borgbase.com). To manage BorgBase rep
           verbosity: 1
 ```
 
+## Install-only example (manage config, key, and timer out of band)
+
+```yaml
+- hosts: all
+  roles:
+    - role: borgbase.ansible_role_borgbackup
+      borgbackup_config:
+        create: false
+      borgbackup_ssh:
+        create: false
+      borgbackup_timer:
+        type: none
+```
+
 ## Installation
 
 Download from Ansible Galaxy:
@@ -124,11 +138,13 @@ The role accepts partial dictionaries. For example, setting only `borgbackup_tim
 - `key_path`: private key path. Defaults to the backup user's `.ssh` directory.
 - `key_comment`: public key comment.
 - `command`: explicit borgmatic `ssh_command`.
+- `create`: generate the SSH keypair. Defaults to `true`. Set to `false` to skip SSH keypair generation entirely (e.g. when you manage the key out of band).
 
 ### `borgbackup_config`
 
-- `repositories`: required repository path, list of paths, or list of borgmatic repository dictionaries.
+- `repositories`: repository path, list of paths, or list of borgmatic repository dictionaries. Required when `create` is true.
 - `name`: config filename under `/etc/borgmatic`. Defaults to `config.yaml`.
+- `create`: render `/etc/borgmatic/<name>`. Defaults to `true`. Set to `false` to install borgmatic without writing a config file; the timer and sudoers entries then omit the `-c` flag so borgmatic auto-discovers files in `/etc/borgmatic.d/`.
 - `source_directories`: local paths to back up. Defaults to `/etc/hostname`.
 - `one_file_system`, `exclude_patterns`, `exclude_from`, `exclude_caches`, `exclude_if_present`, `compression`, `lock_wait`: borgmatic source and storage settings.
 - `encryption_passphrase`, `encryption_passcommand`, `remote_path`, `upload_rate_limit`: repository access settings.
