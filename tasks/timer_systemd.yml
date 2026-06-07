@@ -25,10 +25,10 @@
     mode: "{{ item.mode }}"
   loop:
     - src: borgmatic.timer.j2
-      dest: /usr/lib/systemd/system/borgmatic.timer
+      dest: "{{ '/usr/lib/systemd/system/borgmatic-' ~ _borgbackup_timer.name ~ '.timer' }}"
       mode: "0644"
     - src: borgmatic.service.j2
-      dest: /usr/lib/systemd/system/borgmatic.service
+      dest: "{{ '/usr/lib/systemd/system/borgmatic-' ~ _borgbackup_timer.name ~ '.service' }}"
       mode: "0644"
 
 - name: Reload systemd daemon
@@ -37,14 +37,14 @@
 
 - name: Enable and start borgmatic timer
   ansible.builtin.systemd:
-    name: borgmatic.timer
+    name: "{{ 'borgmatic-' ~ _borgbackup_timer.name ~ '.timer' }}"
     state: started
     enabled: true
   when: _borgbackup_timer.enabled | bool
 
 - name: Stop and disable borgmatic timer
   ansible.builtin.systemd:
-    name: borgmatic.timer
+    name: "{{ 'borgmatic-' ~ _borgbackup_timer.name ~ '.timer' }}"
     state: stopped
     enabled: false
   when: not (_borgbackup_timer.enabled | bool)
@@ -53,7 +53,7 @@
   ansible.builtin.debug:
     msg: >-
       Attention: borgbackup_timer.enabled is set to false.
-      The systemd timer (borgmatic.timer) is not activated.
-      Enable it manually with: systemctl enable --now borgmatic.timer
+      The systemd timer ({{ 'borgmatic-' ~ _borgbackup_timer.name ~ '.timer' }}) is not activated.
+      Enable it manually with: systemctl enable --now {{ 'borgmatic-' ~ _borgbackup_timer.name ~ '.timer' }}
   when: not (_borgbackup_timer.enabled | bool)
 ...
