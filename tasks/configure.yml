@@ -57,7 +57,7 @@
   ansible.builtin.set_fact:
     _borgbackup_borgmatic_config: >-
       {{ _borgbackup_borgmatic_config | combine({
-        'umask': _borgbackup_config.umask | int(base=8),
+        'umask': _borgbackup_config.umask | int,
         'lock_wait': _borgbackup_config.lock_wait | int,
         'check_last': _borgbackup_config.check_last | int,
       }) }}
